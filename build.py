@@ -19,7 +19,6 @@ for folder in ["works", "tags"]:
 
 env = jinja2.Environment(loader=jinja2.FileSystemLoader(searchpath="./templates/"), lstrip_blocks=True, trim_blocks=True)
 env.globals['last_built'] = arrow.utcnow()
-env.globals['lorem'] = "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
 
 def urlify_filename(s):
     return s.lower().replace(" ", "_")
@@ -34,7 +33,8 @@ class Renderable:
             self.path = BUILD_DIR + self.link[1:]
         data = copy.copy(self.__dict__)
         data.update({key: self.__class__.__dict__[key] for key in self.__class__.__dict__ if not key.startswith("__")})
-
+        if hasattr(self, "renderargs"):
+            data.update(self.renderargs)
         with open(self.path, "w") as f:
             f.write(env.get_template(self._templatename_.lower() + ".html").render(**data))
 
@@ -49,7 +49,22 @@ class Tag(Renderable):
     def __init__(self, name):
         self.name = name
         self.link = "/tags/" + urlify_filename(self.name) + ".html"
+        self.show = True
+        self.isLink = True
         self.entries = []
+        self._templatename_ = "works"
+        self.isTag = True
+        self.isSubtag = False
+        self.subtags = []
+
+    @property
+    def has_subtags(self):
+        return len(self.subtags) > 0
+
+    @property
+    def renderargs(self):
+        works = sorted(self.entries, key=lambda work: work.date.timestamp if work.date else 0, reverse=True)
+        return dict(tags=tags.list(), works=works, by_instruments=tags["By Instruments"])
 
 
 class Tags(dict):
@@ -60,6 +75,12 @@ class Tags(dict):
     def render(self):
         for tag in self.values():
             tag.render()
+
+    def load_subtags(self, data):
+        for tag, subtags in data.items():
+            self[tag].subtags = [self[subtag] for subtag in subtags]
+            for subtag in subtags:
+                self[subtag].isSubtag = True
 
     def list(self):
         return [self[tag_name] for tag_name in sorted(self)]
@@ -86,6 +107,7 @@ class Work(Renderable):
             self.date = arrow.get(data["year"], data.get("month", 1), data.get("day", 1))
         self.media = data.get('media', [])
         self.media = [data if isinstance(data, list) else (data, data) for data in self.media]
+        self.summary = data.get("summary")
 
     def add_tags(self, tag_names):
         for name in tag_names:
@@ -106,12 +128,20 @@ for work in os.listdir("works"):
 
 works = sorted(works, key=lambda work: work.date.timestamp if work.date else 0, reverse=True)
 
+with open("tags.json", "r") as f:
+    tags.load_subtags(json.load(f))
+
+tags["By Instruments"].show = False
+tags["By Instruments"].isLink = False
 tags.render()
 
 
-Renderable.render_simple("works", tags=tags.list(), works=works)
+Renderable.render_simple("works", tags=tags.list(), works=works, by_instruments=tags["By Instruments"])
 Renderable.render_simple("biography")
 Renderable.render_simple("index")
 Renderable.render_simple("press_reviews")
+
+print("copying static stuff")
+shutil.copytree("static", BUILD_DIR + "static")
 
 print("built.")

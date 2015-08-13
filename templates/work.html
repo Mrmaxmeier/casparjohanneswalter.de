@@ -1,21 +1,21 @@
 {% extends "base.html" %}
 {% from 'macros.html' import date %}
 {% macro summary(werk) %}
-<article>
-    <h4>
-        <a href="{{werk.link}}">{{werk.name}}</a>
-        {% if werk.date %}
-        <em style="font-size: 0.8em;">
-            ({{date(werk.date)}})
-        </em>
-        {% endif %}
-    </h4>
-    <p style="margin-bottom: 0.1em;">Kurze Beschreibung</p>
-    {% for media in werk.media -%}
-    <a href="{{media[1]}}">{{media[0]}}<a>
-    {% if not loop.last %} - {% endif %}
-    {%- endfor %}
-</article>
+<h4>
+    <a href="{{werk.link}}">{{werk.name}}</a>
+    {% if werk.date %}
+    <em style="font-size: 0.8em;">
+        ({{date(werk.date)}})
+    </em>
+    {% endif %}
+</h4>
+{% if werk.summary %}
+<p style="margin-bottom: 0.1em;">{{werk.summary}}</p>
+{% endif %}
+{% for media in werk.media -%}
+<a href="{{media[1]}}">{{media[0]}}<a>
+{% if not loop.last %} - {% endif %}
+{%- endfor %}
 {% endmacro %}
 
 {% block body %}

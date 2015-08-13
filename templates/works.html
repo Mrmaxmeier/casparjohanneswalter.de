@@ -1,7 +1,22 @@
 {% extends "base.html" %}
 {% set active_page = 'List of Works' -%}
 {% from 'work.html' import summary %}
-
+{% macro menu(tag) %}
+<li>
+    {% if tag.isLink %}
+    <a {% if isTag and name == tag.name %}class="selected"{% endif %} href="{{tag.link}}">{{tag.name}}</a>
+    {% else %}
+    <a>{{tag.name}}</a>
+    {% endif %}
+    {% if tag.has_subtags %}
+    <ul>
+        {% for subtag in tag.subtags %}
+        <a {% if isTag and name == subtag.name %}class="selected"{% endif %} href="{{subtag.link}}">{{subtag.name}}</a>
+        {% endfor %}
+    </ul>
+    {% endif %}
+</li>
+{% endmacro %}
 {% block body %}
 
 <style>
@@ -14,20 +29,27 @@ article {
 */
 </style>
 
-<aside>
-    Subtypes
+<nav style="font-size: 0.8em;" id="dropdown">
     <ul>
-    {% for tag in tags %}
+    {% if isTag %}
         <li>
-            <a>{{tag.name}}</a>
+            <a href="/works.html">All</a>
         </li>
+    {% endif %}
+    {% for tag in tags %}
+    {% if not tag.isSubtag and tag.show %}
+    {{menu(tag)}}
+    {% endif %}
     {% endfor %}
+    {{menu(by_instruments)}}
     </ul>
-</aside>
+</nav>
 
 
 {% for work in works %}
+<section>
     {{summary(work)}}
+</section>
 {% endfor %}
 
 

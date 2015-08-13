@@ -1,4 +1,4 @@
-{% set active_page = active_page|default('Home') -%}
+{% set active_page = active_page|default('not_in_menu') -%}
 {% macro menu_link(link, text) %}
 <a {% if text == active_page %} class="selected" {% endif %} href="{{link}}">
     <b>{{text}}</b>
@@ -6,15 +6,16 @@
 {% endmacro %}
 <html>
     <head>
-        <title>#Dahlsweg</title>
+        <title>CJ Walter</title>
         <meta charset="utf-8" />
         <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/marx/1.3.0/marx.min.css">
+        <link rel="stylesheet" href="/static/dropdown.css">
         <style>
             nav {
                 padding-bottom: 1em;
             }
             main {
-                max-width: 90rem;
+                max-width: 110rem;
             }
 
             a.selected {
@@ -24,7 +25,7 @@
     </head>
     <body>
         <main>
-            <h1>Johannes' very much good <a href="/">Website</a></h1>
+            <h1>Caspar Johannes Walter</h1>
             <nav>
                 <ul>
                     <li>
@@ -44,7 +45,7 @@
             {% block body %}
             {% endblock %}
             <footer>
-                <p>&copy Donald Trump {{last_built.format("YYYY")}}</p>
+                <p>&copy Johannes Walter {{last_built.format("YYYY")}}</p>
             </footer>
         </main>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/instantclick/3.0.1/instantclick.min.js" data-no-instant></script>
