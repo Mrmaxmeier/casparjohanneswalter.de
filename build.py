@@ -51,6 +51,7 @@ class Tag(Renderable):
         self.link = "/tags/" + urlify_filename(self.name) + ".html"
         self.entries = []
 
+
 class Tags(dict):
     def __missing__(self, key):
         value = self[key] = Tag(key)
@@ -59,6 +60,9 @@ class Tags(dict):
     def render(self):
         for tag in self.values():
             tag.render()
+
+    def list(self):
+        return [self[tag_name] for tag_name in sorted(self)]
 
 tags = Tags()
 
@@ -105,7 +109,7 @@ works = sorted(works, key=lambda work: work.date.timestamp if work.date else 0, 
 tags.render()
 
 
-Renderable.render_simple("works", tags=tags, works=works)
+Renderable.render_simple("works", tags=tags.list(), works=works)
 Renderable.render_simple("biography")
 Renderable.render_simple("index")
 Renderable.render_simple("press_reviews")
