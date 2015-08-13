@@ -53,7 +53,6 @@ class Tag(Renderable):
         self.isLink = True
         self.entries = []
         self._templatename_ = "works"
-        self.isTag = True
         self.isSubtag = False
         self.subtags = []
 
@@ -136,7 +135,7 @@ tags["By Instruments"].isLink = False
 tags.render()
 
 
-Renderable.render_simple("works", tags=tags.list(), works=works, by_instruments=tags["By Instruments"])
+Renderable.render_simple("works", tags=tags.list(), works=works, by_instruments=tags["By Instruments"], all=True)
 Renderable.render_simple("biography")
 Renderable.render_simple("index")
 Renderable.render_simple("press_reviews")

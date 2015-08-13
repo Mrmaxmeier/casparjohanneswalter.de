@@ -4,14 +4,14 @@
 {% macro menu(tag) %}
 <li>
     {% if tag.isLink %}
-    <a {% if isTag and name == tag.name %}class="selected"{% endif %} href="{{tag.link}}">{{tag.name}}</a>
+    <a {% if name == tag.name %}class="selected"{% endif %} href="{{tag.link}}">{{tag.name}}</a>
     {% else %}
     <a>{{tag.name}}</a>
     {% endif %}
     {% if tag.has_subtags %}
     <ul>
         {% for subtag in tag.subtags %}
-        <a {% if isTag and name == subtag.name %}class="selected"{% endif %} href="{{subtag.link}}">{{subtag.name}}</a>
+        <a {% if name == subtag.name %}class="selected"{% endif %} href="{{subtag.link}}">{{subtag.name}}</a>
         {% endfor %}
     </ul>
     {% endif %}
@@ -29,19 +29,17 @@ article {
 */
 </style>
 
-<nav style="font-size: 0.8em;" id="dropdown">
+<nav style="font-size: 0.8em; margin-top: 0px;" id="dropdown">
     <ul>
-    {% if isTag %}
         <li>
-            <a href="/works.html">All</a>
+            <a {% if all %}class="selected"{% endif %}href="/works.html">All</a>
         </li>
-    {% endif %}
-    {% for tag in tags %}
-    {% if not tag.isSubtag and tag.show %}
-    {{menu(tag)}}
-    {% endif %}
-    {% endfor %}
-    {{menu(by_instruments)}}
+        {% for tag in tags %}
+        {% if not tag.isSubtag and tag.show %}
+        {{menu(tag)}}
+        {% endif %}
+        {% endfor %}
+        {{menu(by_instruments)}}
     </ul>
 </nav>
 
