@@ -1,0 +1,9 @@
+{% macro date(date) %}
+{% if (last_built - date).days < (3 * 365) -%}
+{{date.format("DD MMM YY")}}
+{%- elif (last_built - date).days < (3 * 365) -%}
+{{date.format("MMM YY")}}
+{%- else -%}
+{{date.format("YYYY")}}
+{%- endif %}
+{% endmacro %}

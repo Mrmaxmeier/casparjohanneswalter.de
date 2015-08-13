@@ -1,0 +1,11 @@
+{
+    "title": "Werk 1",
+    "tags": ["Orchestra", "String Orchestra", "Ensemble", "Chamber Music", "Vocal Music", "Solo Instruments", "Music Theatre"],
+    "content": "werk1.md",
+    "media": [
+        ["score", "http://www.google.com"],
+        ["audio", "http://www.google.com"]
+    ],
+    "year": 2015,
+    "month": 3
+}

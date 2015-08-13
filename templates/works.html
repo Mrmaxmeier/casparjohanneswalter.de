@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% set active_page = 'List of Works' -%}
+{% from 'work.html' import summary %}
+
+{% block body %}
+
+<style>
+/*
+article {
+    border-style: dotted;
+    border-width: 1px;
+    border-color: grey;
+}
+*/
+</style>
+
+<aside>
+    Subtypes
+    <ul>
+    {% for tag in tags %}
+        <li>
+            <a>{{tag}}</a>
+        </li>
+    {% endfor %}
+    </ul>
+</aside>
+
+
+{% for work in works %}
+    {{summary(work)}}
+{% endfor %}
+
+
+{% endblock %}
