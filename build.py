@@ -142,5 +142,4 @@ Renderable.render_simple("press_reviews")
 
 print("copying static stuff")
 shutil.copytree("static", BUILD_DIR + "static")
-
 print("built.")

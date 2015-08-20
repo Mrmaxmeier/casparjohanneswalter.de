@@ -1,0 +1,6 @@
+[submodule "submodules/marx"]
+	path = submodules/marx
+	url = https://github.com/mblode/marx.git
+[submodule "submodules/codeorigin.jquery.com"]
+	path = submodules/codeorigin.jquery.com
+	url = https://github.com/jquery/codeorigin.jquery.com.git
