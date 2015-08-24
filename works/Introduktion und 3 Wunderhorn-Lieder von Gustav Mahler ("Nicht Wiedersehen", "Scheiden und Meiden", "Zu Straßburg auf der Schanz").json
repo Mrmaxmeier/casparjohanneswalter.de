@@ -1,0 +1,33 @@
+{
+    "title": "Introduktion und 3 Wunderhorn-Lieder von Gustav Mahler",
+    "version": [
+      {},
+      {}
+    ],
+    "subtitle": "",
+    "instrumentation": ["für Mezzosopran oder Bariton, Altflöte, Klarinette, KB-Klarinette,",
+                        "Horn, Akkordeon, Bratsche, Cello und Kontrabass"],
+    "text": "",
+    "dateStr": "2005/2006",
+    "duration": "Dauer ca. 15’",
+    "content": ["I. \"Introduktion\"",
+                "II. \"Nicht Wiedersehen\"",
+                "III. \"Scheiden und Meiden\"",
+                "IV. \"Zu Straßburg auf der Schanz\""],
+    "commission": "commissioned by KlangForum Heidelberg",
+    "dedication": "",
+    "1st performance": ["WP: sept. 2005, Heidelberg, Ruth Ziesack, Ensemble Aisthesis, W.Nußbaum, cond.",
+                        "UA Scheiden und Meiden, Heidelberg 4.11.2005",
+                        "Silke Schwarz, Sopran; Ensemble Aisthesis, Ltg. Walter Nußbaum",
+                        "vollständige UA: Weingarten 14.10.2006,Evangelische Kirche,",
+                        "Ruth Ziesack, Dalia Schaechter, Ensemble Aisthesis, W.Nußbaum, cond."],
+    "documentation": "Aufnahme SWR",
+    "tags": ["Vocal Music", "Ensemble"],
+    "media": [
+        ["score", "http://www.google.com"],
+        ["audio", "http://www.google.com"],
+        ["video", "http://www.google.com"]
+    ],
+    "year": 2006,
+    "index": 2
+}

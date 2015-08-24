@@ -1,6 +1,17 @@
 {
     "title": "Eisklänge",
-    "summary": "for clarinet und piano",
+    "version": [
+      {},
+      {}
+    ],
+    "subtitle": "",
+    "instrumentation": "for clarinet und piano",
+    "text": "",
+    "dateStr": "2012",
+    "duration": "Dauer ca. 10'",
+    "commission": "",
+    "dedication": "",
+    "documentation": "",
     "tags": ["Chamber Music", "Clarinet"],
     "content": "werk1.md",
     "media": [
@@ -8,5 +19,5 @@
         ["audio", "http://www.google.com"]
     ],
     "year": 2012,
-    "month": 1
+    "index": 1
 }

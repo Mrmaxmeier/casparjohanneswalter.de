@@ -1,0 +1,30 @@
+{
+    "title": "Reigen",
+    "version": [
+      {
+        "version": 1,
+        "instrumentation": "tpt, perc",
+        "dateStr": "2004-2005",
+        "duration": "ca. 11'",
+        "1st performance": ["WP: 22.1.2005, Berlin, Sophiensäle (Festival Ultraschall)",
+                            "Reinhold Friedrich, Robyn Schulkowsky"],
+        "documentation": ""
+      },
+      {
+        "version": 2,
+        "instrumentation": "Mz S, tpt, perc",
+        "dateStr": "2004-2005",
+        "duration": "ca. 11'",
+        "1st performance": "",
+        "documentation": "CD (2nd version, capriccio)"
+      }
+    ],
+    "tags": ["Vocal Music", "Mezzo Soprano", "Trumpet", "Percussion"],
+    "media": [
+        ["score", "http://www.google.com"],
+        ["audio", "http://www.google.com"],
+        ["video", "http://www.google.com"]
+    ],
+    "year": 2005,
+    "index": 2
+}

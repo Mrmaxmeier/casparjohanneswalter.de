@@ -1,0 +1,27 @@
+{
+    "title": "Schwebung",
+    "version": [
+      {},
+      {}
+    ],
+    "subtitle": "für Orchester",
+    "instrumentation": ["Besetzung:",
+                        "3.3.3.3 - 3.3.3.1 - timp. 2perc. hp - 12.10.8.8.6"],
+    "text": "",
+    "dateStr": "2007",
+    "duration": "ca. 11’",
+    "commission": "",
+    "dedication": "geschrieben für das 150-jährige Jubiläum der Musikhochschule Stuttgart",
+    "1st performance": ["UA, Festkonzert zum 150. Jubiläum der Musikhochschule Stuttgart",
+                        "16.6.2007, Stuttgart, Liederhalle, Beethovensaal",
+                        "Sinfonieorchester der MHS Stuttgart; Ltg. Per Borin"],
+    "documentation": "CD",
+    "tags": ["Orchestra"],
+    "media": [
+        ["score", "http://www.google.com"],
+        ["audio", "http://www.google.com"],
+        ["video", "http://www.google.com"]
+    ],
+    "year": 2007,
+    "index": 3
+}

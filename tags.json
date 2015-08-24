@@ -1,4 +1,4 @@
 {
-    "Chamber Music": ["Clarinet", "Piano"],
-    "By Instruments": ["Clarinet", "Piano"]
+    "Chamber Music": ["Strings", "Winds", "Brass", "Percussion Ensemble", "Mixed"],
+    "By Instruments": ["Flute", "Oboe", "Clarinet", "Bassoon", "Trumpet", "Horn", "Trombone", "Tuba", "Percussion", "Accordeon", "Theremin", "Piano", "Violin", "Viola", "Cello", "Double Bass", "Soprano", "Mezzo Soprano", "Voice", "Guitar", "Harpsichord"]
 }

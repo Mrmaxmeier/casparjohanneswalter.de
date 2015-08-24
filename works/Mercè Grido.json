@@ -1,0 +1,26 @@
+{
+    "title": "Mercè Grido",
+    "version": [
+      {},
+      {}
+    ],
+    "subtitle": "Paraphrase über Gesualdos gleichnamiges Madrigal aus dem 5. Madrigalbuch",
+    "instrumentation": ["für Vokalquintett, Altflöte, Klarinette, Trompete, Bratsche, Cello und Kontrabass",
+                        "in mitteltöniger Stimmung"],
+    "text": "",
+    "dateStr": "2009",
+    "duration": "Dauer ca. 8'",
+    "commission": "Kompositionsauftrag des KlangForum Heidelberg",
+    "dedication": "",
+    "1st performance": ["UA 21.10.2009, Heidelberg Providenzkirche",
+        "Schola Heidelberg, Reinhold Friedrich u.a., Ltg. Walter Nussbaum"],
+    "documentation": "Radiomitschnitt SWR 2",
+    "tags": ["Vocal Music", "Ensemble"],
+    "media": [
+        ["score", "http://www.google.com"],
+        ["audio", "http://www.google.com"],
+        ["video", "http://www.google.com"]
+    ],
+    "year": 2009,
+    "index": 3
+}
