@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% set active_page = 'List of Works' -%}
-{% from 'work.html' import summary %}
+{% from 'work.html' import summary with context %}
 {% macro menu(tag) %}
 <li>
     {% if tag.isLink %}

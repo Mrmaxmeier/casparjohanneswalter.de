@@ -3,25 +3,94 @@
 {% macro summary(werk) %}
 <h4>
     <a href="{{werk.link}}">{{werk.name}}</a>
-    {% if werk.date %}
+    {% if werk.has("dateStr") %}
+    <em style="font-size: 0.8em;">
+        ({{werk.dateStr}})
+    </em>
+    {% elif werk.date %}
     <em style="font-size: 0.8em;">
         ({{date(werk.date)}})
     </em>
     {% endif %}
 </h4>
-{% if werk.summary %}
-<p style="margin-bottom: 0.1em;">{{werk.summary}}</p>
-{% endif %}
+
 {% for media in werk.media -%}
-<a href="{{media[1]}}">{{media[0]}}<a>
+<a href="{{media[1]}}">{{media[0]}}</a>
 {% if not loop.last %} - {% endif %}
 {%- endfor %}
 {% endmacro %}
 
-{% block body %}
 
+{% block body %}
+{% if work %}
 <section>
-    <h1>{{name}}</h1>
+    <h1>
+        {{work["title"]}}
+        {% if work.has("dateStr") %}
+        <em style="font-size: 0.8em;">
+            ({{work.dateStr}})
+        </em>
+        {% elif work.date %}
+        <em style="font-size: 0.8em;">
+            ({{date(work.date)}})
+        </em>
+        {% endif %}
+    </h1>
+    {% if work.has("subtitle") %}
+    {{work["subtitle"]}}
+    <br />
+    {% endif %}
+    {% if work.versions %}
+    {% endif %}
+
+    {% if work.has("instrumentation") %}
+    {{work["instrumentation"]}}
+    <br />
+    {% endif %}
+    {% if work.has("text") %}
+    {{work["text"]}}
+    <br />
+    {% endif %}
+    {% if work.has("dateStr") %}
+    {{work["dateStr"]}}
+    <br />
+    {% endif %}
+    {% if work.has("duration") %}
+    {{work["duration"]}}
+    <br />
+    {% endif %}
+    {% if work.has("commision") %}
+    {{work["commision"]}}
+    <br />
+    {% endif %}
+
+    {% if work.has("dedication") %}
+    <i>{{work["dedication"]}}</i>
+    <br />
+    {% endif %}
+    {% if work.has("1st performance") %}
+    {{work["1st performance"]}}
+    <br />
+    {% endif %}
+    {% if work.has("documentation") %}
+    {{work["documentation"]}}
+    <br />
+    {% endif %}
+
+    {% if content %}
     <p>{{content | safe}}</p>
+    <br />
+    {% endif %}
+
+    {% for media in work.media -%}
+    <a href="{{media[1]}}">{{media[0]}}</a>
+    {% if not loop.last %} - {% endif %}
+    {%- endfor %}
+    <br />
+    {% for tag in work.tags -%}
+    <a href="{{tag.link}}">{{tag.name}}</a>
+    {% if not loop.last %} - {% endif %}
+    {%- endfor %}
 </section>
+{% endif %}
 {% endblock %}

@@ -46,10 +46,12 @@
             {% block body %}
             {% endblock %}
             <footer>
-                <p>&copy Johannes Walter {{last_built.format("YYYY")}}</p>
+                <p>&copy Caspar Johannes Walter {{last_built.format("YYYY")}}</p>
             </footer>
         </main>
+        {% if False %}
         <script src="https://cdnjs.cloudflare.com/ajax/libs/instantclick/3.0.1/instantclick.min.js" data-no-instant></script>
         <script data-no-instant>InstantClick.init();</script>
+        {% endif %}
     </body>
 </html>

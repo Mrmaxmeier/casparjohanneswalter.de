@@ -24,7 +24,7 @@ env.globals['last_built'] = arrow.utcnow()
 def urlify_filename(s):
     return s.lower().replace(" ", "_")
 
-class Renderable:
+class Renderable(object):
     def render(self):
         if not hasattr(self, "_templatename_"):
             self._templatename_ = self.__class__.__qualname__
@@ -36,8 +36,12 @@ class Renderable:
         data.update({key: self.__class__.__dict__[key] for key in self.__class__.__dict__ if not key.startswith("__")})
         if hasattr(self, "renderargs"):
             data.update(self.renderargs)
-        with open(self.path, "w") as f:
-            f.write(env.get_template(self._templatename_.lower() + ".html").render(**data))
+
+        try:
+            with open(self.path, "w") as f:
+                f.write(env.get_template(self._templatename_.lower() + ".html").render(**data))
+        except Exception as e:
+            raise e
 
     @classmethod
     def render_simple(cls, name, **kwargs):
@@ -89,25 +93,27 @@ tags = Tags()
 
 class Work(Renderable):
     def __init__(self, data, postlist=[]):
+        self.data = data
         self.name = data['title']
         self.link = "/works/" + urlify_filename(self.name) + ".html"
         self.postlist = postlist
         self.postlist.append(self)
         self.tags = []
         self.content = None
-        if 'content' in data:
-            content = data["content"]
-            with open("works/" + content, "r") as f:
-                content_data = f.read()
-            if content.endswith(".md"):
-                self.content = markdown.markdown(content_data)
+        # if 'content' in data:
+        #     content = data["content"]
+        #     with open("works/" + content, "r") as f:
+        #         content_data = f.read()
+        #     if content.endswith(".md"):
+        #         self.content = markdown.markdown(content_data)
         self.add_tags(data['tags'])
-        self.data = None
         if "year" in data:
             self.date = arrow.get(data["year"], data.get("month", 1), data.get("day", 1))
         self.media = data.get('media', [])
         self.media = [data if isinstance(data, list) else (data, data) for data in self.media]
         self.summary = data.get("summary")
+        self.versions = data.get("versions")
+        self.renderargs = {"work": self}
 
     def add_tags(self, tag_names):
         for name in tag_names:
@@ -115,13 +121,35 @@ class Work(Renderable):
             self.tags.append(tag)
             tag.entries.append(self)
 
+    def has(self, key):
+        if key in self.data:
+            if isinstance(self.data[key], str):
+                return self.data[key] != ""
+            return True
+        return False
+
+    def __getitem__(self, key):
+        if key in self.data:
+            if not key in ["tags", "media"]:
+                if isinstance(self.data[key], list):
+                    return "\n".join(self.data[key])
+            return self.data[key]
+        else:
+            raise ValueError(key)
+
+
+
 works = []
 
 for work in os.listdir("works"):
     if not work.endswith(".json"):
         continue
     with open("works/" + work, "r") as f:
-        data = json.load(f)
+        try:
+            data = json.load(f)
+        except ValueError as e:
+            print(work)
+            raise e
     w = Work(data)
     w.render()
     works.append(w)
@@ -133,6 +161,7 @@ with open("tags.json", "r") as f:
 
 tags["By Instruments"].show = False
 tags["By Instruments"].isLink = False
+print("render tags")
 tags.render()
 
 
