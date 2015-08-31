@@ -2,9 +2,8 @@
 {% set active_page = 'Home' -%}
 
 {% block body %}
-
-Kektop
+<img src="/static/index.jpg">
 <br />
-last_built: {{last_built.format("HH:MM - DD. MMM YYYY")}}
-
+{{last_built.format("HH:MM - DD. MMM YYYY")}}
+{# momentjs #}
 {% endblock %}

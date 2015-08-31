@@ -113,6 +113,14 @@ class Work(Renderable):
         self.media = [data if isinstance(data, list) else (data, data) for data in self.media]
         self.summary = data.get("summary")
         self.versions = data.get("versions")
+        if self.versions:
+            nv = []
+            for version in self.versions:
+                v = copy.deepcopy(self.data)
+                v.pop("versions")
+                v.update(version)
+                nv.push(v)
+            self.versions = nv
         self.renderargs = {"work": self}
 
     def add_tags(self, tag_names):

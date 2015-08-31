@@ -1,57 +1,67 @@
 {% set active_page = active_page|default('not_in_menu') -%}
 {% macro menu_link(link, text) %}
 <a {% if text == active_page %} class="selected" {% endif %} href="{{link}}">
-    <b>{{text}}</b>
+	<b>{{text}}</b>
 </a>
 {% endmacro %}
 <html>
-    <head>
-        <title>CJ Walter</title>
-        <meta charset="utf-8" />
-        <link rel="stylesheet" href="/static/marx.min.css">
-        <link rel="stylesheet" href="/static/dropdown.css">
-        <style>
-            nav {
-                padding-bottom: 1em;
-            }
-            main {
-                max-width: 110rem;
-                width: 90%;
-            }
+	<head>
+		<title>CJ Walter</title>
+		<meta charset="utf-8" />
+		<link rel="stylesheet" href="/static/marx.min.css">
+		<link rel="stylesheet" href="/static/dropdown.css">
+		<style>
+			body {
+				font-size: 17;
+			}
 
-            a.selected {
-                border-color: rgba(0,0,0,.2);
-            }
-        </style>
-    </head>
-    <body>
-        <main>
-            <h1>Caspar Johannes Walter</h1>
-            <nav>
-                <ul>
-                    <li>
-                        {{menu_link("/index.html", "Home")}}
-                    </li>
-                    <li>
-                        {{menu_link("/works.html", "List of Works")}}
-                    </li>
-                    <li>
-                        {{menu_link("/biography.html", "Biography")}}
-                    </li>
-                    <li>
-                        {{menu_link("/press_reviews.html", "Press Reviews")}}
-                    </li>
-                </ul>
-            </nav>
-            {% block body %}
-            {% endblock %}
-            <footer>
-                <p>&copy Caspar Johannes Walter {{last_built.format("YYYY")}}</p>
-            </footer>
-        </main>
-        {% if False %}
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/instantclick/3.0.1/instantclick.min.js" data-no-instant></script>
-        <script data-no-instant>InstantClick.init();</script>
-        {% endif %}
-    </body>
+			nav {
+				padding-bottom: 1em;
+			}
+
+			nav ul li {
+				display: inline-block;
+				padding-bottom: 0.8em;
+			}
+
+			main {
+				max-width: 110rem;
+				width: 90%;
+			}
+
+			a.selected {
+				border-color: rgba(0,0,0,.2);
+			}
+		</style>
+	</head>
+	<body>
+		<main>
+			<h1>Caspar Johannes Walter</h1>
+			<nav>
+				<ul>
+					<li>
+						{{menu_link("/index.html", "Home")}}
+					</li>
+					<li>
+						{{menu_link("/works.html", "List of Works")}}
+					</li>
+					<li>
+						{{menu_link("/biography.html", "Biography")}}
+					</li>
+					<li>
+						{{menu_link("/press_reviews.html", "Press Reviews")}}
+					</li>
+				</ul>
+			</nav>
+			{% block body %}
+			{% endblock %}
+			<footer>
+				<p>&copy {#Caspar Johannes Walter#}Donald Trump {{last_built.format("YYYY")}}</p>
+			</footer>
+		</main>
+		{% if False %}
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/instantclick/3.0.1/instantclick.min.js" data-no-instant></script>
+		<script data-no-instant>InstantClick.init();</script>
+		{% endif %}
+	</body>
 </html>

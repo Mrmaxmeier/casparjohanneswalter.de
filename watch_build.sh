@@ -3,4 +3,5 @@ watchmedo shell-command \
     --recursive \
     --command='python3.4 build.py' \
     --wait \
+    --drop \
     .
