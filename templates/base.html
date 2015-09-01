@@ -1,7 +1,7 @@
 {% set active_page = active_page|default('not_in_menu') -%}
 {% macro menu_link(link, text) %}
 <a {% if text == active_page %} class="selected" {% endif %} href="{{link}}">
-	<b>{{text}}</b>
+	<b style="color: {% if text == active_page %}#777{% else %}#aaa{% endif %}">{{text}}</b>
 </a>
 {% endmacro %}
 <html>
@@ -13,6 +13,10 @@
 		<style>
 			body {
 				font-size: 17;
+			}
+
+			blockquote {
+				line-height: 150%;
 			}
 
 			nav {
@@ -32,6 +36,15 @@
 			a.selected {
 				border-color: rgba(0,0,0,.2);
 			}
+
+			div.work > h3 {
+				margin: 0;
+			}
+			div.work {
+				margin-right: 2em; border-left: .2rem solid #1271db; padding-left: 1em;
+				width: 50%;
+			}
+
 		</style>
 	</head>
 	<body>
@@ -39,24 +52,18 @@
 			<h1>Caspar Johannes Walter</h1>
 			<nav>
 				<ul>
-					<li>
-						{{menu_link("/index.html", "Home")}}
-					</li>
-					<li>
-						{{menu_link("/works.html", "List of Works")}}
-					</li>
-					<li>
-						{{menu_link("/biography.html", "Biography")}}
-					</li>
-					<li>
-						{{menu_link("/press_reviews.html", "Press Reviews")}}
-					</li>
+					<li> {{menu_link("/index.html", "Home")}} </li>
+					<li> {{menu_link("/works.html", "List of Works")}} </li>
+					<li> {{menu_link("/biography.html", "Biography")}} </li>
+					<li> {{menu_link("/press_reviews.html", "Press Reviews")}} </li>
+					<li> {{menu_link("/research.html", "Research")}} </li>
+					<li> {{menu_link("/impressum.html", "Impressum")}} </li>
 				</ul>
 			</nav>
 			{% block body %}
 			{% endblock %}
 			<footer>
-				<p>&copy {#Caspar Johannes Walter#}Donald Trump {{last_built.format("YYYY")}}</p>
+				<p>&copy Caspar Johannes Walter {{last_built.format("YYYY")}}</p>
 			</footer>
 		</main>
 		{% if False %}

@@ -1,12 +1,13 @@
 {% extends "base.html" %}
 {% set active_page = 'List of Works' -%}
 {% from 'work.html' import summary with context %}
+{% from 'work.html' import summ2 with context %}
 {% macro menu(tag) %}
 <li>
     {% if tag.isLink %}
-    <a {% if name == tag.name %}class="selected"{% endif %} href="{{tag.link}}">{{tag.name}}</a>
+    <a style="font-size: 16" {% if name == tag.name %}class="selected"{% endif %} href="{{tag.link}}">{{tag.name}}</a>
     {% else %}
-    <a>{{tag.name}}</a>
+    <a style="font-size: 16">{{tag.name}}</a>
     {% endif %}
     {% if tag.has_subtags %}
     <ul>
@@ -21,23 +22,30 @@
 
 <nav style="font-size: 0.8em; margin-top: 0px;" id="dropdown">
     <ul>
-        <li style="display: inline-block;">
-            <a {% if all %}class="selected"{% endif %}href="/works.html">All</a>
+        <li>
+            <a style="font-size: 16" {% if all %}class="selected"{% endif %} href="/works.html">All</a>
         </li>
+        {{menu(by_instruments)}}
         {% for tag in tags %}
         {% if not tag.isSubtag and tag.show %}
         {{menu(tag)}}
         {% endif %}
         {% endfor %}
-        {{menu(by_instruments)}}
     </ul>
 </nav>
 
 
-{% for work in works %}
-<section>
-    {{summary(work)}}
-</section>
+{% for works in workslists %}
+{% if works[1] %}
+<div style="display: flex; margin-bottom: 3em;">
+{{summ2(works[0])}}
+{{summ2(works[1])}}
+</div>
+{% else %}
+<div style="width: 50%">
+{{summ2(works[0])}}
+</div>
+{% endif %}
 {% endfor %}
 
 

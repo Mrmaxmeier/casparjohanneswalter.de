@@ -14,19 +14,18 @@
     {% endif %}
 </h4>
 
-<span style="padding-left: 1.25em;">
-{% for media in werk.media -%}
-<a href="{{media[1]}}">{{media[0]}}</a>
+<span style="padding-left: 1em;">
+{% for tag in werk.tags -%}
+<a href="{{tag.link}}" style="font-size: 14">{{tag.name}}</a>
 {% if not loop.last %} - {% endif %}
 {%- endfor %}
 </span>
 {% endmacro %}
 
-
-{% block body %}
+{% macro summ2(work) %}
 {% if work %}
-<section>
-    <h1>
+<div class="work">
+    <h3>
         {{work["title"]}}
         {% if work.has("dateStr") %}
         <em style="font-size: 0.8em;">
@@ -37,7 +36,7 @@
             ({{date(work.date)}})
         </em>
         {% endif %}
-    </h1>
+    </h3>
     {% if work.has("subtitle") %}
     {{work["subtitle"]}}
     <br />
@@ -89,10 +88,88 @@
     {% if not loop.last %} - {% endif %}
     {%- endfor %}
     <br />
+    {#
     {% for tag in work.tags -%}
     <a href="{{tag.link}}">{{tag.name}}</a>
     {% if not loop.last %} - {% endif %}
     {%- endfor %}
+    #}
+</div>
+{% endif %}
+{% endmacro %}
+
+{% block body %}
+{% if work %}
+<section>
+    <h3>
+        {{work["title"]}}
+        {% if work.has("dateStr") %}
+        <em style="font-size: 0.8em;">
+            ({{work.dateStr}})
+        </em>
+        {% elif work.date %}
+        <em style="font-size: 0.8em;">
+            ({{date(work.date)}})
+        </em>
+        {% endif %}
+    </h3>
+    {% if work.has("subtitle") %}
+    {{work["subtitle"]}}
+    <br />
+    {% endif %}
+    {% if work.versions %}
+    {% endif %}
+
+    {% if work.has("instrumentation") %}
+    {{work["instrumentation"]}}
+    <br />
+    {% endif %}
+    {% if work.has("text") %}
+    {{work["text"]}}
+    <br />
+    {% endif %}
+    {% if work.has("dateStr") %}
+    {{work["dateStr"]}}
+    <br />
+    {% endif %}
+    {% if work.has("duration") %}
+    {{work["duration"]}}
+    <br />
+    {% endif %}
+    {% if work.has("commision") %}
+    {{work["commision"]}}
+    <br />
+    {% endif %}
+
+    {% if work.has("dedication") %}
+    <i>{{work["dedication"]}}</i>
+    <br />
+    {% endif %}
+    {% if work.has("1st performance") %}
+    {{work["1st performance"]}}
+    <br />
+    {% endif %}
+    {% if work.has("documentation") %}
+    {{work["documentation"]}}
+    <br />
+    {% endif %}
+
+    {% if content %}
+    <p>{{content | safe}}</p>
+    <br />
+    {% endif %}
+
+    {% for media in work.media -%}
+    <a href="{{media[1]}}">{{media[0]}}</a>
+    {% if not loop.last %} - {% endif %}
+    {%- endfor %}
+    <br />
+    {#
+    {% for tag in work.tags -%}
+    <a href="{{tag.link}}">{{tag.name}}</a>
+    {% if not loop.last %} - {% endif %}
+    {%- endfor %}
+    #}
 </section>
 {% endif %}
 {% endblock %}
