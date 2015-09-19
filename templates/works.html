@@ -12,7 +12,9 @@
     {% if tag.has_subtags %}
     <ul>
         {% for subtag in tag.subtags %}
+        {% if subtag.has_entries %}
         <a {% if name == subtag.name %}class="selected"{% endif %} href="{{subtag.link}}">{{subtag.name}}</a>
+        {% endif %}
         {% endfor %}
     </ul>
     {% endif %}

@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 print("building...")
 import jinja2
 import arrow
@@ -73,6 +75,10 @@ class Tag(Renderable):
 	@property
 	def has_subtags(self):
 		return len(self.subtags) > 0
+
+	@property
+	def has_entries(self):
+		return len(self.entries) > 0
 
 	@property
 	def renderargs(self):
@@ -178,6 +184,7 @@ with open("tags.json", "r") as f:
 
 tags["by Instruments"].show = False
 tags["by Instruments"].isLink = False
+tags["by Genre"].isLink = False
 print("render tags")
 tags.render()
 

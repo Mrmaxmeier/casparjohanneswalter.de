@@ -121,5 +121,9 @@ apply_ui_on_elem = () ->
     console.log($(this).attr("data-row"))
     apply_ui $(this).attr("data-row")
 
+frac_to_cent = (frac) ->
+	Math.log(frac[0] / frac[1]) / Math.log(Math.pow(2, 1/1200))
+
+
 $("#lt > tr:eq(0) > td > input").on("keyup", apply_ui_on_elem)
 $("#lt > tr:eq(1) > td > input").on("keyup", apply_ui_on_elem)

@@ -1,5 +1,5 @@
 {
     "Chamber Music": ["Strings", "Winds", "Brass", "Percussion Ensemble", "Mixed"],
     "by Instruments": ["Flute", "Oboe", "Clarinet", "Bassoon", "Trumpet", "Horn", "Trombone", "Tuba", "Percussion", "Accordeon", "Theremin", "Piano", "Violin", "Viola", "Cello", "Double Bass", "Soprano", "Mezzo Soprano", "Voice", "Guitar", "Harpsichord"],
-    "Genre": ["Ensemble", "Music Theatre", "Chamber Music", "Organ", "Solo", "Video", "Vocal Music", "Orchestra"]
+    "by Genre": ["Ensemble", "Music Theatre", "Chamber Music", "Organ", "Solo", "Video", "Vocal Music", "Orchestra"]
 }
