@@ -18,27 +18,32 @@
 
         input {
             text-align: center;
-            width: 3em;
+            width: 5em;
+			max-width: 5em;
         }
+		td {
+			width: 7em;
+			max-width: 7em;
+		}
         </style>
     </head>
     <body>
-        <main>
-            <article>
-                <br />
-                <table>
-                    <tbody id="ut">
-                        <tr></tr>
-                        <tr></tr>
-                    </tbody>
-                </table>
-                <table>
-                    <tbody id="lt">
-                        <tr></tr>
-                        <tr></tr>
-                    </tbody>
-                </table>
-            </article>
+        <main style="max-width: none !important">
+            <br />
+            <table>
+                <tbody id="ut">
+                    <tr></tr>
+                    <tr></tr>
+                    <tr></tr>
+                </tbody>
+            </table>
+            <table>
+                <tbody id="lt">
+                    <tr></tr>
+                    <tr></tr>
+                    <tr></tr>
+                </tbody>
+            </table>
         </main>
         <script src="/static/kithara_calc.js"></script>
     </body>
