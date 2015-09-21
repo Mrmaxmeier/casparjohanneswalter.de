@@ -16,38 +16,14 @@ swp = (f) ->
 div = (a, b) ->
 	mul(a, swp(b))
 
+cpy = (f) ->
+	[f[0], f[1]]
+
 repr = (f) ->
 	f[0] + "/" + f[1]
 
-
-
-apply = (l, index, frac) ->
-	while (frac[0] / frac[1]) < (l[index][0] / l[index][1])
-		frac[0] *= 2
-	frac = div frac, l[index]
-	nl = (mul f, frac for f in l)
-	subs = (0 for f in l)
-	for frac, i in nl
-		while (frac[0] / frac[1]) > 2
-			subs[i]++
-			frac[1] *= 2
-		while (frac[0] / frac[1]) < 1
-			subs[i]--
-			frac[0] *= 2
-
-	[(reduce f[0], f[1] for f in nl), subs]
-
-
-base = [3, 2]
-
-l = [base, [1, 1], [3, 2], [5, 4], [7, 4], [11, 8], [3, 2]]
-
-
-[nl, subs] = apply(l, 3, [6, 5])
-for f, i in nl
-	console.log repr(f) + "  " + subs[i]
-console.log "\n"
-
+frac_to_num = (f) ->
+	f[0] / f[1]
 
 
 getfract = (table, index) ->
@@ -59,18 +35,80 @@ getfract = (table, index) ->
 setfract = (table, index, frac) ->
 	$(table).find("tr:eq(0) > td:eq(#{index * 2}) > input").val(frac[0])
 	$(table).find("tr:eq(1) > td:eq(#{index * 2}) > input").val(frac[1])
-	$(table).find("tr:eq(2) > td:eq(#{index * 2}) > div:eq(1)").text(Math.round(frac_to_cent(frac)))
+	$(table).find("tr:eq(2) > td:eq(#{index * 2}) > .cents").text(Math.round(frac_to_cent(frac)))
 
 setimg = (table, index, frac, sum) ->
 	a = (frac_to_cent(frac) + 100 / 12) * 72 / 1200
-	a = Math.round(a)
-	x = 4 + a // 72
+	a = Math.floor(a)
+	x = (sum + 1) + a // 72
 	y = (a + 42) %% 72
 	url = location.origin + "/static/kithara_calc/#{x}_#{y}.png"
-	console.log(url)
+	# console.log(url)
 	$(table).find("tr:eq(2) > td:eq(#{index * 2}) > img").attr("src", url)
 
-window.getfract = getfract
+setsubs = (table, index, sub) ->
+	$(table).find("tr:eq(2) > td:eq(#{index * 2}) > .subs > input").val(sub)
+
+getsubs = (table, index) ->
+	parsed = parseInt($(table).find("tr:eq(2) > td:eq(#{index * 2}) > .subs > input").val())
+	if isNaN(parsed)
+		return 3
+	return parsed
+
+calcsubs = (frac) ->
+	sub = 0
+	while frac_to_num(frac) > 2
+		frac[1] *= 2
+		sub++
+	while frac_to_num(frac) < 0.5
+		frac[0] *= 2
+		sub--
+	return sub
+
+magic_number = (table, index) ->
+	[ getfract(table, index)[0] * 2 ** getsubs(table, index),
+	  getfract(table, index)[1] ]
+
+
+# ut * 2 ** ut_sub
+# lt * 2 ** lt_sub
+# s = lt / ut
+# (ut#andere * 2 ** ut_sub#andere) * s
+
+
+apply_ui = (index) ->
+	multiplier = div(magic_number("#lt", index), magic_number("#ut", index))
+
+	frac = getfract("#lt", index)
+	if isNaN(frac[0]) or isNaN(frac[1])
+		return
+
+	console.log(multiplier, magic_number("#lt", index), magic_number("#ut", index), index)
+
+	for i in [0..6]
+		setimg("#ut", i, getfract("#ut", i), getsubs("#ut", i))
+
+		f = mul(magic_number("#ut", i), multiplier)
+		sub = calcsubs(f)
+		f = reduce(f[0], f[1])
+		console.log(sub, f, i)
+		setfract("#lt", i, f)
+		setsubs("#lt", i, sub)
+		if i > 0
+			setimg("#lt", i, f, sub)
+
+apply_ui_on_elem = () ->
+	apply_ui parseInt($(this).attr("data-row"))
+
+frac_to_cent = (frac) ->
+	Math.log(frac[0] / frac[1]) / Math.log(Math.pow(2, 1/1200))
+
+apply_preset = (name) ->
+	for d, i in presets[name]
+		f = [d[0], d[1]]
+		setfract("#ut", i, cpy(f))
+		if i > 0
+			setsubs("#ut", i, d[2])
 
 for row in [0..6]
 	nom_ti = row * 2 + 1
@@ -80,82 +118,61 @@ for row in [0..6]
 	<td>
 		<input type="text" tabindex="#{nom_ti}">
 	</td>
-	<td class="hidden"></td>
-	""")
+	<td class="hidden"></td>""")
 	$("#ut > tr:eq(1)").append("""
 	<td>
 		<input type="text" tabindex="#{den_ti}">
 	</td>
-	<td class="hidden"></td>
-	""")
+	<td class="hidden"></td>""")
 	$("#ut > tr:eq(2)").append("""
 	<td>
-		<div></div>
+		<span class="subs">
+			Octave:
+			<input type="text" tabindex="#{den_ti}" style="width: 3.5em; height: 1.5em;" placeholder="3">
+		</span>
+		<div class="cents"></div>
+		<img style="max-width: 5em"/>
 	</td>
-	<td class="hidden"></td>
-	""")
+	<td class="hidden"></td>""")
 	$("#lt > tr:eq(0)").append("""
 	<td>
 		<input type="text" tabindex="#{ti_sep + nom_ti}" data-row="#{row}">
 	</td>
-	<td class="hidden"></td>
-	""")
+	<td class="hidden"></td>""")
 	$("#lt > tr:eq(1)").append("""
 	<td>
 		<input type="text" tabindex="#{ti_sep + den_ti}" data-row="#{row}">
 	</td>
-	<td class="hidden"></td>
-	""")
+	<td class="hidden"></td>""")
 	$("#lt > tr:eq(2)").append("""
 	<td>
-		<div></div>
-		<div></div>
+		<span class="subs">
+			<input type="text" style="width: 3.5em; height: 1.5em;" placeholder="3">
+		</span>
+		<div class="cents"></div>
 		<a href="#" data-row="#{row}">apply</a>
 		<img style="max-width: 5em"/>
 	</td>
-	<td class="hidden"></td>
-	""")
+	<td class="hidden"></td>""")
 
 
-$("#ut > tr:eq(0) > td:eq(1)").css("padding-right", "3em")
-$("#lt > tr:eq(0) > td:eq(1)").css("padding-right", "3em")
+# $("#ut > tr:eq(2) > td:eq(0) > .subs").remove()
+# $("#ut > tr:eq(2) > td:eq(0) > .cents").remove()
+$("#ut > tr:eq(2) > td:eq(0)").addClass("hidden")
 
-apply_ui = (index) ->
-	frac = getfract("#lt", index)
-	if isNaN(frac[0]) or isNaN(frac[1])
-		return
-	console.log index
-	l = (getfract("#ut", i) for i in [0..6])
-	nl = []
-	for f, i in l
-		if not isNaN(f[0]) and not isNaN(f[1])
-			nl.push(f)
-			setfract("#ut", i, f)
-	console.log(nl)
-
-	console.log frac
-	[nl, subs] = apply(nl, index, frac)
-	for frac, i in nl
-		setfract("#lt", i, frac)
-		if subs[i] > 0
-			$("#lt").find("tr:eq(2) > td:eq(#{i * 2}) > div:eq(0)").text("+" + subs[i])
-		else
-			$("#lt").find("tr:eq(2) > td:eq(#{i * 2}) > div:eq(0)").text(subs[i])
-		setimg("#lt", i, frac, subs[i])
-
-apply_ui_on_elem = () ->
-	console.log($(this).attr("data-row"))
-	apply_ui $(this).attr("data-row")
-
-frac_to_cent = (frac) ->
-	Math.log(frac[0] / frac[1]) / Math.log(Math.pow(2, 1/1200))
-
+$("#ut > tr:eq(0) > td:eq(2)").css("padding-right", "3em")
+$("#lt > tr:eq(0) > td:eq(2)").css("padding-right", "3em")
 
 #$("#lt > tr:eq(0) > td > input").on("keyup", apply_ui_on_elem)
 #$("#lt > tr:eq(1) > td > input").on("keyup", apply_ui_on_elem)
 $("#lt > tr:eq(2) > td > a").on("click", apply_ui_on_elem)
 
-for frac, i in l
-	setfract("#ut", i, frac)
-setfract("#lt", 0, [5, 2])
+
+presets = {
+	"test": [[8, 7], [12, 7, 2], [1, 1, 2], [9, 7, 2], [10, 7, 3], [12, 7, 3], [8, 7, 3]]
+}
+
+
+apply_preset("test")
+setfract("#lt", 0, [8, 5])
 apply_ui(0)
