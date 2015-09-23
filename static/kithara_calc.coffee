@@ -31,8 +31,8 @@ frac_to_num = (f) ->
 getfract = (table, index) ->
 	num = $(table).find("tr:eq(0) > td:eq(#{index * 2}) > input")
 	den = $(table).find("tr:eq(1) > td:eq(#{index * 2}) > input")
-	[ Number.parseInt(num.val()),
-	  Number.parseInt(den.val()) ]
+	[ parseInt(num.val()),
+	  parseInt(den.val()) ]
 
 setfract = (table, index, frac) ->
 	$(table).find("tr:eq(0) > td:eq(#{index * 2}) > input").val(frac[0])
