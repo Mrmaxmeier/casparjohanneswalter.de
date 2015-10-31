@@ -42,10 +42,9 @@ setfract = (table, index, frac) ->
 setimg = (table, index, frac, sum) ->
 	a = (frac_to_cent(frac) + 100 / 12) * 72 / 1200
 	a = Math.floor(a)
-	x = (sum + 1) + a // 72
+	x = sum + a // 72
 	y = (a + 42) %% 72
 	url = location.origin + "/static/kithara_calc/#{x}_#{y}.png"
-	# console.log(url)
 	$(table).find("tr:eq(2) > td:eq(#{index * 2}) > img").attr("src", url)
 
 setsubs = (table, index, sub) ->
@@ -94,7 +93,6 @@ apply_ui = (index) ->
 		setimg("#ut", i, getfract("#ut", i), getsubs("#ut", i))
 
 		f = mul(magic_number("#ut", i), multiplier)
-		console.log("mal mul", f, i)
 		sub = calcsubs(f)
 		f = div(f, [2 ** sub, 1])
 		f = reduce(f)
