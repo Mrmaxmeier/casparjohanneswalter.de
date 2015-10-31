@@ -13,7 +13,7 @@ import sh
 from collections import defaultdict
 
 
-BUILD_DIR = "../johannes_website_out/"
+BUILD_DIR = os.getenv("BUILD_DIR", "../johannes_website_out/")
 contents = [os.path.join(BUILD_DIR, i) for i in os.listdir(BUILD_DIR)]
 [shutil.rmtree(i) if os.path.isdir(i) else os.unlink(i) for i in contents]
 
