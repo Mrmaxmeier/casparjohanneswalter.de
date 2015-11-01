@@ -64,16 +64,17 @@ class Row extends React.Component {
 			let firstCB = (val) => {this.props.setCB(index, [parseInt(val), d.ratio[1]])}
 			let secondCB = (val) => {this.props.setCB(index, [d.ratio[0], parseInt(val)])}
 			let spacer = <td className="hidden" key={`spacer_${index}`} />
-			firstRow.push(<RatioInput tabIndex="1" data={d.ratio[0]} key={`input_${index}`} changeCB={firstCB} />)
+			let tabIndexBase = index * 3 + (isUpper ? 1 : 999)
+			firstRow.push(<RatioInput tabIndex={tabIndexBase} data={d.ratio[0]} key={`input_${index}`} changeCB={firstCB} />)
 			firstRow.push(spacer)
-			secondRow.push(<RatioInput tabIndex="1" data={d.ratio[1]} key={`input_${index}`} changeCB={secondCB} />)
+			secondRow.push(<RatioInput tabIndex={tabIndexBase + 1} data={d.ratio[1]} key={`input_${index}`} changeCB={secondCB} />)
 			secondRow.push(spacer)
 			if (index == 0) {
 				thirdRow.push(<td className="hidden" key={"firstSpacer"}></td>)
 			} else {
 				thirdRow.push(
 					<LowerInput isUpper={isUpper} frac={d.ratio} octave={d.octave}
-					            tabIndex="6" key={`input_${index}`}
+					            tabIndex={tabIndexBase + 2} key={`input_${index}`}
 								applyCB={() => {this.props.applyCB(index)}}
 								index={index} setOctaveCB={this.props.setOctave}/>
 				)
