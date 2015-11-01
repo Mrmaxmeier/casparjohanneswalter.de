@@ -26,7 +26,7 @@ class LowerInput extends React.Component {
 			return ((a % b) + b) % b
 		}
 		let y = mod(a + 42, 72)
-		return `/kithara_calc/${x}_${y}.png`
+		return `/static/kithara_calc/${x}_${y}.png`
 	}
 	render() {
 		let cents = Math.round(frac_to_cent(this.props.frac))
