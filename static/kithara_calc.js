@@ -36,7 +36,7 @@ class LowerInput extends React.Component {
 				<span className="subs">
 					Octave:
 					<input type="text" tabIndex={this.props.tabIndex} style={{width: "3.5em", heigh: "1.5em"}}
-					       placeholder="3" defaultValue={octave}
+					       placeholder="3" defaultValue={octave} value={octave}
 					       onChange={(d) => {
 							   this.props.setOctaveCB(this.props.index, $(d.target).val())
 						   }} />
