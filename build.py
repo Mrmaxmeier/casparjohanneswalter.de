@@ -197,12 +197,4 @@ Renderable.render_simple("research")
 
 print("copying static stuff")
 shutil.copytree("static", BUILD_DIR + "static")
-
-coffee_scripts = ["static/" + p for p in os.listdir("static") if p.endswith(".coffee")]
-coffee_compile = sh.coffee.bake(compile=True)
-
-for f in coffee_scripts:
-	cmd = coffee_compile.bake("--output", BUILD_DIR + os.path.split(f)[0])
-	cmd(f)
-
 print("built.")

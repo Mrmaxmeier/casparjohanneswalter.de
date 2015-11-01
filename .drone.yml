@@ -4,7 +4,6 @@ build:
     - git submodule init
     - git submodule update
     - pip install -r requirements.txt --use-mirrors
-    - sudo npm -g install coffee-script
     - mkdir ../out
     - BUILD_DIR="../out/" python build.py
     - sudo apt-get install ncftp

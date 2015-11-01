@@ -6,6 +6,10 @@
         <link rel="stylesheet" href="/static/marx.min.css">
         <link rel="stylesheet" href="/static/dropdown.css">
         <script src="/static/jquery-2.1.4.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/react/0.14.1/react.js"></script>
+		<script src="https://cdn.jsdelivr.net/react/0.14.1/react-dom.js"></script>
+		<script src="https://cdn.jsdelivr.net/babel/5.8.33/browser-polyfill.js"></script>
+		<script src="https://cdn.jsdelivr.net/babel/5.8.33/browser.js"></script>
         <style>
         table > tbody > tr:first-of-type > td {
             border-bottom: 2px black solid;
@@ -30,21 +34,9 @@
     <body>
         <main style="max-width: none !important">
             <br />
-            <table>
-                <tbody id="ut">
-                    <tr></tr>
-                    <tr></tr>
-                    <tr></tr>
-                </tbody>
-            </table>
-            <table>
-                <tbody id="lt">
-                    <tr></tr>
-                    <tr></tr>
-                    <tr></tr>
-                </tbody>
-            </table>
+			<div id="kitharacalc"></div>
         </main>
-        <script src="/static/kithara_calc.js"></script>
+        <script type="text/babel" src="/static/kithara_math.js"></script>
+        <script type="text/babel" src="/static/kithara_calc.js"></script>
     </body>
 </html>
