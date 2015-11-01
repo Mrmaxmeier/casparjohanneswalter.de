@@ -193,6 +193,7 @@ Renderable.render_simple("works", tags=tags.list(), workslists=group(works, 2), 
 Renderable.render_simple("biography")
 Renderable.render_simple("index")
 Renderable.render_simple("press")
+Renderable.render_simple("research")
 
 print("copying static stuff")
 shutil.copytree("static", BUILD_DIR + "static")

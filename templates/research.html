@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% set active_page = 'Research' -%}
+
+{% block body %}
+<div>
+	<pre><a href="/static/kithara_calc.html">Kithara I Calculator</a>
+Der Kithara I Calculator zeigt an, welche Töne erklingen, wenn der Glissandostab (Pyrex Rod) auf einen bestimmten neuen Punkt (Ratio) geschoben wird.
+Der Kithara I Calculator rechnet jeweils die Tonhönen eines Hexads. Dazu müssen in den oberen Kästchen für die sechs Saiten des Hexads die sechs Ratios der Saiten eingetragen werden, inklusive der Oktavlagen im englischen System. (es kann auch ein Preset ausgewählt werden)
+In dem Kästchen lings erscheint die Grundstimmung des Hexads, die O-dentity bzw. U-dentity.
+Um die Information über die neue Stimmung der Saiten nach der Verschiebung des Pyrex Rods zu erhalten muss entweder eine bekannte Zieltonhöhe einer Seite (als Ratio){#oder links die neue O-dentity bzw U-dentity eingetragen werden#}.
+Beim drücken auf den 'Apply'-Knopf unter dem Ratio rechnet der Kithara I Calculator die Ratios aller sechs Saiten und die neue O-dentity bzw U-dentity. Die Tonhöhen sind angegeben als Ratios, als konventionelle temerierte Notation, gerundet zu 1/12 Tönen und als Abstand in Cents zum Bezugston G = 1/1.
+	</pre>
+</div>
+{% endblock %}

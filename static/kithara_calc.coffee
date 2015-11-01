@@ -169,24 +169,23 @@ for row in [0..6]
 	<td class="hidden"></td>""")
 
 
-# $("#ut > tr:eq(2) > td:eq(0) > .subs").remove()
-# $("#ut > tr:eq(2) > td:eq(0) > .cents").remove()
 $("#ut > tr:eq(2) > td:eq(0)").addClass("hidden")
 $("#lt > tr:eq(2) > td:eq(0)").addClass("hidden")
 
 $("#ut > tr:eq(0) > td:eq(2)").css("padding-right", "3em")
 $("#lt > tr:eq(0) > td:eq(2)").css("padding-right", "3em")
 
-#$("#lt > tr:eq(0) > td > input").on("keyup", apply_ui_on_elem)
-#$("#lt > tr:eq(1) > td > input").on("keyup", apply_ui_on_elem)
 $("#lt > tr:eq(2) > td > a").on("click", apply_ui_on_elem)
 
 
 presets = {
-	"test": [[8, 7], [12, 7, 2], [1, 1, 2], [9, 7, 2], [10, 7, 3], [12, 7, 3], [8, 7, 3]]
+	"Hexad 1, green": [[8, 7, "o"], [12, 7, 3], [1, 1, 3], [9, 7, 3], [10, 7, 4], [12, 7, 4], [8, 7, 4]],
+	"Hexad 6, middle-green": [[7, 4, "u"], [7, 6, 2], [7, 6, 3], [7, 5, 4], [7, 4, 4], [7, 4, 4], [7, 6, 4]],
+	"Hexad 7, middle-orange": [[4, 3, "o"], [1, 1, 2], [4, 3, 3], [5, 3, 3], [3, 2, 4], [5, 3, 4], [7, 6, 4]],
+	"Hexad 12, orange": [[3, 2, "u"], [12, 7, 3], [1, 1, 3], [6, 5, 3], [3, 2, 4], [12, 7, 4], [6, 5, 4]]
 }
 
 
-apply_preset("test")
+apply_preset("Hexad 12, orange")
 setfract("#lt", 2, [3, 2])
 apply_ui(2)
