@@ -31,6 +31,17 @@ class LowerInput extends React.Component {
 	render() {
 		let cents = Math.round(frac_to_cent(this.props.frac))
 		let octave = this.props.octave
+		if (this.props.index == 0) {
+			if (this.props.isUpper) {
+				return (<td className="hidden"></td>)
+			} else {
+				return (
+					<td>
+						<a href="#" data-row="1" onClick={() => {this.props.applyCB()}}>apply</a>
+					</td>
+				)
+			}
+		}
 		return (
 			<td>
 				<span className="subs">
@@ -70,13 +81,16 @@ class Row extends React.Component {
 			secondRow.push(<RatioInput tabIndex={tabIndexBase + 1} data={d.ratio[1]} key={`input_${index}`} changeCB={secondCB} />)
 			secondRow.push(spacer)
 			if (index == 0) {
-				thirdRow.push(<td className="hidden" key={"firstSpacer"}></td>)
+				thirdRow.push(
+					<LowerInput isUpper={isUpper} applyCB={() => {this.props.applyCB(index)}}
+					            index={index} setOctaveCB={this.props.setOctave}/>
+				)
 			} else {
 				thirdRow.push(
 					<LowerInput isUpper={isUpper} frac={d.ratio} octave={d.octave}
 					            tabIndex={tabIndexBase + 2} key={`input_${index}`}
-								applyCB={() => {this.props.applyCB(index)}}
-								index={index} setOctaveCB={this.props.setOctave}/>
+					            applyCB={() => {this.props.applyCB(index)}}
+					            index={index} setOctaveCB={this.props.setOctave}/>
 				)
 			}
 			thirdRow.push(spacer)
