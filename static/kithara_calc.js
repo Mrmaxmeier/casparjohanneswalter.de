@@ -80,19 +80,12 @@ class Row extends React.Component {
 			firstRow.push(spacer)
 			secondRow.push(<RatioInput tabIndex={tabIndexBase + 1} data={d.ratio[1]} key={`input_${index}`} changeCB={secondCB} />)
 			secondRow.push(spacer)
-			if (index == 0) {
-				thirdRow.push(
-					<LowerInput isUpper={isUpper} applyCB={() => {this.props.applyCB(index)}}
-					            index={index} setOctaveCB={this.props.setOctave}/>
-				)
-			} else {
-				thirdRow.push(
-					<LowerInput isUpper={isUpper} frac={d.ratio} octave={d.octave}
-					            tabIndex={tabIndexBase + 2} key={`input_${index}`}
-					            applyCB={() => {this.props.applyCB(index)}}
-					            index={index} setOctaveCB={this.props.setOctave}/>
-				)
-			}
+			thirdRow.push(
+				<LowerInput isUpper={isUpper} frac={d.ratio} octave={d.octave}
+				            tabIndex={tabIndexBase + 2} key={`input_${index}`}
+				            applyCB={() => {this.props.applyCB(index)}}
+				            index={index} setOctaveCB={this.props.setOctave}/>
+			)
 			thirdRow.push(spacer)
 		})
 		return (
