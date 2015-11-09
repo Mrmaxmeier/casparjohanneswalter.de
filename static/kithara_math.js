@@ -29,6 +29,7 @@ window.cpy = (f) => {
 }
 
 window.repr = (f) => {
+	f = reduce(f)
 	return `${f[0]} / ${f[1]}`
 }
 
@@ -51,11 +52,22 @@ function calcOctave(frac) {
 }
 
 window.calcState = function (state, obj) {
-	let multiplier = div(getMultiplier(obj), getMultiplier(state[obj.index]))
+	var multiplier
+	if (obj.index == 0) {
+		multiplier = div(obj.ratio, state[obj.index].ratio)
+		if (multiplier[0] / multiplier[1] < 1) {
+			multiplier[0] *= 2
+		}
+	} else {
+		multiplier = div(getMultiplier(obj), getMultiplier(state[obj.index]))
+	}
+
+	let passed_obj = obj
 
 	console.log(`Multiplier: ${repr(multiplier)}`)
 
 	return state.map((obj, index) => {
+
 		var ratio = mul(getMultiplier(obj), multiplier)
 		var octave = calcOctave(ratio)
 		ratio = reduce(div(ratio, [2 ** octave, 1]))
@@ -71,9 +83,32 @@ window.calcState = function (state, obj) {
 			ratio = reduce(ratio)
 		}
 
+		if (passed_obj.overtone) {
+			octave += Math.log2(passed_obj.overtone / (multiplier[0]/ multiplier[1]))
+		}
+
 		return {
 			ratio: ratio,
-			octave: octave
+			octave: octave,
+			overtone: passed_obj.overtone
 		}
+	})
+}
+
+window.calcOvertone = function(state, overtone) {
+	var ratio = mul(state.upperRow[0].ratio, [overtone, 1])
+	var octave = state.upperRow[0].octave
+	while ((ratio[0] / ratio[1]) >= 2) {
+		ratio[1] *= 2
+		octave++
+	}
+	ratio = reduce(ratio)
+	console.log(octave, ratio)
+
+	return calcState(state.upperRow, {
+		ratio: ratio,
+		octave: octave,
+		index: 0,
+		overtone: overtone
 	})
 }

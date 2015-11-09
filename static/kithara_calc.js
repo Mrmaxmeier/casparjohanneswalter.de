@@ -35,9 +35,20 @@ class LowerInput extends React.Component {
 			if (this.props.isUpper) {
 				return (<td className="hidden"></td>)
 			} else {
+				let overtone = this.props.overtone ? this.props.overtone : "";
 				return (
 					<td>
-						<a href="#" data-row="1" onClick={() => {this.props.applyCB()}}>apply</a>
+						<a href="#" data-row="1" onClick={() => {this.props.applyCB()}}>apply identity</a>
+						<br />
+						<br />
+						<span>
+							Overtone:
+							<input type="text" tabIndex={this.props.tabIndex} style={{width: "3.5em", heigh: "1.5em"}}
+							       placeholder="" defaultValue={overtone} value={overtone}
+							       onChange={(d) => {
+									   this.props.setOvertone(parseInt($(d.target).val()))
+								   }} />
+						</span>
 					</td>
 				)
 			}
@@ -84,7 +95,8 @@ class Row extends React.Component {
 				<LowerInput isUpper={isUpper} frac={d.ratio} octave={d.octave}
 				            tabIndex={tabIndexBase + 2} key={`input_${index}`}
 				            applyCB={() => {this.props.applyCB(index)}}
-				            index={index} setOctaveCB={this.props.setOctave}/>
+				            index={index} setOctaveCB={this.props.setOctave}
+							setOvertone={this.props.setOvertone} overtone={this.props.overtone} />
 			)
 			thirdRow.push(spacer)
 		})
@@ -167,6 +179,12 @@ class KitharaCalc extends React.Component {
 			this.handleApply(index)
 		}
 	}
+	setOvertone(overtone) {
+		var state = jQuery.extend(true, {}, this.state)
+		state.lowerRow[0].overtone = overtone
+		state.lowerRow = calcOvertone(state, overtone)
+		this.setState(state)
+	}
 	handleApply(index) {
 		console.log(this, index)
 		this.setState({
@@ -196,7 +214,9 @@ class KitharaCalc extends React.Component {
 				<Row isUpper={false} data={this.state.lowerRow}
 				     setCB={this.setRatioCB.bind(this, false)}
 					 setOctave={this.setOctave.bind(this, false)}
-					 applyCB={this.handleApply.bind(this)} />
+					 applyCB={this.handleApply.bind(this)}
+					 overtone={this.state.lowerRow[0].overtone}
+					 setOvertone={this.setOvertone.bind(this)} />
 			</div>
 		)
 	}
