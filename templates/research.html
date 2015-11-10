@@ -3,12 +3,39 @@
 
 {% block body %}
 <div>
-	<pre><a href="/static/kithara_calc.html">Kithara I Calculator</a>
-Der Kithara I Calculator zeigt an, welche Töne erklingen, wenn der Glissandostab (Pyrex Rod) auf einen bestimmten neuen Punkt (Ratio) geschoben wird.
-Der Kithara I Calculator rechnet jeweils die Tonhönen eines Hexads. Dazu müssen in den oberen Kästchen für die sechs Saiten des Hexads die sechs Ratios der Saiten eingetragen werden, inklusive der Oktavlagen im englischen System. (es kann auch ein Preset ausgewählt werden)
-In dem Kästchen links erscheint die Grundstimmung des Hexads, die O-dentity bzw. U-dentity.
-Um die Information über die neue Stimmung der Saiten nach der Verschiebung des Pyrex Rods zu erhalten muss entweder eine bekannte Zieltonhöhe einer Seite (als Ratio){#oder links die neue O-dentity bzw U-dentity eingetragen werden#}.
-Beim drücken auf den 'Apply'-Knopf unter dem Ratio rechnet der Kithara I Calculator die Ratios aller sechs Saiten und die neue O-dentity bzw U-dentity. Die Tonhöhen sind angegeben als Ratios, als konventionelle temperierte Notation, gerundet zu 1/12 Tönen und als Abstand in Cents zum Bezugston G = 1/1.
-	</pre>
+	<span><a href="/static/kithara_calc.html">Kithara I Calculator</a>
+<p>
+	Der Kithara I Calculator berechnet die Tonhöhen aller Saiten der Kithara I, wenn der Glissandostab (Pyrex Rod) auf einen bestimmten neuen Punkt (Ratio) geschoben wird bzw. er berechnet die Obertöne auf allen Saiten.
+</p>
+<ol>
+	<li>
+		Wählen Sie aus den Presets einen der 12 „hexads“ der Kithara I aus.
+		[Jeder „hexad“ ist ein set aus sechs Saiten in einer harmonisch konsistenten Stimmung. Diese leere-Saiten-Stimmung erscheint in der oberen Reihe.
+		 Die Grundstimmung als O-dentity bzw. U-dentity erscheint ganz links; die sechs Kästchen daneben geben die Stimmung aller sechs Saiten des „hexads“ an.]
+		<br />
+		Alternativ dazu können auch individuell in die Kästchen für die Stimmung der sechs Saiten frei sechs „ratios“ [Teiltonverhältnisse] inklusive der gewünschten Oktavlagen (im englischen System; a4 = 440 Hz) eingetragen werden.
+	</li>
+	<li>
+		Tragen Sie in die untere Reihe eine Information ein, die als Grundlage der Neuberechnung der Tonhöhen aller sechs Saiten dient.
+		<ol type="a">
+			<li>
+				Eine Zieltonhöhe einer beliebigen Saite (als „ratio“ mit Angabe der Oktavlage).
+				Durch das Drücken des „apply“-Knopfes darunter wird berechnet, wie alle Saiten klingen würden, wenn der Glissandostab (Pyrex Rod) auf diese Stelle geschoben worden wäre.
+			</li>
+			<li>
+				Eine neue Grundstimmung (O-dentity bzw. U-dentity) als „ratio“ in das höhere Feld unten links.
+				Durch den „apply“-Knopf darunter berechnen sich alle sechs Saiten neu. Die software sucht sich die geeignete Oktavlage selbst, damit die Stimmung innerhalb der ersten Oktave über der leere-Saiten-Stimmung bleibt.
+			</li>
+			<li>
+				Durch einen Eintrag in das Feld „overtone“.
+				Das Drücken des „apply“-Knopfes darunter berechnet die Tonhöhen dieses Obertones auf allen sechs Saiten der leere-Saiten-Stimmung.
+			</li>
+		</ol>
+	</li>
+</ol>
+<p>
+	Die Tonhöhen sind angegeben als Ratios, als konventionelle temperierte Notation, gerundet zu 1/12 Tönen und als Abstand in Cents zum Bezugston G = 1/1.
+</p>
+</span>
 </div>
 {% endblock %}
