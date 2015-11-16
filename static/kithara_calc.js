@@ -5,14 +5,21 @@ let presets = {
 	"Hexad 12, orange": [[3, 2, "u"], [12, 7, 3], [1, 1, 3], [6, 5, 3], [3, 2, 4], [12, 7, 4], [6, 5, 4]]
 }
 
+let nonNaN = (n) => isNaN(n) ? "" : n
+
 class RatioInput extends React.Component {
 	handleChange (c) {
 		this.props.changeCB($(c.target).val())
 	}
 	render() {
+		let invalid = isNaN(this.props.data)
+		let style = invalid ? {borderColor: 'red'} : {}
+		let val = nonNaN(this.props.data)
 		return (
 			<td>
-				<input type="text" tabIndex={this.props.tabIndex} defaultValue={this.props.data} value={this.props.data} onChange={this.handleChange.bind(this)}></input>
+				<input type="text" tabIndex={this.props.tabIndex} defaultValue={val}
+				       value={val} onChange={this.handleChange.bind(this)}
+					   style={style}/>
 			</td>
 		)
 	}
@@ -30,7 +37,9 @@ class LowerInput extends React.Component {
 	}
 	render() {
 		let cents = Math.round(frac_to_cent(this.props.frac))
-		let octave = this.props.octave
+		let octave = nonNaN(this.props.octave)
+		let invalid = isNaN(this.props.octave) || this.props.octave == null
+		let style = invalid ? {width: "3.5em", heigh: "1.5em", borderColor: 'red'} : {width: "3.5em", heigh: "1.5em"}
 		if (this.props.index == 0) {
 			if (this.props.isUpper) {
 				return (<td className="hidden"></td>)
@@ -43,11 +52,11 @@ class LowerInput extends React.Component {
 						<br />
 						<span>
 							Overtone:
-							<input type="text" tabIndex={this.props.tabIndex} style={{width: "3.5em", heigh: "1.5em"}}
+							<input type="text" tabIndex={this.props.tabIndex}
 							       placeholder="" defaultValue={overtone} value={overtone}
 							       onChange={(d) => {
 									   this.props.setOvertone(parseInt($(d.target).val()))
-								   }} />
+								   }} style={{width: "3.5em", heigh: "1.5em"}} />
 						</span>
 					</td>
 				)
@@ -57,10 +66,10 @@ class LowerInput extends React.Component {
 			<td>
 				<span className="subs">
 					Octave:
-					<input type="text" tabIndex={this.props.tabIndex} style={{width: "3.5em", heigh: "1.5em"}}
+					<input type="text" tabIndex={this.props.tabIndex} style={style}
 					       placeholder="3" defaultValue={octave} value={octave}
 					       onChange={(d) => {
-							   this.props.setOctaveCB(this.props.index, $(d.target).val())
+							   this.props.setOctaveCB(this.props.index, parseInt($(d.target).val()))
 						   }} />
 				</span>
 				<div className="cents">{cents}</div>
