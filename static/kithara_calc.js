@@ -1,8 +1,51 @@
 let presets = {
-	"Hexad 1, green": [[8, 7, "o"], [12, 7, 3], [1, 1, 3], [9, 7, 3], [10, 7, 4], [12, 7, 4], [8, 7, 4]],
-	"Hexad 6, middle-green": [[7, 4, "u"], [7, 6, 2], [7, 6, 3], [7, 5, 4], [7, 4, 4], [7, 4, 4], [7, 6, 4]],
-	"Hexad 7, middle-orange": [[4, 3, "o"], [1, 1, 2], [4, 3, 3], [5, 3, 3], [3, 2, 4], [5, 3, 4], [7, 6, 4]],
-	"Hexad 12, orange": [[3, 2, "u"], [12, 7, 3], [1, 1, 3], [6, 5, 3], [3, 2, 4], [12, 7, 4], [6, 5, 4]]
+	"Kithara I": {
+		"Hexad 1, green": [[8, 7, "o"], [12, 7, 3], [1, 1, 3], [9, 7, 3], [10, 7, 4], [12, 7, 4], [8, 7, 4]],
+		"Hexad 6, middle-green": [[7, 4, "u"], [7, 6, 2], [7, 6, 3], [7, 5, 4], [7, 4, 4], [7, 4, 4], [7, 6, 4]],
+		"Hexad 7, middle-orange": [[4, 3, "o"], [1, 1, 2], [4, 3, 3], [5, 3, 3], [3, 2, 4], [5, 3, 4], [7, 6, 4]],
+		"Hexad 12, orange": [[3, 2, "u"], [12, 7, 3], [1, 1, 3], [6, 5, 3], [3, 2, 4], [12, 7, 4], [6, 5, 4]]
+	},
+	"Pedal Steel Guitar": {
+		"O - 1 / 1": [
+			[1, 1, "o"],
+			[3, 2, 2],
+			[1, 1, 2],
+			[5, 4, 2],
+			[3, 2, 3],
+			[7, 4, 3],
+			[9, 8, 3],
+			[11, 8, 4],
+			[3, 2, 4],
+			[7, 4, 4],
+			[1, 1, 4]
+		],
+		"O - 1 / 1, mit 13": [
+			[1, 1, "o"],
+			[3, 2, 2],
+			[1, 1, 2],
+			[5, 4, 2],
+			[3, 2, 3],
+			[7, 4, 3],
+			[9, 8, 3],
+			[11, 8, 4],
+			[13, 8, 4],
+			[7, 4, 4],
+			[1, 1, 4]
+		],
+		"U - 9 / 8": [
+			[9, 8, "u"],
+			[18, 11, 2],
+			[1, 1, 2],
+			[9, 7, 2],
+			[3, 2, 3],
+			[9, 5, 3],
+			[9, 8, 3],
+			[9, 7, 3],
+			[3, 2, 4],
+			[9, 5, 4],
+			[9, 8, 4]
+		]
+	}
 }
 
 let nonNaN = (n) => isNaN(n) ? "" : n
@@ -124,10 +167,10 @@ class Row extends React.Component {
 class KitharaCalc extends React.Component {
 	constructor(props) {
 		super(props)
-		this.state = this.setStateFromPreset(presets["Hexad 1, green"], false)
+		this.state = this.setStateFromPreset("Kithara I", "Hexad 1, green", false)
 	}
-	setStateFromPreset(p, setState=true) {
-		console.log(p)
+	setStateFromPreset(instrument, preset, setState=true) {
+		let p = presets[instrument][preset]
 		let row = p.map((a, index) => {
 			if (index == 0) {
 				return {
@@ -146,7 +189,9 @@ class KitharaCalc extends React.Component {
 				ratio: [3, 2],
 				octave: 3,
 				index: 2
-			})
+			}),
+			instrument: instrument,
+			preset: preset
 		}
 		console.log(state)
 		if (setState) {
@@ -155,8 +200,15 @@ class KitharaCalc extends React.Component {
 		return state
 	}
 	setPreset(d) {
-		console.log("setPreset", $(d.target).val())
-		this.setStateFromPreset(presets[$(d.target).val()])
+		let preset = $(d.target).val()
+		console.log("setPreset", preset)
+		this.setStateFromPreset(this.state.instrument, preset)
+	}
+	setInstrument(d) {
+		let instrument = $(d.target).val()
+		let preset = Object.keys(presets[instrument])[0]
+		console.log("setInstrument", instrument)
+		this.setStateFromPreset(instrument, preset)
 	}
 	setRatioCB(isUpper, index, ratio) {
 		var state = jQuery.extend(true, {}, this.state)
@@ -196,7 +248,7 @@ class KitharaCalc extends React.Component {
 	}
 	handleApply(index) {
 		console.log(this, index)
-		this.setState({
+		let state = jQuery.extend(true, this.state, {
 			upperRow: this.state.upperRow,
 			lowerRow: calcState(this.state.upperRow, {
 				ratio: this.state.lowerRow[index].ratio,
@@ -204,14 +256,21 @@ class KitharaCalc extends React.Component {
 				index: index
 			})
 		})
+		this.setState(state)
 	}
 	render() {
 		return (
 			<div style={{padding: "1em"}}>
 				<div style={{padding: "1em"}}>
-					Preset: &nbsp;
-					<select onChange={this.setPreset.bind(this)}>
+					Instrument: &nbsp;
+					<select onChange={this.setInstrument.bind(this)}>
 						{$.map(presets, (_, key) => {
+							return <option key={key} value={key}>{key}</option>
+						})}
+					</select>
+					&nbsp; Preset: &nbsp;
+					<select onChange={this.setPreset.bind(this)}>
+						{$.map(presets[this.state.instrument], (_, key) => {
 							return <option key={key} value={key}>{key}</option>
 						})}
 					</select>
