@@ -195,6 +195,9 @@ Renderable.render_simple("index")
 Renderable.render_simple("press")
 Renderable.render_simple("research")
 
+print("webpacking")
+sh.webpack()
+
 print("copying static stuff")
 shutil.copytree("static", BUILD_DIR + "static")
 print("built.")

@@ -1,42 +1,38 @@
 
 <html>
-    <head>
-        <title>CJ Walter</title>
-        <meta charset="utf-8" />
-        <link rel="stylesheet" href="/static/marx.min.css">
-        <link rel="stylesheet" href="/static/dropdown.css">
-        <script src="/static/jquery-2.1.4.min.js"></script>
-		<script src="https://cdn.jsdelivr.net/react/0.14.1/react.js"></script>
-		<script src="https://cdn.jsdelivr.net/react/0.14.1/react-dom.js"></script>
-		<script src="https://cdn.jsdelivr.net/babel/5.8.33/browser-polyfill.js"></script>
-		<script src="https://cdn.jsdelivr.net/babel/5.8.33/browser.js"></script>
-        <style>
-        table > tbody > tr:first-of-type > td {
-            border-bottom: 2px black solid;
-        }
+	<head>
+		<title>CJ Walter</title>
+		<meta charset="utf-8" />
+		<link rel="stylesheet" href="/static/marx.min.css">
+		<link rel="stylesheet" href="/static/dropdown.css">
+		<style>
+		table > tbody > tr:first-of-type > td {
+			border-bottom: 2px black solid;
+		}
 
-        td.hidden {
-            padding: 0.7em;
-            visibility: hidden;
-        }
+		td.hidden {
+			padding: 0.7em;
+			visibility: hidden;
+		}
 
-        input {
-            text-align: center;
-            width: 5em;
+		input {
+			text-align: center;
+			width: 5em;
 			max-width: 5em;
-        }
+		}
 		td {
 			width: 7em;
 			max-width: 7em;
 		}
-        </style>
-    </head>
-    <body>
-        <main style="max-width: none !important">
-            <br />
-			<div id="kitharacalc"></div>
-        </main>
-        <script type="text/babel" src="/static/kithara_math.js"></script>
-        <script type="text/babel" src="/static/kithara_calc.js"></script>
-    </body>
+		</style>
+	</head>
+	<body>
+		<main style="max-width: none !important">
+			<br />
+			<div id="kitharacalc">
+				Loading Javascript...
+			</div>
+		</main>
+		<script src="/static/kithara_bundle.js"></script>
+	</body>
 </html>
