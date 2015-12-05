@@ -78,8 +78,35 @@ class LowerInput extends React.Component {
 		let y = mod(a + 42, 72)
 		return `/static/kithara_calc/${x}_${y}.png`
 	}
+
+	getCentDisp() {
+		let charmap = {
+			0: '♮g',
+			1: '♭a',
+			2: '♮a',
+			3: '♭h',
+			4: '♮h',
+			5: '♮c',
+			6: '♯c',
+			7: '♮d',
+			8: '♭e',
+			9: '♮e',
+			10: '♮f',
+			11: '♯f',
+			12: '♮g',
+		}
+
+		let cents = frac_to_cent(this.props.frac)
+		let near = Math.round(cents / 100) * 100
+		let diff = Math.round((cents - near) * 10) / 10
+
+		return charmap[near / 100] + (diff > 0 ? ' +' : ' ') + diff + '¢'
+
+	}
+
 	render() {
-		let cents = Math.round(frac_to_cent(this.props.frac))
+		//let cents = Math.round(frac_to_cent(this.props.frac) * 10) / 10
+		let cents = this.getCentDisp()
 		let octave = nonNaN(this.props.octave)
 		let invalid = isNaN(this.props.octave) || this.props.octave == null
 		let style = invalid ? {width: "3.5em", heigh: "1.5em", borderColor: 'red'} : {width: "3.5em", heigh: "1.5em"}
