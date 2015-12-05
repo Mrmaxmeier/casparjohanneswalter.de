@@ -1,7 +1,10 @@
 module.exports = {
-	entry: './research/kithara_calc.js',
+	entry: {
+		kithara_calc: './research/kithara_calc.js',
+		partch_bruch_rechner: './research/partch_bruch_rechner.js'
+	},
 	output: {
-		filename: './static/kithara_calc_bundle.js'
+		filename: './static/[name].bundle.js'
 	},
 	module: {
 		loaders: [

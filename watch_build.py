@@ -11,9 +11,12 @@ from watchdog.events import FileSystemEventHandler
 class Builder(FileSystemEventHandler):
 	def on_any_event(self, event):
 		print(event)
-		print(event.src_path)
-		if not "bundle.js" in event.src_path:
-			self.build()
+		if event.src_path.endswith(".bundle.js"):
+			return
+
+		print()
+		self.build()
+
 	def build(self):
 		sh.python3("./build.py", _out=lambda d: print(d, end=""))
 

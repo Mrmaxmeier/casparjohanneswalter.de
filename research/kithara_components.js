@@ -17,22 +17,21 @@ let tdWidth = {
 	maxWidth: '7em'
 }
 
-class RatioInput extends React.Component {
+export class RatioInput extends React.Component {
 	handleChange (c) {
 		this.props.changeCB(this.refs.input.value)
 	}
 	render() {
 		let invalid = isNaN(this.props.data)
-		let style = invalid ? {
-			borderColor: 'red',
-			textAlign: 'center',
-			width: '5em',
-			maxWidth: '5em'
-		} : {
+		var style = {
 			textAlign: 'center',
 			width: '5em',
 			maxWidth: '5em'
 		}
+		if (invalid)
+			style['borderColor'] = 'red'
+		if (this.props.disabled)
+			style['color'] = "#444"
 		let tdStyle = this.props.isUpper ? Object.assign({
 			borderBottom: '2px black solid'
 		}, tdWidth) : tdWidth
@@ -41,7 +40,7 @@ class RatioInput extends React.Component {
 			<td style={tdStyle}>
 				<input type="text" tabIndex={this.props.tabIndex} defaultValue={val}
 				       value={val} onChange={this.handleChange.bind(this)}
-					   style={style} ref="input"/>
+					   style={style} ref="input" disabled={this.props.disabled}/>
 			</td>
 		)
 	}
