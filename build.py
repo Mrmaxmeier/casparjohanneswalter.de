@@ -196,7 +196,7 @@ Renderable.render_simple("press")
 Renderable.render_simple("research")
 
 print("webpacking")
-sh.webpack()
+sh.Command("./node_modules/webpack/bin/webpack.js")()
 
 print("copying static stuff")
 shutil.copytree("static", BUILD_DIR + "static")

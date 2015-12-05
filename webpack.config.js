@@ -1,7 +1,7 @@
 module.exports = {
-	entry: './static/kithara_calc.js',
+	entry: './research/kithara_calc.js',
 	output: {
-		filename: './static/kithara_bundle.js'
+		filename: './static/kithara_calc_bundle.js'
 	},
 	module: {
 		loaders: [
