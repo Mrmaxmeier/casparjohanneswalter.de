@@ -12,16 +12,33 @@ import {
 
 let nonNaN = (n) => isNaN(n) ? "" : n
 
+let tdWidth = {
+	width: '7em',
+	maxWidth: '7em'
+}
+
 class RatioInput extends React.Component {
 	handleChange (c) {
 		this.props.changeCB(this.refs.input.value)
 	}
 	render() {
 		let invalid = isNaN(this.props.data)
-		let style = invalid ? {borderColor: 'red'} : {}
+		let style = invalid ? {
+			borderColor: 'red',
+			textAlign: 'center',
+			width: '5em',
+			maxWidth: '5em'
+		} : {
+			textAlign: 'center',
+			width: '5em',
+			maxWidth: '5em'
+		}
+		let tdStyle = this.props.isUpper ? Object.assign({
+			borderBottom: '2px black solid'
+		}, tdWidth) : tdWidth
 		let val = nonNaN(this.props.data)
 		return (
-			<td>
+			<td style={tdStyle}>
 				<input type="text" tabIndex={this.props.tabIndex} defaultValue={val}
 				       value={val} onChange={this.handleChange.bind(this)}
 					   style={style} ref="input"/>
@@ -74,11 +91,11 @@ class LowerInput extends React.Component {
 		let style = invalid ? {width: "3.5em", heigh: "1.5em", borderColor: 'red'} : {width: "3.5em", heigh: "1.5em"}
 		if (this.props.index == 0) {
 			if (this.props.isUpper) {
-				return (<td className="hidden"></td>)
+				return (<td style={{visibility: 'hidden'}}></td>)
 			} else {
 				let overtone = this.props.overtone ? this.props.overtone : "";
 				return (
-					<td>
+					<td style={tdWidth}>
 						<a href="#" data-row="1" onClick={() => {this.props.applyCB()}}>apply identity</a>
 						<br />
 						<br />
@@ -95,7 +112,7 @@ class LowerInput extends React.Component {
 			}
 		}
 		return (
-			<td>
+			<td style={tdWidth}>
 				<span className="subs">
 					Octave:
 					<input type="text" tabIndex={this.props.tabIndex} style={style}
@@ -126,9 +143,9 @@ class Row extends React.Component {
 		data.map((d, index) => {
 			let firstCB = (val) => {this.props.setCB(index, [parseInt(val), d.ratio[1]])}
 			let secondCB = (val) => {this.props.setCB(index, [d.ratio[0], parseInt(val)])}
-			let spacer = <td className="hidden" key={`spacer_${index}`} />
+			let spacer = <td style={{padding: '0.7em', visibility: 'hidden', maxWidth: '5em', width: '5em'}} key={`spacer_${index}`} />
 			let tabIndexBase = index * 3 + (isUpper ? 1 : 999)
-			firstRow.push(<RatioInput tabIndex={tabIndexBase} data={d.ratio[0]} key={`input_${index}`} changeCB={firstCB} />)
+			firstRow.push(<RatioInput tabIndex={tabIndexBase} data={d.ratio[0]} key={`input_${index}`} changeCB={firstCB} isUpper={true} />)
 			firstRow.push(spacer)
 			secondRow.push(<RatioInput tabIndex={tabIndexBase + 1} data={d.ratio[1]} key={`input_${index}`} changeCB={secondCB} />)
 			secondRow.push(spacer)
