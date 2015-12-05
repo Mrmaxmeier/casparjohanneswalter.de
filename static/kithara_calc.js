@@ -268,10 +268,24 @@ class KitharaCalc extends React.Component {
 		}
 	}
 	setOvertone(overtone) {
+		if (!overtone) {
+			this.clearOvertone()
+			return
+		}
 		var state = jQuery.extend(true, {}, this.state)
 		state.lowerRow[0].overtone = overtone
 		state.lowerRow = calcOvertone(state, overtone)
 		this.setState(state)
+	}
+	clearOvertone() {
+		let lowerRow = this.state.lowerRow.map(e => {
+			return {
+				ratio: e.ratio,
+				octave: e.octave,
+				overtone: null
+			}
+		})
+		this.setState({ lowerRow })
 	}
 	handleApply(index) {
 		console.log(this, index)
@@ -284,6 +298,7 @@ class KitharaCalc extends React.Component {
 			})
 		})
 		this.setState(state)
+		this.clearOvertone()
 	}
 	render() {
 		return (
