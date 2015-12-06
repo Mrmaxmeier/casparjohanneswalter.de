@@ -11,17 +11,19 @@ import {
 
 let range = num => Array.apply(null, Array(num)).map(function (_, i) {return i})
 let clone = obj => JSON.parse(JSON.stringify(obj))
+let highlighted = [[1,1], [81,80], [33,32], [21,20], [16,15], [12,11], [11,10], [10,9], [9,8], [8,7], [7,6], [32,27], [6,5], [11,9], [5,4], [14,11], [9,7], [21,16], [4,3], [27,20], [11,8], [7,5], [10,7], [16,11], [40,27], [3,2], [32,21], [14,9], [11,7], [8,5], [18,11], [5,3], [27,16], [12,7], [7,4], [16,9], [9,5], [20,11], [11,6], [15,8], [40,21], [64,33], [160,81], [2,1]]
 
 class Rechner extends React.Component {
 	constructor(props) {
 		super(props)
 		this.state = {
 			main: [1, 1],
-			ops: range(16).map((i) => [i + 1, 1])
+			scnd: [1, 1],
+			ops: [[12,11], [11,10], [10,9], [9,8], [8,7], [7,6], [6,5], [11,9], [5,4], [14,11], [9,7], [4,3], [11,8], [7,5], [10,7]]
 		}
 	}
 	outList(data) {
-		let nop = () => null
+		let isHighlighted = (e) => highlighted.reduce((a, d) => a || (d[0] == e[0] && d[1] == e[1]), false)
 		return (
 			<div>
 				<table>
@@ -29,13 +31,13 @@ class Rechner extends React.Component {
 						<tr>
 							{data.map((d, i) => {
 								let data = !d ? null : d[0]
-								return <RatioInput key={i} data={data} isUpper={true} changeCB={nop} disabled={true} />
+								return <RatioInput key={i} data={data} isUpper={true} highlighted={isHighlighted(d)} disabled={true} />
 							})}
 						</tr>
 						<tr>
 							{data.map((d, i) => {
 								let data = !d ? null : d[1]
-								return <RatioInput key={i} data={data} isUpper={false} changeCB={nop} disabled={true} />
+								return <RatioInput key={i} data={data} isUpper={false} highlighted={isHighlighted(d)} disabled={true} />
 							})}
 						</tr>
 					</tbody>
@@ -115,6 +117,31 @@ class Rechner extends React.Component {
 					if (!main)
 						return
 					return clamp(div(main, frac))
+				}))}
+
+
+				<table>
+					<tbody>
+						<tr><RatioInput data={this.state.scnd[0]} isUpper={true} changeCB={(v) => {
+							this.setState({scnd: [v, this.state.scnd[1]]})
+						}} /></tr>
+						<tr><RatioInput data={this.state.scnd[1]} changeCB={(v) => {
+							this.setState({scnd: [this.state.scnd[0], v]})
+						}} /></tr>
+					</tbody>
+				</table>
+
+				{this.outList(this.state.ops.map((frac) => {
+					let scnd = sanetizeFrac(this.state.scnd)
+					if (!scnd)
+						return
+					return clamp(mul(frac, scnd))
+				}))}
+				{this.outList(this.state.ops.map((frac) => {
+					let scnd = sanetizeFrac(this.state.scnd)
+					if (!scnd)
+						return
+					return clamp(div(scnd, frac))
 				}))}
 			</div>
 		)

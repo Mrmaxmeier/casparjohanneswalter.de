@@ -19,7 +19,8 @@ let tdWidth = {
 
 export class RatioInput extends React.Component {
 	handleChange (c) {
-		this.props.changeCB(this.refs.input.value)
+		if (this.props.changeCB)
+			this.props.changeCB(this.refs.input.value)
 	}
 	render() {
 		let invalid = isNaN(this.props.data)
@@ -32,6 +33,8 @@ export class RatioInput extends React.Component {
 			style['borderColor'] = 'red'
 		if (this.props.disabled)
 			style['color'] = "#444"
+		if (this.props.highlighted)
+			style['borderColor'] = 'blue'
 		let tdStyle = this.props.isUpper ? Object.assign({
 			borderBottom: '2px black solid'
 		}, tdWidth) : tdWidth
