@@ -1,7 +1,13 @@
 {
   "plugins": [
     "transform-strict-mode",
-    "transform-es2015-modules-commonjs"
+    "transform-class-properties",
+    "transform-es2015-modules-commonjs",
+    "transform-function-bind"
   ],
-  "presets": ["react"]
+  "presets": [
+    "stage-1",
+    ["es2015", { "modules": false }],
+    "react"
+  ]
 }
