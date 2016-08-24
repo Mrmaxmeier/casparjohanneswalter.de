@@ -1,0 +1,12 @@
+extends:
+  - standard
+  - "plugin:react/recommended"
+plugins:
+  - standard
+  - react
+  - babel
+
+parser: "babel-eslint"
+parserOptions:
+  sourceType: "module"
+  allowImportExportEverywhere: false
