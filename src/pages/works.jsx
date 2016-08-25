@@ -78,6 +78,7 @@ export class WorksPage extends React.Component {
   render () {
     let works = sortedWorks()
     if (this.props.params.tag !== undefined) {
+      // TODO: label
       works = works::filter((w) => {
         return w.tags::contains(this.props.params.tag)
       })
@@ -112,42 +113,3 @@ export class WorksPage extends React.Component {
     )
   }
 }
-
-/*
-{% from 'work.html' import summary with context %}
-{% from 'work.html' import summ2 with context %}
-{% macro menu(tag) %}
-<li>
-    {% if tag.isLink %}
-    <a style="font-size: 16" {% if name == tag.name %}class="selected"{% endif %} href="{{tag.link}}">{{tag.name}}</a>
-    {% else %}
-    <a style="font-size: 16">{{tag.name}}</a>
-    {% endif %}
-    {% if tag.has_subtags %}
-    <ul>
-        {% for subtag in tag.subtags %}
-        {% if subtag.has_entries %}
-        <a {% if name == subtag.name %}class="selected"{% endif %} href="{{subtag.link}}">{{subtag.name}}</a>
-        {% endif %}
-        {% endfor %}
-    </ul>
-    {% endif %}
-</li>
-{% endmacro %}
-{% block body %}
-
-<nav style="font-size: 0.8em; margin-top: 0px;" id="dropdown">
-    <ul>
-        <li>
-            <a style="font-size: 16" {% if all %}class="selected"{% endif %} href="/works.html">All</a>
-        </li>
-        {{menu(by_instruments)}}
-        {% for tag in tags %}
-        {% if not tag.isSubtag and tag.show %}
-        {{menu(tag)}}
-        {% endif %}
-        {% endfor %}
-    </ul>
-</nav>
-*/
-

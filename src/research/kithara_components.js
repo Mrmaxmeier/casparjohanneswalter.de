@@ -1,6 +1,6 @@
 
-const React = require('react')
-const $ = require('jquery')
+import React from 'react'
+import $ from 'jquery'
 
 import { presets } from './kithara_presets'
 
@@ -18,6 +18,14 @@ let tdWidth = {
 }
 
 export class RatioInput extends React.Component {
+  static propTypes = {
+    changeCB: React.PropTypes.func,
+    data: React.PropTypes.number,
+    disabled: React.PropTypes.bool,
+    highlighted: React.PropTypes.bool,
+    isUpper: React.PropTypes.bool,
+    tabIndex: React.PropTypes.number
+  }
   handleChange (c) {
     if (this.props.changeCB) {
       this.props.changeCB(this.refs.input.value)
@@ -55,6 +63,17 @@ export class RatioInput extends React.Component {
 }
 
 class LowerInput extends React.Component {
+  static propTypes = {
+    isUpper: React.PropTypes.bool,
+    frac: React.PropTypes.any,
+    octave: React.PropTypes.any,
+    index: React.PropTypes.number,
+    tabIndex: React.PropTypes.number,
+    setOvertone: React.PropTypes.func,
+    applyCB: React.PropTypes.func,
+    setOctaveCB: React.PropTypes.func,
+    overtone: React.PropTypes.any
+  }
   getImg () {
     let a = Math.floor((fracToCent(this.props.frac) + 100 / 12) * 72 / 1200)
     let x = this.props.octave + Math.floor(a / 72)
@@ -99,7 +118,7 @@ class LowerInput extends React.Component {
       if (this.props.isUpper) {
         return (<td style={{visibility: 'hidden'}}></td>)
       } else {
-        let overtone = this.props.overtone ? this.props.overtone : ''
+        let overtone = this.props.overtone || ''
         return (
           <td style={tdWidth}>
             <a href='#' data-row='1' onClick={() => { this.props.applyCB() }}>apply identity</a>
@@ -138,6 +157,15 @@ class LowerInput extends React.Component {
 }
 
 class Row extends React.Component {
+  static propTypes = {
+    data: React.PropTypes.array,
+    overtone: React.PropTypes.any,
+    isUpper: React.PropTypes.bool,
+    setCB: React.PropTypes.func,
+    setOvertone: React.PropTypes.func,
+    setOctave: React.PropTypes.func,
+    applyCB: React.PropTypes.func
+  }
   render () {
     let data = this.props.data
     let isUpper = this.props.isUpper
@@ -302,7 +330,7 @@ export class KitharaCalc extends React.Component {
             })}
           </select>
         </div>
-        <Row isUpper data={this.state.upperRow}
+        <Row isUpper={true} data={this.state.upperRow}
           setCB={this.setRatioCB.bind(this, true)}
           setOctave={this.setOctave.bind(this, true)}
           applyCB={this.handleApply.bind(this)} />

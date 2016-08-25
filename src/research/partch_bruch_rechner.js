@@ -1,6 +1,5 @@
 
 const React = require('react')
-const ReactDOM = require('react-dom')
 
 import { RatioInput } from './kithara_components'
 import {
@@ -151,8 +150,3 @@ export class Rechner extends React.Component {
     )
   }
 }
-
-ReactDOM.render(
-  <Rechner />,
-  document.getElementById('rechner')
-)
