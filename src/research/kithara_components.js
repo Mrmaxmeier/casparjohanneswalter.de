@@ -121,7 +121,7 @@ class LowerInput extends React.Component {
         let overtone = this.props.overtone || ''
         return (
           <td style={tdWidth}>
-            <a href='#' data-row='1' onClick={() => { this.props.applyCB() }}>apply identity</a>
+            <a data-row='1' onClick={() => { this.props.applyCB() }}>apply identity</a>
             <br />
             <br />
             <span>
@@ -148,7 +148,7 @@ class LowerInput extends React.Component {
         </span>
         <div className='cents'>{cents}</div>
         {this.props.isUpper ? null : (
-          <a href='#' data-row='1' onClick={() => { this.props.applyCB() }}>apply</a>
+          <a data-row='1' onClick={() => { this.props.applyCB() }}>apply</a>
         )}
         <img style={{maxWidth: '5em'}} src={this.getImg()} />
       </td>

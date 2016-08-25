@@ -1,8 +1,7 @@
-module.exports = {
-  entry: ['./src/index.jsx'],
+let shared = {
   output: {
     path: 'build',
-    filename: 'index.bundle.js'
+    filename: '[name].js'
   },
   module: {
     loaders: [{
@@ -18,3 +17,11 @@ module.exports = {
     }]
   }
 }
+
+module.exports = [
+  Object.assign({entry: {index: './src/index.jsx'}}, shared),
+  Object.assign({
+    entry: {build: './build.jsx'},
+    target: 'node'
+  }, shared)
+]

@@ -4,35 +4,10 @@ require('!style!css!sass!./style.scss')
 
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { Router, Route, hashHistory } from 'react-router'
 
-import { App } from './app.jsx'
-import { IndexPage } from './pages/index.jsx'
-import { WorksPage } from './pages/works.jsx'
-import { BioPage } from './pages/bio.jsx'
-import { PressPage } from './pages/press.jsx'
-import { ResearchPage, Kithara, PartchBruch } from './pages/research.jsx'
-
-export class RoutedApp extends React.Component {
-  render () {
-    return (
-      <Router history={hashHistory}>
-        <Route path="/" component={App}>
-          <Route path="/index" component={IndexPage} />
-          <Route path="/works" component={WorksPage} />
-          <Route path="/tags/:tag" component={WorksPage} />
-          <Route path="/biography" component={BioPage} />
-          <Route path="/press" component={PressPage} />
-          <Route path="/research" component={ResearchPage} />
-          <Route path="/research/kithara" component={Kithara} />
-          <Route path="/research/partch_bruch_rechner" component={PartchBruch} />
-        </Route>
-      </Router>
-    )
-  }
-}
+import { Routes } from './routes.jsx'
 
 ReactDOM.render(
-  <RoutedApp />,
+  <Routes />,
   document.getElementById('app')
 )
