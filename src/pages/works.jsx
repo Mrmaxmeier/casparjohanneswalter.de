@@ -1,9 +1,9 @@
 import React from 'react'
 import { Link } from 'react-router'
-import { filter, contains } from 'underline'
+import { filter, contains, map } from 'underline'
 
 import { rows, sorted as sortedWorks } from '../works.js'
-import { groups as tagGroups } from '../tags.js'
+import { groups as tagGroups, slugify } from '../tags.js'
 
 class MenuTag extends React.Component {
   static propTypes = {
@@ -19,7 +19,8 @@ class MenuTag extends React.Component {
         <a>{tag.name}</a>
         <ul>
           {tag.subtags.map((subtag) => {
-            return <Link key={subtag} to={'/tags/' + subtag}>{subtag}</Link>
+            let slug = slugify(subtag)
+            return <Link key={slug} to={'/tags/' + slug}>{subtag}</Link>
           })}
         </ul>
       </li>
@@ -80,7 +81,8 @@ export class WorksPage extends React.Component {
     if (this.props.params.tag !== undefined) {
       // TODO: label
       works = works::filter((w) => {
-        return w.tags::contains(this.props.params.tag)
+        let tags = w.tags::map(slugify)
+        return tags::contains(this.props.params.tag)
       })
     }
     return (

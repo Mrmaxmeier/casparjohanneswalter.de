@@ -3,7 +3,7 @@ import React from 'react'
 import { renderToString } from 'react-dom/server'
 import { match, RouterContext } from 'react-router'
 import { Routes } from './src/routes.jsx'
-import { tags } from './src/tags.js'
+import { tags, slugify } from './src/tags.js'
 
 let index = fs.readFileSync('src/index.html').toString()
 
@@ -17,7 +17,7 @@ let routesToRender = [
   'research/partch_fraction'
 ]
 
-tags().forEach((tag) => routesToRender.push('tags/' + tag))
+tags().forEach((tag) => routesToRender.push('tags/' + slugify(tag)))
 
 let routes = new Routes().render()
 

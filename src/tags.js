@@ -7,9 +7,15 @@ import { mapObject, values } from 'underline'
 export function tags () {
   let l = []
   works.forEach((w) => {
-    l.push(w.tags)
+    w.tags.forEach((t) => {
+      l.push(t)
+    })
   })
   return l
+}
+
+export function slugify (s) {
+  return s.toLowerCase().replace(/[^a-zA-Z0-9]/, '-')
 }
 
 export function groups () {
