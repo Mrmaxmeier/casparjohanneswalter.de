@@ -3,12 +3,6 @@ import moment from 'moment'
 
 import { Menu } from './menu.jsx'
 
-export class IndexPage extends React.Component {
-  render () {
-    return <img src={require('../static/index.jpg')} />
-  }
-}
-
 export class App extends React.Component {
   static propTypes = {
     children: React.PropTypes.any

@@ -5,7 +5,7 @@ export class BioPage extends React.Component {
     // TODO: bio pic
     return (
       <section style={{lineHeight: '177%'}}>
-        <img style={{width: '50em', maxWidth: '50%', float: 'left', paddingRight: '1.2em'}} src={require('../static/index.jpg')} />
+        <img style={{width: '50em', maxWidth: '50%', float: 'left', paddingRight: '1.2em'}} src={require('../../static/index.jpg')} />
         <p>
           He was born in Frankfurt/Main in 1964, and studied composition with V. D. Kirchner (Wiesbaden) as well as with J. Fritsch and C. Barlow (Cologne Conservatory of Music, 1985-90). In 1985 he was cofounder of the Cologne-based Thürmchen Verlag (Publishing House). He has received several major composition awards including the first prize in the Stuttgart Composition Competition (1991), the 13th Irino Prize for Orchestra (Japan, 1992), in 1995 the first prize in the competition »Vienna modern«, the Hindemith Award of the Schleswig-Holstein Festival and from the state of North Rhine-Westphalia the award for most promising in the category music. In 1988, he was awarded the same by the City of Cologne. He received a scholarship in 1995/96 at the Künstlerhof Schreyahn (Artists' Colony), Lower Saxony, and in 1998 he has been granted a fellowship to carry out his work at the Villa Massimo in Rome. He has represented the young generation of Cologne musicians in exchange projects sponsored by the Goethe Institute in New York (1989) and Atlanta (1993). His pieces were selected for the World Music Days in Stockholm in 1994 and in Copenhagen in 1996. A CD with chamber music works by Caspar Johannes Walter released by the German Council of Music on the Label Wergo has been awarded the »Preis der deutschen Schallplattenkritik« in 1998.
         </p>

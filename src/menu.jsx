@@ -1,6 +1,5 @@
 import React from 'react'
 import { Link } from 'react-router'
-import classNames from 'classnames'
 
 class MenuLink extends React.Component {
   static propTypes = {
@@ -10,14 +9,10 @@ class MenuLink extends React.Component {
 
   render () {
     return (
-      <Link to={'/' + this.props.id}><b>{this.props.name}</b></Link>
-//      <a className={classNames({selected: this.props.id === 'index'})}>
-//        <b>{this.props.name}</b>
-//      </a>
+      <Link to={'/' + this.props.id} activeClassName='active'>
+        {this.props.name}
+      </Link>
     )
-    /* <a {% if text == active_page %} class="selected" {% endif %} href="{{link}}">
-      <b style="color: {% if text == active_page %}#777{% else %}#aaa{% endif %}">{{text}}</b>
-    </a> */
   }
 }
 
@@ -35,7 +30,7 @@ export class Menu extends React.Component {
         <ul>
           {items.map((m) => <li key={m.id}><MenuLink {...m} /></li>)}
           <li>
-            <a href='mailto:cjwalter@arcor.de'><b>Contact</b></a>
+            <a href='mailto:cjwalter@arcor.de'> Contact </a>
           </li>
         </ul>
       </nav>

@@ -7,9 +7,11 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { Router, Route, hashHistory } from 'react-router'
 
-import { App, IndexPage, Test2 } from './app.jsx'
-import { BioPage } from './bio.jsx'
-
+import { App } from './app.jsx'
+import { IndexPage } from './pages/index.jsx'
+import { WorksPage } from './pages/works.jsx'
+import { BioPage } from './pages/bio.jsx'
+import { PressPage } from './pages/press.jsx'
 
 export class RoutedApp extends React.Component {
   render () {
@@ -17,13 +19,14 @@ export class RoutedApp extends React.Component {
       <Router history={hashHistory}>
         <Route path="/" component={App}>
           <Route path="/index" component={IndexPage} />
+          <Route path="/works" component={WorksPage} />
           <Route path="/biography" component={BioPage} />
+          <Route path="/press" component={PressPage} />
         </Route>
       </Router>
     )
   }
 }
-
 
 ReactDOM.render(
   <RoutedApp />,
