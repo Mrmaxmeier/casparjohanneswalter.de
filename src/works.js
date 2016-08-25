@@ -1,7 +1,3 @@
-import React from 'react'
-
-export class A extends React.Component {}
-
 export let works = [
   require('../works/175 Sekunden.json'),
   require('../works/Adieu m\'amour · Ay, douloureux · Les tres doulx Yeux.json'),

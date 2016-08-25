@@ -1,6 +1,31 @@
 import React from 'react'
 
 import { rows } from '../works.js'
+import { groups as tagGroups } from 'babel!../tags.js' // TODO: fix webpack config
+
+class MenuTag extends React.Component {
+  static propTypes = {
+    tag: React.PropTypes.object
+  }
+  render () {
+    let tag = this.props.tag
+    // li > a font-size: 16
+    return (
+      <li>
+        {tag.isLink ? (
+          <a className="selected" href="{{tag.link}}">{tag.name}</a>
+        ) : (
+          <a>{tag.name}</a>
+        )}
+        <ul>
+          {tag.subtags.map((subtag) => {
+            return <a key={subtag} className="selected">{subtag}</a>
+          })}
+        </ul>
+      </li>
+    )
+  }
+}
 
 class WorkSummary extends React.Component {
   static propTypes = {
@@ -50,6 +75,14 @@ export class WorksPage extends React.Component {
   render () {
     return (
       <div className='works'>
+        <nav className='dropdown'>
+          <ul>
+              <li>
+                  <a className='active'>All</a>
+              </li>
+              {tagGroups().map((tag) => <MenuTag key={tag.name} tag={tag} />)}
+          </ul>
+        </nav>
         {rows().map((row, i) => {
           if (row.length < 2) {
             return (

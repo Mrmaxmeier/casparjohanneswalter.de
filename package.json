@@ -5,6 +5,9 @@
   "main": "index.js",
   "author": "Mrmaxmeier",
   "license": "MIT",
+  "scripts": {
+    "dev": "webpack-dev-server"
+  },
   "dependencies": {
     "babel": "^6.5.2",
     "babel-core": "^6.9.1",
@@ -32,6 +35,7 @@
     "react-router": "^2.7.0",
     "sass-loader": "^4.0.0",
     "style-loader": "^0.13.1",
+    "underline": "^1.0.4",
     "webpack": "^v2.1.0-beta.21"
   },
   "devDependencies": {
