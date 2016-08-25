@@ -6,7 +6,8 @@
   "author": "Mrmaxmeier",
   "license": "MIT",
   "scripts": {
-    "dev": "webpack-dev-server"
+    "start": "webpack-dev-server",
+    "build": "webpack"
   },
   "dependencies": {
     "babel": "^6.5.2",

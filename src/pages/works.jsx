@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { rows } from '../works.js'
+import { rows } from 'babel!../works.js'  // TODO: fix webpack config
 import { groups as tagGroups } from 'babel!../tags.js' // TODO: fix webpack config
 
 class MenuTag extends React.Component {
@@ -9,7 +9,6 @@ class MenuTag extends React.Component {
   }
   render () {
     let tag = this.props.tag
-    // li > a font-size: 16
     return (
       <li>
         {tag.isLink ? (
@@ -45,8 +44,8 @@ class WorkSummary extends React.Component {
       <div className='work'>
         <h3>
           {work.title}
-          {tagif('dateStr', (dateStr) => <em>({dateStr})</em>)}
-          {tagif('date', (date) => <em>({date})</em>)}
+          {tagif('dateStr', (dateStr) => <em> ({dateStr})</em>)}
+          {tagif('date', (date) => <em> ({date})</em>)}
         </h3>
         {tagif('subtitle', p)}
         {tagif('instrumentation', p)}
@@ -72,6 +71,9 @@ class WorkSummary extends React.Component {
 }
 
 export class WorksPage extends React.Component {
+  static propTypes = {
+    params: React.PropTypes.object
+  }
   render () {
     return (
       <div className='works'>

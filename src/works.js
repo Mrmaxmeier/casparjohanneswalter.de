@@ -1,13 +1,16 @@
-export let works = [
-  require('../works/175 Sekunden.json'),
-  require('../works/Adieu m\'amour · Ay, douloureux · Les tres doulx Yeux.json'),
-  require('../works/Aus dem Leben der Amöben.json'),
-  require('../works/Beltà, poi chet’assenti (Nachbild 2).json'),
-  require('../works/eisklaenge.json')
-]
+import { sortBy } from 'underline'
+
+function requireAll (context) {
+  return context.keys().map(context)
+}
+
+export let works = requireAll(require.context('../works', false, /\.json$/))
 
 export function sorted () {
-  return works
+  return works::sortBy((work) => {
+    let year = (work.year || 0) + (work.index || 0) / 10
+    return -year
+  })
 }
 
 export function rows () {
