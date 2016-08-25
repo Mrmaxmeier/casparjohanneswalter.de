@@ -14,7 +14,7 @@ let routesToRender = [
   'press',
   'research',
   'research/kithara',
-  'research/parch_bruch_rechner'
+  'research/partch_fraction'
 ]
 
 tags().forEach((tag) => routesToRender.push('tags/' + tag))
@@ -40,12 +40,19 @@ routesToRender.forEach((route) => {
       let rendered = renderToString(<RouterContext {...renderProps} />)
       let html = index.replace('<main id="app" />', '<main id="app">' + rendered + '</main>')
       console.log('saving', route)
+
+      let dir = './build/' + route.split('/').slice(0, -1).join('/')
+      if (dir.length > 0 && !fs.existsSync(dir)) {
+        console.log('making dir \'' + dir + '\'')
+        fs.mkdirSync(dir)
+      }
       let err = fs.writeFileSync('./build/' + route + '.html', html)
       if (err) {
         throw err
       }
       console.log('saved', route)
     } else {
+      console.log(404, route)
       let err = 'not found'
       throw err
     }

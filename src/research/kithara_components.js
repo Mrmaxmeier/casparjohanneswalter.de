@@ -2,6 +2,8 @@
 import React from 'react'
 import $ from 'jquery'
 
+import { keys, map } from 'underline'
+
 import { presets } from './kithara_presets'
 
 import {
@@ -319,13 +321,13 @@ export class KitharaCalc extends React.Component {
         <div style={{padding: '1em'}}>
           Instrument: &nbsp;
           <select onChange={this.setInstrument.bind(this)}>
-            {$.map(presets, (_, key) => {
+            {presets::keys()::map((key) => {
               return <option key={key} value={key}>{key}</option>
             })}
           </select>
           &nbsp; Preset: &nbsp;
           <select onChange={this.setPreset.bind(this)}>
-            {$.map(presets[this.state.instrument], (_, key) => {
+            {presets[this.state.instrument]::keys()::map((key) => {
               return <option key={key} value={key}>{key}</option>
             })}
           </select>
