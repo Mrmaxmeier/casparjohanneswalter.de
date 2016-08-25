@@ -17,7 +17,7 @@ export function groups () {
     return {
       subtags: subtags,
       name: name,
-      show: true
+      show: name !== 'Chamber Music'
     }
   })::values()
 }

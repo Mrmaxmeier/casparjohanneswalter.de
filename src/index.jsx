@@ -19,6 +19,7 @@ export class RoutedApp extends React.Component {
         <Route path="/" component={App}>
           <Route path="/index" component={IndexPage} />
           <Route path="/works" component={WorksPage} />
+          <Route path="/tags/:tag" component={WorksPage} />
           <Route path="/biography" component={BioPage} />
           <Route path="/press" component={PressPage} />
         </Route>

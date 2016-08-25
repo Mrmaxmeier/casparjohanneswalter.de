@@ -1,7 +1,9 @@
 import React from 'react'
+import { Link } from 'react-router'
+import { filter, contains } from 'underline'
 
-import { rows } from 'babel!../works.js'  // TODO: fix webpack config
-import { groups as tagGroups } from 'babel!../tags.js' // TODO: fix webpack config
+import { rows, sorted as sortedWorks } from '../works.js'
+import { groups as tagGroups } from '../tags.js'
 
 class MenuTag extends React.Component {
   static propTypes = {
@@ -9,16 +11,15 @@ class MenuTag extends React.Component {
   }
   render () {
     let tag = this.props.tag
+    if (!tag.show) {
+      return null
+    }
     return (
       <li>
-        {tag.isLink ? (
-          <a className="selected" href="{{tag.link}}">{tag.name}</a>
-        ) : (
-          <a>{tag.name}</a>
-        )}
+        <a>{tag.name}</a>
         <ul>
           {tag.subtags.map((subtag) => {
-            return <a key={subtag} className="selected">{subtag}</a>
+            return <Link key={subtag} to={'/tags/' + subtag}>{subtag}</Link>
           })}
         </ul>
       </li>
@@ -75,17 +76,23 @@ export class WorksPage extends React.Component {
     params: React.PropTypes.object
   }
   render () {
+    let works = sortedWorks()
+    if (this.props.params.tag !== undefined) {
+      works = works::filter((w) => {
+        return w.tags::contains(this.props.params.tag)
+      })
+    }
     return (
       <div className='works'>
         <nav className='dropdown'>
           <ul>
               <li>
-                  <a className='active'>All</a>
+                  <Link to='/works' activeClassName='active'>All</Link>
               </li>
               {tagGroups().map((tag) => <MenuTag key={tag.name} tag={tag} />)}
           </ul>
         </nav>
-        {rows().map((row, i) => {
+        {rows(works).map((row, i) => {
           if (row.length < 2) {
             return (
               <div className='one' key={i}>

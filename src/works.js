@@ -13,9 +13,12 @@ export function sorted () {
   })
 }
 
-export function rows () {
-  let rows = [[]]
-  sorted().forEach((w) => {
+export function rows (list) {
+  if (list.length === 0) {
+    return []
+  }
+  let rows = [[]];
+  (list || sorted()).forEach((w) => {
     let current = rows[rows.length - 1]
     if (current.length === 2) {
       current = [w]
