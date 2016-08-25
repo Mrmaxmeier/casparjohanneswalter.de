@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router'
 import classNames from 'classnames'
 
 class MenuLink extends React.Component {
@@ -9,9 +10,10 @@ class MenuLink extends React.Component {
 
   render () {
     return (
-      <a className={classNames({selected: this.props.id === 'index'})}>
-        <b>{this.props.name}</b>
-      </a>
+      <Link to={'/' + this.props.id}><b>{this.props.name}</b></Link>
+//      <a className={classNames({selected: this.props.id === 'index'})}>
+//        <b>{this.props.name}</b>
+//      </a>
     )
     /* <a {% if text == active_page %} class="selected" {% endif %} href="{{link}}">
       <b style="color: {% if text == active_page %}#777{% else %}#aaa{% endif %}">{{text}}</b>
@@ -26,13 +28,15 @@ export class Menu extends React.Component {
       { id: 'works', name: 'List of Works' },
       { id: 'biography', name: 'Biography' },
       { id: 'press', name: 'Press' },
-      { id: 'research', name: 'Research' },
-      { id: 'contact', link: 'mailto:cjwalter@arcor.de', name: 'Contact' }
+      { id: 'research', name: 'Research' }
     ]
     return (
       <nav>
         <ul>
           {items.map((m) => <li key={m.id}><MenuLink {...m} /></li>)}
+          <li>
+            <a href='mailto:cjwalter@arcor.de'><b>Contact</b></a>
+          </li>
         </ul>
       </nav>
     )

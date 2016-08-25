@@ -5,10 +5,27 @@ require('!style!css!sass!./style.scss')
 
 import React from 'react'
 import ReactDOM from 'react-dom'
+import { Router, Route, hashHistory } from 'react-router'
 
-import { App } from './app.jsx'
+import { App, IndexPage, Test2 } from './app.jsx'
+import { BioPage } from './bio.jsx'
+
+
+export class RoutedApp extends React.Component {
+  render () {
+    return (
+      <Router history={hashHistory}>
+        <Route path="/" component={App}>
+          <Route path="/index" component={IndexPage} />
+          <Route path="/biography" component={BioPage} />
+        </Route>
+      </Router>
+    )
+  }
+}
+
 
 ReactDOM.render(
-  <App />,
+  <RoutedApp />,
   document.getElementById('app')
 )
