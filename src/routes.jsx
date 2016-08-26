@@ -1,5 +1,6 @@
 import React from 'react'
-import { Router, Route, IndexRedirect, hashHistory, browserHistory } from 'react-router'
+import { Router, Route, IndexRedirect, browserHistory } from 'react-router'
+import { dependencies } from '../package.json'
 
 import { App } from './app.jsx'
 import { IndexPage } from './pages/index.jsx'
@@ -8,10 +9,25 @@ import { BioPage } from './pages/bio.jsx'
 import { PressPage } from './pages/press.jsx'
 import { ResearchPage, Kithara, PartchFraction } from './pages/research.jsx'
 
-export class Routes extends React.Component {
-  renderRelease (release) {
+class _404Page extends React.Component {
+  static propTypes = {
+    location: React.PropTypes.object
+  }
+  render () {
     return (
-      <Router history={release ? browserHistory : hashHistory}>
+      <div>
+        <h1>404 Not Found</h1>
+        Invalid route: <b>{this.props.location.pathname}</b>
+        <center>React: {dependencies['react']} - Router: {dependencies['react-router']}</center>
+      </div>
+    )
+  }
+}
+
+export class Routes extends React.Component {
+  render () {
+    return (
+      <Router history={browserHistory}>
         <Route path="/" component={App}>
           <IndexRedirect to='/index' />
           <Route path="/index" component={IndexPage} />
@@ -23,11 +39,19 @@ export class Routes extends React.Component {
           <Route path="/research/kithara" component={Kithara} />
           <Route path="/research/partch_fraction" component={PartchFraction} />
         </Route>
+        <Route path='*' component={_404Page} />
       </Router>
     )
   }
-
-  render () {
-    return this.renderRelease(false) // TODO: fixme
-  }
 }
+
+export let routes = [
+  'index',
+  'works',
+  'biography',
+  'press',
+  'research',
+  'research/kithara',
+  'research/partch_fraction',
+  '404'
+]
