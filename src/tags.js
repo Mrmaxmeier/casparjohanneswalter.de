@@ -7,9 +7,10 @@ import { mapObject, values } from 'underline'
 export function tags () {
   let l = []
   works.forEach((w) => {
-    w.tags.forEach((t) => {
-      l.push(t)
-    })
+    l = l.concat(w.tags)
+  })
+  groupsJson::mapObject((subtags) => {
+    l = l.concat(subtags)
   })
   return l
 }
