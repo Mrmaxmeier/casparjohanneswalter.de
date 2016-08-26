@@ -1,5 +1,5 @@
 import React from 'react'
-import { Router, Route, hashHistory, browserHistory } from 'react-router'
+import { Router, Route, IndexRedirect, hashHistory, browserHistory } from 'react-router'
 
 import { App } from './app.jsx'
 import { IndexPage } from './pages/index.jsx'
@@ -13,6 +13,7 @@ export class Routes extends React.Component {
     return (
       <Router history={release ? browserHistory : hashHistory}>
         <Route path="/" component={App}>
+          <IndexRedirect to='/index' />
           <Route path="/index" component={IndexPage} />
           <Route path="/works" component={WorksPage} />
           <Route path="/tags/:tag" component={WorksPage} />

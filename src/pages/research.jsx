@@ -77,7 +77,6 @@ export class ResearchPage extends React.Component {
             <Link to='/research/partch_fraction'>Partch Fraction Calculator</Link>
           </li>
         </ul>
-        <h3>other</h3>
       </div>
     )
   }
