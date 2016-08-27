@@ -11,9 +11,8 @@ import { ResearchPage, Kithara, PartchFraction } from './pages/research.jsx'
 
 import { tags, slugify } from './tags.js'
 
-var __IN_BUILD__
 let rr = require('react-router')
-let history = __IN_BUILD__ ? rr.browserHistory : rr.hashHistory
+let history = __IN_BUILD__ ? rr.browserHistory : rr.hashHistory // eslint-disable-line no-undef
 
 class _404Page extends React.Component {
   static propTypes = {
