@@ -28,7 +28,7 @@ module.exports = {
   },
   plugins: [
     new webpack.DefinePlugin({
-      __IN_BUILD__: JSON.stringify(false)
+      __IN_BUILD__: JSON.stringify(true)
     }),
     new PrebuildRoutesPlugin({
       embed: function (route, data, assets) {
