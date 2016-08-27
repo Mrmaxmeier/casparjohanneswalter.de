@@ -12,7 +12,7 @@ function requirePatched (asset) {
 }
 
 module.exports = function (options) {
-  function buildRoute (routes, route, compilation) {
+  function buildRoute (routes, route, compilation, base) {
     console.log('building route', route)
     match({ routes: routes.node, location: route }, (error, redirectLocation, renderProps) => {
       if (error) {
@@ -28,7 +28,7 @@ module.exports = function (options) {
         // your "not found" component or route respectively, and send a 404 as
         // below, if you're using a catch-all route.
         let rendered = renderToString(React.createElement(RouterContext, renderProps))
-        let html = options.embed(route, rendered, compilation.assets)
+        let html = options.embed(route, rendered, base)
         compilation.assets[route + '.html'] = {
           source: () => html,
           size: () => html.length
@@ -60,8 +60,9 @@ module.exports = function (options) {
       compiler.plugin('emit', function (compilation, callback) {
         let required = requirePatched(compilation.assets[options.require + '.js'])
         let routes = options.routes(required)
+        let base = options.base(compilation.assets)
 
-        routes.routes.forEach((route) => buildRoute(routes, route, compilation))
+        routes.routes.forEach((route) => buildRoute(routes, route, compilation, base))
         callback()
       })
     }

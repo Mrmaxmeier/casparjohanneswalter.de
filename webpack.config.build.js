@@ -31,9 +31,11 @@ module.exports = {
       __IN_BUILD__: JSON.stringify(true)
     }),
     new PrebuildRoutesPlugin({
-      embed: function (route, data, assets) {
-        let index = assets['index.html'].source().toString('utf8')
-        return index.replace('<main id="app" />', '<main id="app">' + data + '</main>')
+      base: (assets) => {
+        return assets['index.html'].source().toString('utf8')
+      },
+      embed: function (route, data, base) {
+        return base.replace('<main id="app" />', '<main id="app">' + data + '</main>')
       },
       routes: function (routes) {
         return {
