@@ -1,5 +1,5 @@
 import React from 'react'
-import { Router, Route, IndexRedirect, browserHistory } from 'react-router'
+import { Router, Route, IndexRedirect } from 'react-router'
 import { dependencies } from '../package.json'
 
 import { App } from './app.jsx'
@@ -8,6 +8,12 @@ import { WorksPage } from './pages/works.jsx'
 import { BioPage } from './pages/bio.jsx'
 import { PressPage } from './pages/press.jsx'
 import { ResearchPage, Kithara, PartchFraction } from './pages/research.jsx'
+
+import { tags, slugify } from './tags.js'
+
+var __IN_BUILD__
+let rr = require('react-router')
+let history = __IN_BUILD__ ? rr.browserHistory : rr.hashHistory
 
 class _404Page extends React.Component {
   static propTypes = {
@@ -27,7 +33,7 @@ class _404Page extends React.Component {
 export class Routes extends React.Component {
   render () {
     return (
-      <Router history={browserHistory}>
+      <Router history={history}>
         <Route path="/" component={App}>
           <IndexRedirect to='/index' />
           <Route path="/index" component={IndexPage} />
@@ -54,4 +60,4 @@ export let routes = [
   'research/kithara',
   'research/partch_fraction',
   '404'
-]
+].concat(tags().map((tag) => 'tags/' + slugify(tag)))

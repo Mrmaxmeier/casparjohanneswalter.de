@@ -14,7 +14,7 @@ export class App extends React.Component {
         <Menu />
         {this.props.children}
         <footer>
-          <p>© Caspar Johannes Walter {moment().format('YYYY')}</p>
+          <p>© 2015 - {moment().format('YYYY')} Caspar Johannes Walter <br /> All Rights Reserved</p>
         </footer>
       </div>
     )

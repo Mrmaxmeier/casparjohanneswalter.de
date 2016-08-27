@@ -5,11 +5,8 @@ set -e
 echo "$ rm -rf build"
 rm -rf build
 
-echo "$ webpack"
-./node_modules/webpack/bin/webpack.js
+echo "$ webpack -p --config webpack.config.build.js"
+./node_modules/webpack/bin/webpack.js -p --config webpack.config.build.js
 
-echo "$ node build/build.js"
-node build/build.js
-
-echo "$ cp -r static build"
-cp -r static build
+echo "$ cp -r static/kithara_calc build"
+cp -r static/kithara_calc build

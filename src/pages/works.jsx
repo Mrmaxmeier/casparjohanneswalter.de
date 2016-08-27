@@ -1,9 +1,9 @@
 import React from 'react'
 import { Link } from 'react-router'
-import { filter, contains, map } from 'underline'
+import { filter, find, contains, map } from 'underline'
 
 import { rows, sorted as sortedWorks } from '../works.js'
-import { groups as tagGroups, slugify } from '../tags.js'
+import { tags, groups as tagGroups, slugify } from '../tags.js'
 
 class MenuTag extends React.Component {
   static propTypes = {
@@ -85,6 +85,9 @@ export class WorksPage extends React.Component {
         return tags::contains(this.props.params.tag)
       })
     }
+
+    let taggedAs = tags()::find((tag) => slugify(tag) === this.props.params.tag)
+
     return (
       <div className='works'>
         <nav className='dropdown'>
@@ -95,6 +98,13 @@ export class WorksPage extends React.Component {
               {tagGroups().map((tag) => <MenuTag key={tag.name} tag={tag} />)}
           </ul>
         </nav>
+        {taggedAs ? (
+          works.length > 0 ? (
+            <h4>Works tagged as '{taggedAs}':</h4>
+          ) : (
+            <h4>No works tagged as '{taggedAs}'</h4>
+          )
+        ) : null}
         {rows(works).map((row, i) => {
           if (row.length < 2) {
             return (
