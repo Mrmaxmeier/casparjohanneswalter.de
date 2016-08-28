@@ -1,4 +1,5 @@
 let webpack = require('webpack')
+let React = require('react')
 let PrebuildRoutesPlugin = require('./prebuild-routes-plugin.js')
 
 module.exports = {
@@ -38,8 +39,10 @@ module.exports = {
         return base.replace('<main id="app" />', '<main id="app">' + data + '</main>')
       },
       routes: function (routes) {
+        let routesElem = React.createElement(routes.Routes, {})
+        let renderRoutes = (new routes.Routes()).render
         return {
-          node: (new routes.Routes()).render(),
+          node: renderRoutes.bind(routesElem)(),
           routes: routes.routes
         }
       },
