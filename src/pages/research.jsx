@@ -68,14 +68,10 @@ export class ResearchPage extends React.Component {
   render () {
     return (
       <div>
-        <h3>music calculators</h3>
+        <h3>Music calculators</h3>
         <ul>
-          <li>
-            <Link to='/research/kithara'>Kithara I Calculator</Link>
-          </li>
-          <li>
-            <Link to='/research/partch_fraction'>Partch Fraction Calculator</Link>
-          </li>
+          <li><Link to='/research/kithara'>Kithara I Calculator</Link></li>
+          <li><Link to='/research/partch_fraction'>Partch Fraction Calculator</Link></li>
         </ul>
       </div>
     )

@@ -4,7 +4,7 @@ export class PressPage extends React.Component {
   render () {
     return (
       <div>
-        <blockquote style={{marginBottom: '2em'}}>
+        <blockquote>
         "… His conspiciously highly developed personal style is based upon careful listening. The audible influences of John Cage and Morton Feldman on the spiritual side and Helmut Lachenmann and Mathias Spahlinger on the material level -although one can scarcely separate the two- oblige many of his pieces to the aesthetics of silence, to the refusal of tumultuous mental and constructional concepts. Their effect calls for a change in perception. In their best moments, the compositions themselves even assist in achieving this … but Walter's pieces, which sometimes last only a few seconds, do not necessarily live from a narration, or a process, but from a gesture, which is, as a rule, formed in a completely logical manner and which is as open as it is closed. Caspar Johannes Walter's imaginative use of the instruments' scraping, scratching and stroking sounds is never violent, but always conveys respect for the instrument …" <br />
         - Ute Schalz Laurenze, Bremer Weserkurier, 20.4.94
         </blockquote>
