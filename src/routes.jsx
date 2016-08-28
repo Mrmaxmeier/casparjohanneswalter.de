@@ -1,5 +1,6 @@
 import React from 'react'
 import { Router, Route, IndexRedirect } from 'react-router'
+import ReactGA from 'react-ga'
 import { dependencies } from '../package.json'
 
 import { App } from './app.jsx'
@@ -30,9 +31,16 @@ class _404Page extends React.Component {
 }
 
 export class Routes extends React.Component {
+  static propTypes = {
+    analytics: React.PropTypes.bool
+  }
   render () {
+    let onUpdate = this.props.analytics ? () => {
+      ReactGA.set({ page: window.location.pathname })
+      ReactGA.pageview(window.location.pathname)
+    } : null
     return (
-      <Router history={history}>
+      <Router history={history} onUpdate={onUpdate}>
         <Route path="/" component={App}>
           <IndexRedirect to='/index' />
           <Route path="/index" component={IndexPage} />
