@@ -1,31 +1,12 @@
 let webpack = require('webpack')
 let React = require('react')
 let PrebuildRoutesPlugin = require('./prebuild-routes-plugin.js')
+let config = require('./webpack.config.js')
 
-module.exports = {
+module.exports = Object.assign(config, {
   entry: {
     index: './src/index.jsx',
     routes: './src/routes.jsx'
-  },
-  output: {
-    path: 'build',
-    filename: '[name].js'
-  },
-  module: {
-    loaders: [{
-      test: /\.(js|jsx)$/,
-      exclude: /node_modules/,
-      loader: 'babel'
-    }, {
-      test: /\.(jpe?g|png|gif|svg)$/i,
-      loaders: [
-        'file?name=[name].[ext]',
-        'image-webpack?bypassOnDebug&optimizationLevel=7&interlaced=false'
-      ]
-    }, {
-      test: /\.json$/,
-      loader: 'json'
-    }]
   },
   plugins: [
     new webpack.DefinePlugin({
@@ -49,4 +30,4 @@ module.exports = {
       require: 'routes'
     })
   ]
-}
+})

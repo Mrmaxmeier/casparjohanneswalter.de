@@ -17,7 +17,7 @@ module.exports = {
       test: /\.(jpe?g|png|gif|svg)$/i,
       loaders: [
         'file?name=[name].[ext]',
-        'image-webpack?bypassOnDebug&optimizationLevel=7&interlaced=false'
+        'image-webpack?bypassOnDebug&optimizationLevel=7&interlaced=false?progressive=true'
       ]
     }, {
       test: /\.json$/,
