@@ -3,6 +3,7 @@ let renderToString = require('react-dom/server').renderToString
 let router = require('react-router')
 let match = router.match
 let RouterContext = router.RouterContext
+let Sitemap = require('sitemap')
 
 function requirePatched (asset) {
   let Module = module.constructor
@@ -63,6 +64,22 @@ module.exports = function (options) {
         let base = options.base(compilation.assets)
 
         routes.routes.forEach((route) => buildRoute(routes, route, compilation, base))
+        if (options.sitemap) {
+          let sitemap = Sitemap.createSitemap({
+            hostname: 'https://' + options.hostname,
+            cacheTime: 600000,
+            urls: []
+          })
+          routes.routes.filter(options.sitemapFilter)
+            .forEach((route) => {
+              sitemap.add({url: route})
+            })
+          let data = sitemap.toString()
+          compilation.assets['sitemap.xml'] = {
+            source: () => data,
+            size: () => data.length
+          }
+        }
         callback()
       })
     }

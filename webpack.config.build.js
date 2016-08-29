@@ -27,7 +27,10 @@ module.exports = Object.assign(config, {
           routes: routes.routes
         }
       },
-      require: 'routes'
+      hostname: 'casparjohanneswalter.de',
+      require: 'routes',
+      sitemap: true,
+      sitemapFilter: (route) => !(route.includes('tags/') || route === '404')
     })
   ]
 })
