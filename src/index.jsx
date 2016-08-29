@@ -7,9 +7,11 @@ import ReactGA from 'react-ga'
 
 import { Routes } from './routes.jsx'
 
-ReactGA.initialize('UA-39068556-2')
+if (__IN_BUILD__) { // eslint-disable-line no-undef
+  ReactGA.initialize('UA-39068556-2')
+}
 
 ReactDOM.render(
-  <Routes analytics />,
+  <Routes analytics={__IN_BUILD__} />, // eslint-disable-line no-undef
   document.getElementById('app')
 )

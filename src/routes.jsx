@@ -1,5 +1,5 @@
 import React from 'react'
-import { Router, Route, IndexRedirect } from 'react-router'
+import { Router, Route, Link, IndexRedirect } from 'react-router'
 import ReactGA from 'react-ga'
 import { dependencies } from '../package.json'
 
@@ -19,11 +19,21 @@ class _404Page extends React.Component {
   static propTypes = {
     location: React.PropTypes.object
   }
+  static checkRedirect (nextState, replace) {
+    let path = nextState.location.pathname
+    if (path.endsWith('.html')) {
+      console.log('redirecting', nextState.location.pathname, 'to', path.slice(0, -5))
+      replace({
+        pathname: path.slice(0, -5)
+      })
+    }
+  }
   render () {
     return (
       <div>
         <h1>404 Not Found</h1>
-        Invalid route: <b>{this.props.location.pathname}</b>
+        Invalid route: <b>{this.props.location.pathname}</b><br />
+        Return to <Link to={'/index'}>index</Link>
         <center>React: {dependencies['react']} - Router: {dependencies['react-router']}</center>
       </div>
     )
@@ -52,7 +62,7 @@ export class Routes extends React.Component {
           <Route path="/research/kithara" component={Kithara} />
           <Route path="/research/partch_fraction" component={PartchFraction} />
         </Route>
-        <Route path='*' component={_404Page} />
+        <Route path='*' component={_404Page} onEnter={_404Page.checkRedirect} />
       </Router>
     )
   }
