@@ -64,15 +64,12 @@ export function calcState (state, obj) {
 
   let passedObj = obj
 
-  console.log(`Multiplier: ${repr(multiplier)}`)
-
   return state.map((obj, index) => {
     let ratio = mul(getMultiplier(obj), multiplier)
     let octave = calcOctave(ratio)
     ratio = reduce(div(ratio, [Math.pow(2, octave), 1]))
     if ((ratio[0] / ratio[1]) < 4 / 3) {
       octave--
-      console.log(index, octave)
     }
 
     if (index === 0) {
@@ -102,7 +99,6 @@ export function calcOvertone (state, overtone) {
     octave++
   }
   ratio = reduce(ratio)
-  console.log(octave, ratio)
 
   return calcState(state.upperRow, {
     ratio: ratio,

@@ -20,6 +20,9 @@ module.exports = {
         'image-webpack?bypassOnDebug&optimizationLevel=7&interlaced=false?progressive=true'
       ]
     }, {
+      test: /\.(ttf|eot|svg|jpg|woff(2)?)(\?[a-z0-9=&.]+)?$/,
+      loader: 'file'
+    }, {
       test: /\.json$/,
       loader: 'json'
     }]

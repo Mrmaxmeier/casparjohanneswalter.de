@@ -1,5 +1,4 @@
-require('file?name=[name].[ext]!./index.html')
-require('file?name=style.css!sass!./style.scss')
+require('./static_files.js')
 
 import React from 'react'
 import ReactDOM from 'react-dom'

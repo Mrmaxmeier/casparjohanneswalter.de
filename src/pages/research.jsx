@@ -3,6 +3,7 @@ import { Link } from 'react-router'
 
 import { KitharaCalc } from '../research/kithara_components.js'
 import { Rechner as PartchFractionRechner } from '../research/partch_bruch_rechner.js'
+import { FractionToCents } from '../research/converterComponents.jsx'
 
 export class Kithara extends React.Component {
   render () {
@@ -64,6 +65,17 @@ export class PartchFraction extends React.Component {
   }
 }
 
+export class Converters extends React.Component {
+  render () {
+    return (
+      <div>
+        <h3>Converters</h3>
+        <FractionToCents />
+      </div>
+    )
+  }
+}
+
 export class ResearchPage extends React.Component {
   render () {
     return (
@@ -72,6 +84,7 @@ export class ResearchPage extends React.Component {
         <ul>
           <li><Link to='/research/kithara'>Kithara I Calculator</Link></li>
           <li><Link to='/research/partch_fraction'>Partch Fraction Calculator</Link></li>
+          <li><Link to='/research/converters'>Converters</Link></li>
         </ul>
       </div>
     )

@@ -56,7 +56,7 @@ export class RatioInput extends React.Component {
     let val = nonNaN(this.props.data)
     return (
       <td style={tdStyle}>
-        <input type='text' tabIndex={this.props.tabIndex} defaultValue={val}
+        <input type='text' tabIndex={this.props.tabIndex}
           value={val} onChange={this.handleChange.bind(this)}
           style={style} ref='input' disabled={this.props.disabled} />
       </td>
@@ -129,7 +129,7 @@ class LowerInput extends React.Component {
             <span>
               Overtone:
               <input type='text' tabIndex={this.props.tabIndex}
-                placeholder='' defaultValue={overtone} value={overtone}
+                placeholder='' value={overtone}
                 onChange={(d) => {
                   this.props.setOvertone(parseInt($(d.target).val()))
                 }} style={{width: '3.5em', heigh: '1.5em'}} />
@@ -143,7 +143,7 @@ class LowerInput extends React.Component {
         <span className='subs'>
           Octave:
           <input type='text' tabIndex={this.props.tabIndex} style={style}
-            placeholder='3' defaultValue={octave} value={octave}
+            placeholder='3' value={octave}
             onChange={(d) => {
               this.props.setOctaveCB(this.props.index, parseInt($(d.target).val()))
             }} />
@@ -235,7 +235,6 @@ export class KitharaCalc extends React.Component {
       instrument: instrument,
       preset: preset
     }
-    console.log(state)
     if (setState) {
       this.setState(state)
     }
@@ -266,7 +265,6 @@ export class KitharaCalc extends React.Component {
     }
   }
   setOctave (isUpper, index, octave) {
-    console.log(isUpper, index, octave)
     let state = $.extend(true, {}, this.state)
     if (isUpper) {
       state.upperRow[index].octave = octave
@@ -303,7 +301,6 @@ export class KitharaCalc extends React.Component {
     this.setState({ lowerRow })
   }
   handleApply (index) {
-    console.log(this, index)
     let state = $.extend(true, this.state, {
       upperRow: this.state.upperRow,
       lowerRow: calcState(this.state.upperRow, {
