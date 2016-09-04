@@ -114,6 +114,7 @@ export class SpecificRangeSlider extends Component {
   render () {
     let max = this.state.max
     let min = this.state.min
+    let step = this.props.step || max - min < 100 ? 0.1 : 1
     return (
       <span>
         <MathInput default={this.props.defaultMin}
@@ -122,7 +123,7 @@ export class SpecificRangeSlider extends Component {
             this.setState({min})
           }} ref="min" />
         <input type="range" style={{width: '20em', verticalAlign: 'middle'}}
-          min={min} max={max} step={this.props.step} value={this.state.value}
+          min={min} max={max} step={step} value={this.state.value}
           onChange={(event) => {
             let value = parseFloat(event.target.value)
             this.setState({ value })
