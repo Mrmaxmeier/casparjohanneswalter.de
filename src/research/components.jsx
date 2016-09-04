@@ -75,13 +75,15 @@ export class FreqPlayer extends Component {
   static propTypes = {
     freq: React.PropTypes.number,
     custom: React.PropTypes.bool,
-    inTable: React.PropTypes.bool
+    inTable: React.PropTypes.bool,
+    showTypePicker: React.PropTypes.bool,
+    defaultVolume: React.PropTypes.number
   }
   constructor (props) {
     super(props)
     this.state = {
       isPlaying: false,
-      volume: 0.5,
+      volume: props.defaultVolume || 0.5,
       type: 'sine'
     }
     this.setWave(props.freq, this.state.volume * 0.2, this.state.type)
@@ -95,6 +97,14 @@ export class FreqPlayer extends Component {
         volume
       }
     })
+  }
+  setPlaying (isPlaying) {
+    if (isPlaying) {
+      this.wave.play()
+    } else {
+      this.wave.stop()
+    }
+    this.setState({ isPlaying })
   }
   componentWillUnmount () {
     if (this.state.isPlaying) {
@@ -118,42 +128,45 @@ export class FreqPlayer extends Component {
     return (
       <tr>
         <th>
-          Play frequency:
+          Frequency:
           {this.props.freq <= 0 || this.props.freq >= 22050 ? (
-            <PrecNumber digits={4} value={this.props.freq} style={{color: 'red'}}/>
-          ) : <PrecNumber digits={4} value={this.props.freq} />} (hz)
+            <PrecNumber digits={5} value={this.props.freq} style={{color: 'red'}}/>
+          ) : <PrecNumber digits={5} value={this.props.freq} />} (hz)
         </th>
         <th>
           <button disabled={isPlaying} onClick={() => {
-            this.wave.play()
-            this.setState({isPlaying: true})
+            this.setPlaying(true)
           }}>Play</button>
         </th>
         <th>
           <button disabled={!isPlaying} onClick={() => {
-            this.wave.stop()
-            this.setState({isPlaying: false})
+            this.setPlaying(false)
           }}>Stop</button>
         </th>
         <th>
           <input type="range"
-            min={0} max={1} step={0.025}
+            min={0} max={1} step={0.01} value={this.state.volume}
             onChange={(event) => {
+              console.log('onChange event', event.target.value)
               let volume = parseFloat(event.target.value)
               this.setState({ volume })
             }}/>
         </th>
         <th>
-          <select onChange={(event) => {
-            let type = event.target.value
-            this.setState({ type })
-          }}>
-            <option value="sine">Sine</option>
-            <option value="sawtooth">Sawtooth</option>
-            <option value="square">Square</option>
-            {false ? <option value="custom">Custom</option> : null}
-          </select>
+          <PrecNumber precision={3} value={this.state.volume} />
         </th>
+        {this.props.showTypePicker ? (
+          <th>
+            <select onChange={(event) => {
+              let type = event.target.value
+              this.setState({ type })
+            }}>
+              <option value="sine">Sine</option>
+              <option value="sawtooth">Sawtooth</option>
+              <option value="square">Square</option>
+            </select>
+          </th>
+        ) : null}
       </tr>
     )
   }

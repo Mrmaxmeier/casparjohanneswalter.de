@@ -21,6 +21,7 @@ export class FractionToCents extends Component {
     let error = this.state.input.error
     let canRender = value !== null && value !== undefined
     let output = canRender ? ratioToCents(value) : null
+
     let playerFrequencies = canRender ? [
       this.state.reference.value,
       this.state.reference.value * value
@@ -67,7 +68,7 @@ export class FractionToCents extends Component {
         {canRender ? (
           <table>
             <tbody>
-              {playerFrequencies.map((freq) => <FreqPlayer inTable freq={freq} key={freq} />)}
+              {playerFrequencies.map((freq) => <FreqPlayer showTypePicker={false} inTable freq={freq} key={freq} />)}
             </tbody>
           </table>
         ) : null}

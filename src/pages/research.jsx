@@ -1,11 +1,12 @@
-import React from 'react'
+import React, {Component} from 'react'
 import { Link } from 'react-router'
 
 import { KitharaCalc } from '../research/kithara_components.js'
 import { Rechner as PartchFractionRechner } from '../research/partch_bruch_rechner.js'
 import { FractionToCents } from '../research/converterComponents.jsx'
+import { SoundGen } from '../research/soundgen.jsx'
 
-export class Kithara extends React.Component {
+export class Kithara extends Component {
   render () {
     return (
       <div>
@@ -48,7 +49,7 @@ export class Kithara extends React.Component {
   }
 }
 
-export class PartchFraction extends React.Component {
+export class PartchFraction extends Component {
   render () {
     return (
       <div>
@@ -65,7 +66,7 @@ export class PartchFraction extends React.Component {
   }
 }
 
-export class Converters extends React.Component {
+export class Converters extends Component {
   render () {
     return (
       <div>
@@ -76,7 +77,18 @@ export class Converters extends React.Component {
   }
 }
 
-export class ResearchPage extends React.Component {
+export class SoundGenPage extends Component {
+  render () {
+    return (
+      <div>
+        <h3>Sound generator</h3>
+        <SoundGen />
+      </div>
+    )
+  }
+}
+
+export class ResearchPage extends Component {
   render () {
     return (
       <div>
@@ -85,6 +97,7 @@ export class ResearchPage extends React.Component {
           <li><Link to='/research/kithara'>Kithara I Calculator</Link></li>
           <li><Link to='/research/partch_fraction'>Partch Fraction Calculator</Link></li>
           <li><Link to='/research/converters'>Converters</Link></li>
+          <li><Link to='/research/soundgen'>Sound generator</Link></li>
         </ul>
       </div>
     )
