@@ -14,13 +14,14 @@ export class MathInput extends Component {
   constructor (props) {
     super(props)
     this.state = {
-      value: props.default
+      value: props.default,
+      error: false
     }
   }
-  set (value) {
+  setValue (value, callOnChange) {
     this.refs.elem.value = value
     this.setState({ value })
-    if (this.props.onChange) {
+    if (callOnChange && this.props.onChange) {
       this.props.onChange(processString(value, this.props.asKind))
     }
   }
@@ -32,14 +33,18 @@ export class MathInput extends Component {
       width: '3.5em',
       height: '1.5em'
     }
+    if (this.state.error) {
+      style['color'] = 'red'
+    }
     return (
       <input type='text' ref='elem'
         defaultValue={this.state.value}
         onChange={(d) => {
           let value = this.refs.elem.value
-          this.setState({value})
-          if (this.props.onChange) {
-            this.props.onChange(processString(value, this.props.asKind))
+          let result = processString(value, this.props.asKind)
+          this.setState({ value, error: result.error })
+          if (this.props.onChange && result !== undefined) {
+            this.props.onChange(result)
           }
         }}
         style={style}
@@ -68,6 +73,68 @@ export class PrecNumber extends Component {
       }
     }
     return <span style={style}>{s}</span>
+  }
+}
+
+export class SpecificRangeSlider extends Component {
+  static propTypes = {
+    defaultMin: React.PropTypes.number,
+    defaultMax: React.PropTypes.number,
+    step: React.PropTypes.number,
+    onChange: React.PropTypes.func
+  }
+
+  constructor (props) {
+    super(props)
+    this.state = {
+      value: (props.defaultMin + props.defaultMax) / 2,
+      min: props.defaultMin,
+      max: props.defaultMax
+    }
+  }
+
+  setValue (value, callOnChange) {
+    let max = this.state.max
+    let min = this.state.min
+    if (value > max) {
+      this.refs.max.setValue(value)
+      this.setState({ max: value, value: value })
+    } else if (value < min) {
+      this.refs.min.setValue(value)
+      this.setState({ min: value, value: value })
+    } else {
+      this.setState({ value })
+    }
+
+    if (callOnChange && this.props.onChange) {
+      this.props.onChange(value)
+    }
+  }
+
+  render () {
+    let max = this.state.max
+    let min = this.state.min
+    return (
+      <span>
+        <MathInput default={this.props.defaultMin}
+          asKind="mathjs-ignoreerror"
+          onChange={(min) => {
+            this.setState({min})
+          }} ref="min" />
+        <input type="range" style={{width: '20em'}}
+          min={min} max={max} step={this.props.step} value={this.state.value}
+          onChange={(event) => {
+            let value = parseFloat(event.target.value)
+            this.setState({ value })
+            this.props.onChange(value)
+          }} ref="slider" />
+        <MathInput default={this.props.defaultMax}
+          asKind="mathjs-ignoreerror"
+          onChange={(max) => {
+            this.setState({max})
+          }} ref="max" />
+      </span>
+    )
   }
 }
 
@@ -147,7 +214,6 @@ export class FreqPlayer extends Component {
           <input type="range"
             min={0} max={1} step={0.01} value={this.state.volume}
             onChange={(event) => {
-              console.log('onChange event', event.target.value)
               let volume = parseFloat(event.target.value)
               this.setState({ volume })
             }}/>

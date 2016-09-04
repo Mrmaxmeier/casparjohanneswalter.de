@@ -9,6 +9,13 @@ export function processString (data, via) {
       } catch (error) {
         return { error }
       }
+    },
+    'mathjs-ignoreerror': (data) => {
+      try {
+        return math.eval(data)
+      } catch (error) {
+        return undefined
+      }
     }
   }
   return handlers[via](data)

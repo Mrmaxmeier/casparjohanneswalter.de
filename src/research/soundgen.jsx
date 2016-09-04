@@ -17,7 +17,6 @@ export class SoundGen extends Component {
       }
     }
     this._nodes = Array(32).fill()
-    window._nodes = this._nodes
   }
   defaultVolume (index, freq) {
     let refFreq = freq || this.state.freq.value || 440
