@@ -222,7 +222,7 @@ export class FreqPlayer extends Component {
               let provider = event.target.value
               console.log('switching audio provider to', provider)
               this.provider.unload()
-              if (['sine', 'sawtooth', 'square'].includes(provider)) {
+              if (['sine', 'sawtooth', 'square'].indexOf(provider) !== -1) {
                 this.provider = new AudioProvider({}, provider)
               } else if (provider === 'soundgen') {
                 this.provider = new SoundGenProvider({})
