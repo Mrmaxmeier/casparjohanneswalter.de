@@ -121,7 +121,7 @@ export class SpecificRangeSlider extends Component {
           onChange={(min) => {
             this.setState({min})
           }} ref="min" />
-        <input type="range" style={{width: '20em'}}
+        <input type="range" style={{width: '20em', verticalAlign: 'middle'}}
           min={min} max={max} step={this.props.step} value={this.state.value}
           onChange={(event) => {
             let value = parseFloat(event.target.value)
@@ -211,7 +211,7 @@ export class FreqPlayer extends Component {
           }}>Stop</button>
         </th>
         <th>
-          <input type="range"
+          <input type="range" style={{verticalAlign: 'middle'}}
             min={0} max={1} step={0.01} value={this.state.volume}
             onChange={(event) => {
               let volume = parseFloat(event.target.value)
