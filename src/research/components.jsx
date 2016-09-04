@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
-import Pizzicato from 'pizzicato'
 import math from 'mathjs'
 
 import { processString } from './converters.js'
+import { AudioProvider, SoundGenProvider } from './audio.js'
 
 export class MathInput extends Component {
   static propTypes = {
@@ -146,48 +146,42 @@ export class FreqPlayer extends Component {
     showTypePicker: React.PropTypes.bool,
     defaultVolume: React.PropTypes.number
   }
+
   constructor (props) {
     super(props)
     this.state = {
       isPlaying: false,
       volume: props.defaultVolume || 0.5,
-      type: 'sine'
+      provider: 'sine'
     }
-    this.setWave(props.freq, this.state.volume * 0.2, this.state.type)
+    this.provider = new AudioProvider({
+      volume: this.state.volume * 0.2,
+      frequency: this.props.freq
+    }, 'sine')
   }
-  setWave (frequency, volume, type) {
-    this.wave = new Pizzicato.Sound({
-      source: 'wave',
-      options: {
-        type,
-        frequency,
-        volume
-      }
+
+  updateProvider () {
+    this.provider.setOptions({
+      volume: this.state.volume * 0.2,
+      frequency: this.props.freq
     })
   }
+
   setPlaying (isPlaying) {
     if (isPlaying) {
-      this.wave.play()
+      this.provider.play()
     } else {
-      this.wave.stop()
+      this.provider.stop()
     }
     this.setState({ isPlaying })
   }
+
   componentWillUnmount () {
-    if (this.state.isPlaying) {
-      this.wave.stop()
-    }
+    this.provider.unload()
   }
+
   componentDidUpdate (prevProps, prevState) {
-    this.wave.frequency = this.props.freq
-    this.wave.volume = this.state.volume * 0.2
-    if (this.state.type !== prevState.type) {
-      this.wave.stop()
-      this.setWave(this.props.freq, this.state.volume * 0.2, this.state.type)
-      if (this.state.isPlaying) {
-        this.wave.play()
-      }
-    }
+    this.updateProvider()
   }
 
   renderBody () {
@@ -224,12 +218,25 @@ export class FreqPlayer extends Component {
         {this.props.showTypePicker ? (
           <th>
             <select onChange={(event) => {
-              let type = event.target.value
-              this.setState({ type })
+              let provider = event.target.value
+              console.log('switching audio provider to', provider)
+              this.provider.unload()
+              if (['sine', 'sawtooth', 'square'].includes(provider)) {
+                this.provider = new AudioProvider({}, provider)
+              } else if (provider === 'soundgen') {
+                this.provider = new SoundGenProvider({})
+              } else {
+                this.provider = null
+              }
+              this.updateProvider()
+              if (this.state.isPlaying) {
+                this.provider.play()
+              }
             }}>
               <option value="sine">Sine</option>
               <option value="sawtooth">Sawtooth</option>
               <option value="square">Square</option>
+              <option value="soundgen">Soundgen</option>
             </select>
           </th>
         ) : null}
