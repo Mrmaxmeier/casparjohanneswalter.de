@@ -16,11 +16,11 @@ module.exports = {
     }, {
       test: /\.(jpe?g|png|gif|svg)$/i,
       loaders: [
-        'file?name=[name].[ext]',
+        'file?hash=sha512&digest=hex&name=[hash].[ext]',
         'image-webpack?bypassOnDebug&optimizationLevel=7&interlaced=false?progressive=true'
       ]
     }, {
-      test: /\.(ttf|eot|svg|jpg|woff(2)?)(\?[a-z0-9=&.]+)?$/,
+      test: /\.(ttf|eot|svg|woff(2)?)(\?[a-z0-9=&.]+)?$/,
       loader: 'file'
     }, {
       test: /\.json$/,
