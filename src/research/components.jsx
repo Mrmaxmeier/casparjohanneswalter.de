@@ -153,7 +153,11 @@ export class FreqPlayer extends Component {
       volume: props.defaultVolume || 0.5,
       type: 'sine'
     }
-    this.setWave(props.freq, this.state.volume * 0.2, this.state.type)
+    if (__IN_BUILD__) {  // eslint-disable-line no-undef
+      this.wave = null
+    } else {
+      this.setWave(props.freq, this.state.volume * 0.2, this.state.type)
+    }
   }
   setWave (frequency, volume, type) {
     this.wave = new Pizzicato.Sound({
