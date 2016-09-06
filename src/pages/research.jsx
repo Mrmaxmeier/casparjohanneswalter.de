@@ -3,7 +3,7 @@ import { Link } from 'react-router'
 
 import { KitharaCalc } from '../research/kithara_components.js'
 import { Rechner as PartchFractionRechner } from '../research/partch_bruch_rechner.js'
-import { FractionToCents } from '../research/converterComponents.jsx'
+import { FractionToCents, FrequencyToPitch } from '../research/converterComponents.jsx'
 import { SoundGen } from '../research/soundgen.jsx'
 import { DiffTone } from '../research/difftone.jsx'
 
@@ -73,6 +73,7 @@ export class Converters extends Component {
       <div>
         <h3>Converters</h3>
         <FractionToCents />
+        <FrequencyToPitch />
       </div>
     )
   }

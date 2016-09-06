@@ -14,7 +14,8 @@ export class DiffTone extends Component {
       freq2: {
         value: 550,
         error: null
-      }
+      },
+      inverted: false
     }
   }
 
@@ -24,6 +25,7 @@ export class DiffTone extends Component {
     let smaller = math.min(freq1, freq2)
     let bigger = math.max(freq1, freq2)
     let error = this.state.freq1.error || this.state.freq2.error
+    let val = this.state.inverted ? (v) => (1 / v) * freq1 * freq2 : (v) => v
     return (
       <div>
         <RequiresJS />
@@ -63,6 +65,28 @@ export class DiffTone extends Component {
                 }} ref="slider2" />
               </th>
             </tr>
+            <tr>
+              <th>Normal</th>
+              <th>
+                <input type="radio" name="inverted" checked={!this.state.inverted} onChange={(event) => {
+                  this.setState({ inverted: false })
+                }} style={{width: '1em', height: '1em'}} />
+              </th>
+              <th>
+                Otonality
+              </th>
+            </tr>
+            <tr>
+              <th>Inverted</th>
+              <th>
+                <input type="radio" name="inverted" checked={this.state.inverted} onChange={(event) => {
+                  this.setState({ inverted: true })
+                }} style={{width: '1em', height: '1em'}} />
+              </th>
+              <th>
+                Utonality, intervallic inversion
+              </th>
+            </tr>
             {error ? (
               <tr style={{color: 'red'}}>
                 <th>Error</th>
@@ -73,10 +97,11 @@ export class DiffTone extends Component {
         </table>
         <table>
           <tbody>
-            <FreqPlayer defaultVolume={0.8} showTypePicker inTable freq={freq1} />
-            <FreqPlayer defaultVolume={0.8} showTypePicker inTable freq={freq2} />
-            <FreqPlayer defaultVolume={0.5} showTypePicker inTable freq={bigger - smaller} />
-            <FreqPlayer defaultVolume={0.3} showTypePicker inTable freq={math.abs(smaller * 2 - bigger)} />
+            <FreqPlayer text="Sum:" defaultVolume={0.5} showTypePicker inTable freq={val(freq1 + freq2)} />
+            <FreqPlayer text="Freq 1:" defaultVolume={0.8} showTypePicker inTable freq={val(freq1)} />
+            <FreqPlayer text="Freq 2:" defaultVolume={0.8} showTypePicker inTable freq={val(freq2)} />
+            <FreqPlayer text="Diff 1:" defaultVolume={0.5} showTypePicker inTable freq={val(bigger - smaller)} />
+            <FreqPlayer text="Diff 2:" defaultVolume={0.3} showTypePicker inTable freq={val(math.abs(smaller * 2 - bigger))} />
           </tbody>
         </table>
       </div>

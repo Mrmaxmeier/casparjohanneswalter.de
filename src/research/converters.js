@@ -28,3 +28,38 @@ export function ratioToCents (ratio) {
 export function centsToRatio (cents) {
   return math.pow(2, cents / 1200)
 }
+
+export function centsToOctave (cents) {
+  let n = (cents + 50) / 1200
+  let o = Math.trunc(n)
+  if (n < 0) {
+    o--
+  }
+  return o
+}
+
+export function centsToNote (cents) {
+  let notes = [
+    'C', '#C',
+    'D',
+    'bE', 'E',
+    'F', '#F',
+    'G',
+    'bA', 'A',
+    'bB', 'B'
+  ]
+  let n = math.mod(cents + 50, 1200)
+  let i = Math.trunc(n / 100)
+  return notes[i]
+}
+
+export function centsToNoteDiff (cents) {
+  cents = math.mod(cents, 1200)
+  let noteCents = Math.trunc(cents / 100) * 100
+  let diff = Math.abs(cents - noteCents)
+  if (diff < 50) {
+    return diff
+  } else {
+    return -(100 - diff)
+  }
+}

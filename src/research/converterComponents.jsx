@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { MathInput, FreqPlayer, PrecNumber, RequiresJS } from './components.jsx'
-import { ratioToCents } from './converters.js'
+import { ratioToCents, centsToOctave, centsToNote, centsToNoteDiff } from './converters.js'
+import math from 'mathjs'
 
 export class FractionToCents extends Component {
   constructor (props) {
@@ -31,7 +32,7 @@ export class FractionToCents extends Component {
         <RequiresJS />
         <h4>Fraction to cents</h4>
         <p>Converts numbers zu cents
-          (<a onClick={() => { this.refs.input.set('5 / 4') }}>try 5 / 4</a>)
+          (<a onClick={() => { this.refs.input.setValue('5 / 4', true) }}>try 5 / 4</a>)
         </p>
         <table>
           <tbody>
@@ -72,6 +73,79 @@ export class FractionToCents extends Component {
             </tbody>
           </table>
         ) : null}
+      </div>
+    )
+  }
+}
+
+export class FrequencyToPitch extends Component {
+  constructor (props) {
+    super(props)
+    this.state = {
+      input: {
+        value: null,
+        error: null
+      },
+      reference: {
+        value: 440,
+        error: null
+      }
+    }
+  }
+  render () {
+    let input = this.state.input.value || 220
+    let reference = this.state.reference.value || 440
+    let error = this.state.input.error || this.state.reference.error
+    let canRender = this.state.input.value !== null && this.state.input.value !== undefined
+    let freqC0 = reference / math.pow(2, (1 / 12) * 57)
+    let cents = ratioToCents(input / freqC0)
+    let octave = centsToOctave(cents)
+    let note = centsToNote(cents)
+    let diff = centsToNoteDiff(cents)
+
+    return (
+      <div>
+        <h4>Frequency to pitch</h4>
+        <p>Converts frequencies to pitch
+          (<a onClick={() => { this.refs.input.setValue('220', true) }}>try 220</a>)
+        </p>
+        <table>
+          <tbody>
+            <tr>
+              <th>A4 (hz)</th>
+              <th>
+                <MathInput default={440}
+                  wide asKind="mathjs" ref="reference"
+                  onChange={(reference) => { this.setState({reference}) }} />
+              </th>
+            </tr>
+            <tr>
+              <th>Frequency</th>
+              <th>
+                <MathInput
+                  wide asKind="mathjs" ref="input"
+                  onChange={(input) => { this.setState({input}) }} />
+              </th>
+            </tr>
+            {error ? (
+              <tr style={{color: 'red'}}>
+                <th>Error</th>
+                <th>{error.toString()}</th>
+              </tr>
+            ) : null}
+            {canRender ? (
+              <tr>
+                <th>Pitch</th>
+                <th>
+                  {note}{octave}
+                  {diff > 0 ? ' +' : ' '}
+                  {diff !== 0 ? <PrecNumber value={diff} precision={1} /> : null}
+                  {diff !== 0 ? '¢' : null}
+                </th>
+              </tr>
+            ) : null}
+          </tbody>
+        </table>
       </div>
     )
   }

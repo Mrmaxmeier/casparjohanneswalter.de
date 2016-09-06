@@ -42,7 +42,8 @@ export class MathInput extends Component {
         onChange={(d) => {
           let value = this.refs.elem.value
           let result = processString(value, this.props.asKind)
-          this.setState({ value, error: result.error })
+          let error = result === undefined || result.error
+          this.setState({ value, error })
           if (this.props.onChange && result !== undefined) {
             this.props.onChange(result)
           }
@@ -145,7 +146,8 @@ export class FreqPlayer extends Component {
     custom: React.PropTypes.bool,
     inTable: React.PropTypes.bool,
     showTypePicker: React.PropTypes.bool,
-    defaultVolume: React.PropTypes.number
+    defaultVolume: React.PropTypes.number,
+    text: React.PropTypes.string
   }
 
   constructor (props) {
@@ -190,7 +192,9 @@ export class FreqPlayer extends Component {
     return (
       <tr>
         <th>
-          Frequency:
+          {this.props.text || 'Frequency:'}
+        </th>
+        <th>
           {this.props.freq <= 0 || this.props.freq >= 22050 ? (
             <PrecNumber digits={5} value={this.props.freq} style={{color: 'red'}}/>
           ) : <PrecNumber digits={5} value={this.props.freq} />} (hz)
