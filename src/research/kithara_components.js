@@ -4,6 +4,8 @@ import $ from 'jquery'
 
 import { keys, map } from 'underline'
 
+import { CompactFrequencyPlayer } from './components.jsx'
+
 import { presets } from './kithara_presets'
 
 import {
@@ -77,6 +79,7 @@ class LowerInput extends React.Component {
     overtone: React.PropTypes.any
   }
   getImg () {
+    // TODO: components/NoteImage
     let a = Math.floor((fracToCent(this.props.frac) + 100 / 12) * 72 / 1200)
     let x = this.props.octave + Math.floor(a / 72)
     let mod = (a, b) => {
@@ -153,6 +156,7 @@ class LowerInput extends React.Component {
           <a data-row='1' onClick={() => { this.props.applyCB() }}>apply</a>
         )}
         <img style={{maxWidth: '5em'}} src={this.getImg()} />
+        <CompactFrequencyPlayer freq={(24.5 * Math.pow(2, this.props.octave)) * (this.props.frac[0] / this.props.frac[1]) } />
       </td>
     )
   }

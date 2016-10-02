@@ -78,6 +78,23 @@ export class FractionToCents extends Component {
   }
 }
 
+export class NoteDisplay extends Component {
+  render () {
+    let cents = this.props.cents         
+    let octave = centsToOctave(cents)
+    let note = centsToNote(cents)
+    let diff = centsToNoteDiff(cents)
+    return (
+      <div>
+          {note}{octave}
+          {diff > 0 ? ' +' : ' '}
+          {diff !== 0 ? <PrecNumber value={diff} precision={1} /> : null}
+          {diff !== 0 ? '¢' : null}
+      </div>
+    )
+  }
+}
+
 export class FrequencyToPitch extends Component {
   constructor (props) {
     super(props)
@@ -97,7 +114,7 @@ export class FrequencyToPitch extends Component {
     let reference = this.state.reference.value || 440
     let error = this.state.input.error || this.state.reference.error
     let canRender = this.state.input.value !== null && this.state.input.value !== undefined
-    let freqC0 = reference / math.pow(2, (1 / 12) * 57)
+    let freqC0 = reference / math.pow(2, (1 / 12) * 57)              
     let cents = ratioToCents(input / freqC0)
     let octave = centsToOctave(cents)
     let note = centsToNote(cents)
@@ -137,10 +154,7 @@ export class FrequencyToPitch extends Component {
               <tr>
                 <th>Pitch</th>
                 <th>
-                  {note}{octave}
-                  {diff > 0 ? ' +' : ' '}
-                  {diff !== 0 ? <PrecNumber value={diff} precision={1} /> : null}
-                  {diff !== 0 ? '¢' : null}
+                  <NoteDisplay a4={reference} input={input} />
                 </th>
               </tr>
             ) : null}

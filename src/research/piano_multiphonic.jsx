@@ -1,7 +1,9 @@
 import React, {Component} from 'react'
 import math from 'mathjs'
 
-import { RequiresJS, MathInput, PrecNumber } from './components.jsx'
+import { RequiresJS, MathInput, PrecNumber, NoteImage, CompactFrequencyPlayer } from './components.jsx'
+import { NoteDisplay } from './converterComponents.jsx'
+import { ratioToCents, centsToOctave } from './converters.js'
 
 const magic = [
   'c', 'c#',
@@ -146,8 +148,12 @@ export class PianoMultiphonicCalculatorII extends Component {
             <tr>
               <th>Node / Partial</th>
               <th>Frequency</th>
+              <th>Note</th>
+              <th />
             </tr>
             {fractions.map((f, i) => {
+              let freqC0 = this.state.concertPitch / math.pow(2, (1 / 12) * 57)
+              let cents = ratioToCents((freq * f.d) / freqC0)
               return (
                 <tr key={i}>
                   <th>
@@ -155,6 +161,15 @@ export class PianoMultiphonicCalculatorII extends Component {
                   </th>
                   <th>
                     <PrecNumber value={freq * f.d} />
+                  </th>
+                  <th>
+                    <NoteDisplay cents={cents} />
+                  </th>
+                  <th>
+                    <NoteImage cents={cents} />
+                  </th>
+                  <th>
+                    <CompactFrequencyPlayer freq={freq * f.d} />
                   </th>
                 </tr>
               )

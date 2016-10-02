@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import math from 'mathjs'
 
-import { processString } from './converters.js'
+import { processString, centsToOctave } from './converters.js'
 import { AudioProvider, SoundGenProvider } from './audio.js'
 
 export class MathInput extends Component {
@@ -263,6 +263,61 @@ export class FreqPlayer extends Component {
   }
 }
 
+export class CompactFrequencyPlayer extends Component {
+  static propTypes = {
+    freq: React.PropTypes.number,
+  }
+
+  constructor (props) {
+    super(props)
+    this.state = {
+      isPlaying: false,
+    }
+    this.provider = new SoundGenProvider({
+      volume: 0.5 * 0.2,
+      frequency: this.props.freq
+    })
+  }
+
+  updateProvider () {
+    this.provider.setOptions({
+      volume: 0.5 * 0.2,
+      frequency: this.props.freq
+    })
+  }
+
+  setPlaying (isPlaying) {
+    if (isPlaying) {
+      this.provider.play()
+    } else {
+      this.provider.stop()
+    }
+    this.setState({ isPlaying })
+  }
+
+  componentWillUnmount () {
+    this.provider.unload()
+  }
+
+  componentDidUpdate (prevProps, prevState) {
+    this.updateProvider()
+  }
+
+  render () {
+    let isPlaying = this.state.isPlaying
+    return (
+      <div>
+        <button disabled={isPlaying} onClick={() => {
+          this.setPlaying(true)
+        }}>Play</button>
+        <button disabled={!isPlaying} onClick={() => {
+          this.setPlaying(false)
+        }}>Stop</button>
+      </div>
+    )
+  }
+}
+
 export class RequiresJS extends Component {
   render () {
     return (
@@ -272,6 +327,21 @@ export class RequiresJS extends Component {
           instructions how to enable JavaScript in your web browser
         </a>.
       </noscript>
+    )
+  }
+}
+
+export class NoteImage extends Component {
+  render () {
+    let a = Math.floor((this.props.cents + 100 / 12) * 72 / 1200)
+    let octave = centsToOctave(this.props.cents)
+    // let x = this.props.octave + Math.floor(a / 72)
+    let mod = (a, b) => {
+      return ((a % b) + b) % b
+    }
+    let y = mod(a, 72)
+    return (
+      <img style={{width: '6em'}} src={`/static/kithara_calc/${octave}_${y}.png`} />
     )
   }
 }
