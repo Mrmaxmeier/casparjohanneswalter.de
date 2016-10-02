@@ -6,6 +6,7 @@ import { Rechner as PartchFractionRechner } from '../research/partch_bruch_rechn
 import { FractionToCents, FrequencyToPitch } from '../research/converterComponents.jsx'
 import { SoundGen } from '../research/soundgen.jsx'
 import { DiffTone } from '../research/difftone.jsx'
+import { FractionWindowing } from '../research/fraction_windowing.jsx'
 
 export class Kithara extends Component {
   render () {
@@ -107,6 +108,17 @@ export class DiffTonePage extends Component {
   }
 }
 
+export class FractionWindowingPage extends Component {
+  render () {
+    return (
+      <div>
+        <h3>Fraction Windowing</h3>
+        <FractionWindowing />
+      </div>
+    )
+  }
+}
+
 export class ResearchPage extends Component {
   render () {
     return (
@@ -116,8 +128,12 @@ export class ResearchPage extends Component {
           <li><Link to='/research/kithara'>Kithara I Calculator</Link></li>
           <li><Link to='/research/partch_fraction'>Partch Fraction Calculator</Link></li>
           <li><Link to='/research/converters'>Converters</Link></li>
-          <li><Link to='/research/soundgen'>Sound generator</Link></li>
-          <li><Link to='/research/difftone'>Difference tone generator</Link></li>
+          <li><Link to='/research/soundgen'>Sound Generator</Link></li>
+          <li><Link to='/research/difftone'>Difference Tone Generator</Link></li>
+        </ul>
+        <h3>Additional Math Tools</h3>
+        <ul>
+          <li><Link to='/research/fraction_windowing'>Fraction Windowing</Link></li>
         </ul>
       </div>
     )
