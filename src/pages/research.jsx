@@ -7,6 +7,7 @@ import { FractionToCents, FrequencyToPitch } from '../research/converterComponen
 import { SoundGen } from '../research/soundgen.jsx'
 import { DiffTone } from '../research/difftone.jsx'
 import { FractionWindowing } from '../research/fraction_windowing.jsx'
+import { PianoMultiphonicCalculatorII } from '../research/piano_multiphonic.jsx'
 
 export class Kithara extends Component {
   render () {
@@ -119,6 +120,17 @@ export class FractionWindowingPage extends Component {
   }
 }
 
+export class PianoMultiphonicCalculatorIIPage extends Component {
+  render () {
+    return (
+      <div>
+        <h3>Piano Multiphonic Calculator 2</h3>
+        <PianoMultiphonicCalculatorII />
+      </div>
+    )
+  }
+}
+
 export class ResearchPage extends Component {
   render () {
     return (
@@ -130,6 +142,7 @@ export class ResearchPage extends Component {
           <li><Link to='/research/converters'>Converters</Link></li>
           <li><Link to='/research/soundgen'>Sound Generator</Link></li>
           <li><Link to='/research/difftone'>Difference Tone Generator</Link></li>
+          <li><Link to='/research/piano_multiphonic_calculator_2'>Piano Multiphonic Calculator II</Link></li>
         </ul>
         <h3>Additional Math Tools</h3>
         <ul>

@@ -8,7 +8,11 @@ import { IndexPage } from './pages/index.jsx'
 import { WorksPage } from './pages/works.jsx'
 import { BioPage } from './pages/bio.jsx'
 import { PressPage } from './pages/press.jsx'
-import { ResearchPage, Kithara, PartchFraction, Converters, SoundGenPage, DiffTonePage, FractionWindowingPage } from './pages/research.jsx'
+import {
+  ResearchPage, Kithara, PartchFraction,
+  Converters, SoundGenPage, DiffTonePage,
+  FractionWindowingPage, PianoMultiphonicCalculatorIIPage
+} from './pages/research.jsx'
 
 import { tags, slugify } from './tags.js'
 
@@ -65,6 +69,7 @@ export class Routes extends React.Component {
           <Route path="/research/soundgen" component={SoundGenPage} />
           <Route path="/research/difftone" component={DiffTonePage} />
           <Route path="/research/fraction_windowing" component={FractionWindowingPage} />
+          <Route path="/research/piano_multiphonic_calculator_2" component={PianoMultiphonicCalculatorIIPage} />
         </Route>
         <Route path='*' component={_404Page} onEnter={_404Page.checkRedirect} />
       </Router>
@@ -72,6 +77,7 @@ export class Routes extends React.Component {
   }
 }
 
+// TODO: update
 export let routes = [
   'index',
   'works',
