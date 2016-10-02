@@ -1,11 +1,12 @@
 let webpack = require('webpack')
+let path = require('path')
 
 module.exports = {
   entry: {
     index: './src/index.jsx'
   },
   output: {
-    path: 'build',
+    path: path.resolve('build'),
     filename: '[name].js'
   },
   module: {
