@@ -11,7 +11,8 @@ import { PressPage } from './pages/press.jsx'
 import {
   ResearchPage, Kithara, PartchFraction,
   Converters, SoundGenPage, DiffTonePage,
-  FractionWindowingPage, PianoMultiphonicCalculatorIIPage
+  FractionWindowingPage, PianoMultiphonicCalculatorIIPage,
+  HarmonicBeatingCalculatorPage
 } from './pages/research.jsx'
 
 import { tags, slugify } from './tags.js'
@@ -70,6 +71,7 @@ export class Routes extends React.Component {
           <Route path="/research/difftone" component={DiffTonePage} />
           <Route path="/research/fraction_windowing" component={FractionWindowingPage} />
           <Route path="/research/piano_multiphonic_calculator_2" component={PianoMultiphonicCalculatorIIPage} />
+          <Route path="/research/harmonic_beating_calculator" component={HarmonicBeatingCalculatorPage} />
         </Route>
         <Route path='*' component={_404Page} onEnter={_404Page.checkRedirect} />
       </Router>

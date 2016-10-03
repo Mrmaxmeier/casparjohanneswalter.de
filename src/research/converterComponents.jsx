@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { MathInput, FreqPlayer, PrecNumber, RequiresJS } from './components.jsx'
-import { ratioToCents, centsToOctave, centsToNote, centsToNoteDiff } from './converters.js'
-import math from 'mathjs'
+import { ratioToCents, centsToOctave, centsToNote, centsToNoteDiff, concertPitchToC0 } from './converters.js'
 
 export class FractionToCents extends Component {
   constructor (props) {
@@ -114,7 +113,7 @@ export class FrequencyToPitch extends Component {
     let reference = this.state.reference.value || 440
     let error = this.state.input.error || this.state.reference.error
     let canRender = this.state.input.value !== null && this.state.input.value !== undefined
-    let freqC0 = reference / math.pow(2, (1 / 12) * 57)              
+    let freqC0 = concertPitchToC0(reference)
     let cents = ratioToCents(input / freqC0)
     let octave = centsToOctave(cents)
     let note = centsToNote(cents)

@@ -65,6 +65,10 @@ export function centsToNoteDiff (cents) {
   }
 }
 
+export function concertPitchToC0 (reference) {
+  return reference / math.pow(2, (1 / 12) * 57)
+}
+
 export function intelligenterMediant (zahl, precision) {
   precision = precision || 2
   let a = math.floor(zahl.n / zahl.d)
