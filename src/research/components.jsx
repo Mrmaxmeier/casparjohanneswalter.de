@@ -265,13 +265,13 @@ export class FreqPlayer extends Component {
 
 export class CompactFrequencyPlayer extends Component {
   static propTypes = {
-    freq: React.PropTypes.number,
+    freq: React.PropTypes.number
   }
 
   constructor (props) {
     super(props)
     this.state = {
-      isPlaying: false,
+      isPlaying: false
     }
     this.provider = new SoundGenProvider({
       volume: 0.5 * 0.2,
@@ -307,12 +307,9 @@ export class CompactFrequencyPlayer extends Component {
     let isPlaying = this.state.isPlaying
     return (
       <div>
-        <button disabled={isPlaying} onClick={() => {
-          this.setPlaying(true)
-        }}>Play</button>
-        <button disabled={!isPlaying} onClick={() => {
-          this.setPlaying(false)
-        }}>Stop</button>
+        <button style={{background: isPlaying ? '#f15f55' : '#2196f3'}} onClick={() => {
+          this.setPlaying(!isPlaying)
+        }}>{isPlaying ? 'Stop' : 'Play'}</button>
       </div>
     )
   }
