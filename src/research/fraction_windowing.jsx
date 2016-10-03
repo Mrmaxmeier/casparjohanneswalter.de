@@ -29,17 +29,18 @@ export class FractionWindowing extends Component {
       input = math.fraction(input)
       output = intelligenterMediant(input, this.state.precision)
       let smallestDiff = null
-      let smaller = []
+      let smaller = [false]
       for (let i = 0; i < output.length; i++) {
         let e = output[i]
         let currentDiff = math.abs(e - input)
         if (smallestDiff === null || currentDiff < smallestDiff) {
           smallestDiff = currentDiff
           classifications.push('good')
-          smaller.push(true)
         } else {
           classifications.push('normal')
-          smaller.push(false)
+        }
+        if (i > 0) {
+          smaller.push(output[i] > output[i - 1])
         }
       }
       let c = smaller[0]
@@ -136,6 +137,7 @@ export class FractionWindowing extends Component {
                 <tr key={i} style={{ background: color }}>
                   <th>#{i + 1}</th>
                   <th>{f.n} / {f.d}</th>
+                  <th><PrecNumber value={f.n / f.d} precision={this.state.precision} /></th>
                   <th><PrecNumber value={diff * 100} precision={this.state.precision} />%</th>
                 </tr>
               )
