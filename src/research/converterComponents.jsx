@@ -77,23 +77,6 @@ export class FractionToCents extends Component {
   }
 }
 
-export class NoteDisplay extends Component {
-  render () {
-    let cents = this.props.cents         
-    let octave = centsToOctave(cents)
-    let note = centsToNote(cents)
-    let diff = centsToNoteDiff(cents)
-    return (
-      <div>
-          {note}{octave}
-          {diff > 0 ? ' +' : ' '}
-          {diff !== 0 ? <PrecNumber value={diff} precision={1} /> : null}
-          {diff !== 0 ? '¢' : null}
-      </div>
-    )
-  }
-}
-
 export class FrequencyToPitch extends Component {
   constructor (props) {
     super(props)

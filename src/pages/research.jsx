@@ -9,6 +9,7 @@ import { DiffTone } from '../research/difftone.jsx'
 import { FractionWindowing } from '../research/fraction_windowing.jsx'
 import { PianoMultiphonicCalculatorII } from '../research/piano_multiphonic.jsx'
 import { HarmonicBeatingCalculator } from '../research/harmonic_beating.jsx'
+import { TonalityDiamond } from '../research/tonalitydiamond.jsx'
 
 export class Kithara extends Component {
   render () {
@@ -143,6 +144,17 @@ export class HarmonicBeatingCalculatorPage extends Component {
   }
 }
 
+export class TonalityDiamondPage extends Component {
+  render () {
+    return (
+      <div>
+        <h3>Tonality Diamond</h3>
+        <TonalityDiamond />
+      </div>
+    )
+  }
+}
+
 export class ResearchPage extends Component {
   render () {
     // TODO
@@ -157,6 +169,7 @@ export class ResearchPage extends Component {
           <li><Link to='/research/difftone'>Difference Tone Generator</Link></li>
           <li><Link to='/research/piano_multiphonic_calculator_2'>Piano Multiphonic Calculator II</Link></li>
           <li><Link to='/research/harmonic_beating_calculator'>Harmonic Beating Calculator I</Link></li>
+          <li><Link to='/research/tonality_diamond'>Tonality Diamond</Link></li>
         </ul>
         <h3>Additional Math Tools</h3>
         <ul>

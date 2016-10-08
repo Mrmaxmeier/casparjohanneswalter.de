@@ -1,8 +1,7 @@
 import React, {Component} from 'react'
 import math from 'mathjs'
 
-import { RequiresJS, MathInput, PrecNumber, NoteImage, CompactFrequencyPlayer } from './components.jsx'
-import { NoteDisplay } from './converterComponents.jsx'
+import { RequiresJS, MathInput, PrecNumber, NoteImage, NoteDisplay, CompactFrequencyPlayer } from './components.jsx'
 import { ratioToCents, centsToOctave } from './converters.js'
 
 const magic = [

@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import math from 'mathjs'
 
-import { processString, centsToOctave } from './converters.js'
+import { processString, centsToOctave, centsToNote, centsToNoteDiff } from './converters.js'
 import { AudioProvider, SoundGenProvider } from './audio.js'
 
 export class MathInput extends Component {
@@ -265,7 +265,8 @@ export class FreqPlayer extends Component {
 
 export class CompactFrequencyPlayer extends Component {
   static propTypes = {
-    freq: React.PropTypes.number
+    freq: React.PropTypes.number,
+    buttonStyle: React.PropTypes.object
   }
 
   constructor (props) {
@@ -305,9 +306,10 @@ export class CompactFrequencyPlayer extends Component {
 
   render () {
     let isPlaying = this.state.isPlaying
+    let style = Object.assign({background: isPlaying ? '#f15f55' : '#2196f3'}, this.props.buttonStyle || {})
     return (
       <div>
-        <button style={{background: isPlaying ? '#f15f55' : '#2196f3'}} onClick={() => {
+        <button style={style} onClick={() => {
           this.setPlaying(!isPlaying)
         }}>{isPlaying ? 'Stop' : 'Play'}</button>
       </div>
@@ -329,6 +331,9 @@ export class RequiresJS extends Component {
 }
 
 export class NoteImage extends Component {
+  static propTypes = {
+    cents: React.PropTypes.number
+  }
   render () {
     let a = Math.floor((this.props.cents + 100 / 12) * 72 / 1200)
     let octave = centsToOctave(this.props.cents)
@@ -339,6 +344,26 @@ export class NoteImage extends Component {
     let y = mod(a, 72)
     return (
       <img style={{width: '6em'}} src={`/static/kithara_calc/${octave}_${y}.png`} />
+    )
+  }
+}
+
+export class NoteDisplay extends Component {
+  static propTypes = {
+    cents: React.PropTypes.number
+  }
+  render () {
+    let cents = this.props.cents
+    let octave = centsToOctave(cents)
+    let note = centsToNote(cents)
+    let diff = centsToNoteDiff(cents)
+    return (
+      <div>
+          {note}{octave}
+          {diff > 0 ? ' +' : ' '}
+          {diff !== 0 ? <PrecNumber value={diff} precision={1} /> : null}
+          {diff !== 0 ? '¢' : null}
+      </div>
     )
   }
 }
