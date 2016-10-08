@@ -10,6 +10,7 @@ import { FractionWindowing } from '../research/fraction_windowing.jsx'
 import { PianoMultiphonicCalculatorII } from '../research/piano_multiphonic.jsx'
 import { HarmonicBeatingCalculator } from '../research/harmonic_beating.jsx'
 import { TonalityDiamond } from '../research/tonalitydiamond.jsx'
+import { ChordPlayer } from '../research/chordplayer.jsx'
 
 export class Kithara extends Component {
   render () {
@@ -155,6 +156,17 @@ export class TonalityDiamondPage extends Component {
   }
 }
 
+export class ChordPlayerPage extends Component {
+  render () {
+    return (
+      <div>
+        <h3>Chord Player</h3>
+        <ChordPlayer />
+      </div>
+    )
+  }
+}
+
 export class ResearchPage extends Component {
   render () {
     // TODO
@@ -170,6 +182,7 @@ export class ResearchPage extends Component {
           <li><Link to='/research/piano_multiphonic_calculator_2'>Piano Multiphonic Calculator II</Link></li>
           <li><Link to='/research/harmonic_beating_calculator'>Harmonic Beating Calculator I</Link></li>
           <li><Link to='/research/tonality_diamond'>Tonality Diamond</Link></li>
+          <li><Link to='/research/chord_player'>Chord Player I</Link></li>
         </ul>
         <h3>Additional Math Tools</h3>
         <ul>

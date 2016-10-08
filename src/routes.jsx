@@ -12,7 +12,8 @@ import {
   ResearchPage, Kithara, PartchFraction,
   Converters, SoundGenPage, DiffTonePage,
   FractionWindowingPage, PianoMultiphonicCalculatorIIPage,
-  HarmonicBeatingCalculatorPage, TonalityDiamondPage
+  HarmonicBeatingCalculatorPage, TonalityDiamondPage,
+  ChordPlayerPage
 } from './pages/research.jsx'
 
 import { tags, slugify } from './tags.js'
@@ -73,6 +74,7 @@ export class Routes extends React.Component {
           <Route path="/research/piano_multiphonic_calculator_2" component={PianoMultiphonicCalculatorIIPage} />
           <Route path="/research/harmonic_beating_calculator" component={HarmonicBeatingCalculatorPage} />
           <Route path="/research/tonality_diamond" component={TonalityDiamondPage} />
+          <Route path="/research/chord_player" component={ChordPlayerPage} />
         </Route>
         <Route path='*' component={_404Page} onEnter={_404Page.checkRedirect} />
       </Router>
