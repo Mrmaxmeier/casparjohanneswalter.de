@@ -1,10 +1,8 @@
 import React, {Component} from 'react'
-import math from 'mathjs'
 
 import { RequiresJS, MathInput, NoteDisplay, NoteImage, CompactFrequencyPlayer } from './components.jsx'
 import { concertPitchToC0, ratioToCents } from './converters.js'
-import { range, clone } from 'underscore'
-
+import { clone } from 'underscore'
 
 export class ChordPlayer extends Component {
   constructor (props) {

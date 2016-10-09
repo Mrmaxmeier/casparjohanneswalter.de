@@ -5,7 +5,6 @@ import { RequiresJS, MathInput, NoteDisplay, NoteImage, CompactFrequencyPlayer }
 import { concertPitchToC0, ratioToCents } from './converters.js'
 import { range } from 'underscore'
 
-
 let diamond = [
                       [[11, 4]],
                   [[9, 4], [11, 5]],

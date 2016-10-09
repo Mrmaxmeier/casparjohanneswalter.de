@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import math from 'mathjs'
 
 import { RequiresJS, MathInput, PrecNumber, NoteImage, NoteDisplay, CompactFrequencyPlayer } from './components.jsx'
-import { ratioToCents, centsToOctave } from './converters.js'
+import { ratioToCents } from './converters.js'
 
 const magic = [
   'c', 'c#',
