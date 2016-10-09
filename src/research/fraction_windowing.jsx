@@ -149,7 +149,7 @@ export class FractionWindowing extends Component {
                   <th><PrecNumber value={f.n / f.d} precision={this.state.precision} /></th>
                   <th><PrecNumber value={diff * 100} precision={this.state.precision} />%</th>
                   <th><PrecNumber value={cents} precision={this.state.precision} /></th>
-                  <th><PrecNumber value={inputCents - cents} precision={this.state.precision} />%</th>
+                  <th><PrecNumber value={inputCents - cents} precision={this.state.precision} /></th>
                 </tr>
               )
             })}

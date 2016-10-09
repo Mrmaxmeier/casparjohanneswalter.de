@@ -108,9 +108,18 @@ class LowerInput extends React.Component {
 
     let cents = fracToCent(this.props.frac)
     let near = Math.round(cents / 100) * 100
+    console.log(charmap[near / 100], near)
     let diff = Math.round((cents - near) * 10) / 10
 
     return charmap[near / 100] + (diff > 0 ? ' +' : ' ') + diff + '¢'
+  }
+
+  getFreq () {
+    let cents = fracToCent(this.props.frac) + this.props.octave * 1200
+    let g0 = (440 / Math.pow(2, 50 / 12))
+    // ♮c - ♯f => octave - 1
+    let octave = (cents / 100) % 12 >= 5 ? this.props.octave - 1 : this.props.octave
+    return g0 * Math.pow(2, octave) * (this.props.frac[0] / this.props.frac[1])
   }
 
   render () {
@@ -156,7 +165,7 @@ class LowerInput extends React.Component {
           <a data-row='1' onClick={() => { this.props.applyCB() }}>apply</a>
         )}
         <img style={{maxWidth: '5em'}} src={this.getImg()} />
-        <CompactFrequencyPlayer freq={(24.5 * Math.pow(2, this.props.octave)) * (this.props.frac[0] / this.props.frac[1]) } />
+        <CompactFrequencyPlayer freq={this.getFreq()} />
       </td>
     )
   }
