@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 
 import { RequiresJS, MathInput, NoteDisplay, NoteImage, CompactFrequencyPlayer } from './components.jsx'
 import { concertPitchToC0, ratioToCents } from './converters.js'
-import { clone } from 'underscore'
+import { range, clone } from 'underscore'
 
 export class ChordPlayer extends Component {
   constructor (props) {
@@ -10,7 +10,7 @@ export class ChordPlayer extends Component {
     this.state = {
       concertPitch: 440,
       pitch11: 440 / 9 * 8,
-      data: new Array(8).fill(null).map(() => new Array(6).fill(1)),
+      data: new Array(8).fill(null).map(() => range(6).map((i) => i === 0 ? 1 : null)),
       playingAll: new Array(8).fill(false)
     }
     this.players = new Array(8).fill(null).map(() => new Array(6).fill(undefined))
@@ -62,10 +62,10 @@ export class ChordPlayer extends Component {
                   {row.map((e, i) => {
                     return (
                       <th key={i}>
-                        <MathInput asKind="mathjs-ignoreerror" default="1 / 1"
-                          onChange={(value) => {
+                        <MathInput asKind="mathjs" default={i === 0 ? '1 / 1' : ''}
+                          onChange={(v) => {
                             let data = clone(this.state.data)
-                            data[rowi][i] = value
+                            data[rowi][i] = v.value || null
                             this.setState({ data })
                           }} />
                         <CompactFrequencyPlayer freq={this.state.pitch11 * e}
@@ -82,7 +82,11 @@ export class ChordPlayer extends Component {
                         let playingAll = clone(this.state.playingAll)
                         playingAll[rowi] = !isPlaying
                         this.setState({ playingAll })
-                        this.players[rowi].forEach((p) => p.setPlaying(!isPlaying))
+                        this.players[rowi].forEach((p, i) => {
+                          if (this.state.data[rowi][i] !== null || isPlaying) {
+                            p.setPlaying(!isPlaying)
+                          }
+                        })
                       }}>{isPlaying ? 'Stop All' : 'Play All'}</button>
                     </div>
                   </th>

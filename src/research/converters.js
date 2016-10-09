@@ -69,6 +69,10 @@ export function concertPitchToC0 (reference) {
   return reference / math.pow(2, (1 / 12) * 57)
 }
 
+export function centsToFrequency (cents, a4) {
+  return math.pow(2, (cents / 1200)) * concertPitchToC0(a4)
+}
+
 export function intelligenterMediant (zahl, precision) {
   precision = precision || 2
   let a = math.floor(zahl.n / zahl.d)
