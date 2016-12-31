@@ -1,8 +1,7 @@
 
 import React from 'react'
-import $ from 'jquery'
 
-import { keys, map } from 'underline'
+import { keys, map, clone, extend } from 'underline'
 
 import { CompactFrequencyPlayer } from './components.jsx'
 
@@ -142,7 +141,7 @@ class LowerInput extends React.Component {
               <input type='text' tabIndex={this.props.tabIndex}
                 placeholder='' value={overtone}
                 onChange={(d) => {
-                  this.props.setOvertone(parseInt($(d.target).val()))
+                  this.props.setOvertone(parseInt(d.target.value))
                 }} style={{width: '3.5em', heigh: '1.5em'}} />
             </span>
           </td>
@@ -156,7 +155,7 @@ class LowerInput extends React.Component {
           <input type='text' tabIndex={this.props.tabIndex} style={style}
             placeholder='3' value={octave}
             onChange={(d) => {
-              this.props.setOctaveCB(this.props.index, parseInt($(d.target).val()))
+              this.props.setOctaveCB(this.props.index, parseInt(d.target.value))
             }} />
         </span>
         <div className='cents'>{cents}</div>
@@ -253,16 +252,16 @@ export class KitharaCalc extends React.Component {
     return state
   }
   setPreset (d) {
-    let preset = $(d.target).val()
+    let preset = d.target.value
     this.setStateFromPreset(this.state.instrument, preset)
   }
   setInstrument (d) {
-    let instrument = $(d.target).val()
+    let instrument = d.target.value
     let preset = Object.keys(presets[instrument])[0]
     this.setStateFromPreset(instrument, preset)
   }
   setRatioCB (isUpper, index, ratio) {
-    let state = $.extend(true, {}, this.state)
+    let state = this.state::clone()
     if (isUpper) {
       state.upperRow[index].ratio = ratio
     } else {
@@ -275,7 +274,7 @@ export class KitharaCalc extends React.Component {
     }
   }
   setOctave (isUpper, index, octave) {
-    let state = $.extend(true, {}, this.state)
+    let state = this.state::clone()
     if (isUpper) {
       state.upperRow[index].octave = octave
     } else {
@@ -295,7 +294,7 @@ export class KitharaCalc extends React.Component {
       this.clearOvertone()
       return
     }
-    let state = $.extend(true, {}, this.state)
+    let state = this.state::clone()
     state.lowerRow[0].overtone = overtone
     state.lowerRow = calcOvertone(state, overtone)
     this.setState(state)
@@ -311,7 +310,7 @@ export class KitharaCalc extends React.Component {
     this.setState({ lowerRow })
   }
   handleApply (index) {
-    let state = $.extend(true, this.state, {
+    let state = this.state::extend({
       upperRow: this.state.upperRow,
       lowerRow: calcState(this.state.upperRow, {
         ratio: this.state.lowerRow[index].ratio,
