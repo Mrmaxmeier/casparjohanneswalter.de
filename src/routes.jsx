@@ -2,6 +2,7 @@ import React from 'react'
 import { Router, Route, Link, IndexRedirect } from 'react-router'
 import ReactGA from 'react-ga'
 import { dependencies } from '../package.json'
+import { keys, map } from 'underline'
 
 import { App } from './app.jsx'
 import { IndexPage } from './pages/index.jsx'
@@ -46,6 +47,25 @@ class _404Page extends React.Component {
   }
 }
 
+let routeComponents = {
+  '/index': IndexPage,
+  '/works': WorksPage,
+  '/tags/:tag': WorksPage,
+  '/biography': BioPage,
+  '/press': PressPage,
+  '/research': ResearchPage,
+  '/research/kithara': Kithara,
+  '/research/partch_fraction': PartchFraction,
+  '/research/converters': Converters,
+  '/research/soundgen': SoundGenPage,
+  '/research/difftone': DiffTonePage,
+  '/research/fraction_windowing': FractionWindowingPage,
+  '/research/piano_multiphonic_calculator_2': PianoMultiphonicCalculatorIIPage,
+  '/research/harmonic_beating_calculator': HarmonicBeatingCalculatorPage,
+  '/research/tonality_diamond': TonalityDiamondPage,
+  '/research/chord_player': ChordPlayerPage
+}
+
 export class Routes extends React.Component {
   static propTypes = {
     analytics: React.PropTypes.bool
@@ -55,26 +75,12 @@ export class Routes extends React.Component {
       ReactGA.set({ page: window.location.pathname })
       ReactGA.pageview(window.location.pathname)
     } : null
+    let routes = routeComponents::map((v, k) => <Route key={k} path={k} component={v} />)
     return (
       <Router history={history} onUpdate={onUpdate}>
         <Route path="/" component={App}>
           <IndexRedirect to='/index' />
-          <Route path="/index" component={IndexPage} />
-          <Route path="/works" component={WorksPage} />
-          <Route path="/tags/:tag" component={WorksPage} />
-          <Route path="/biography" component={BioPage} />
-          <Route path="/press" component={PressPage} />
-          <Route path="/research" component={ResearchPage} />
-          <Route path="/research/kithara" component={Kithara} />
-          <Route path="/research/partch_fraction" component={PartchFraction} />
-          <Route path="/research/converters" component={Converters} />
-          <Route path="/research/soundgen" component={SoundGenPage} />
-          <Route path="/research/difftone" component={DiffTonePage} />
-          <Route path="/research/fraction_windowing" component={FractionWindowingPage} />
-          <Route path="/research/piano_multiphonic_calculator_2" component={PianoMultiphonicCalculatorIIPage} />
-          <Route path="/research/harmonic_beating_calculator" component={HarmonicBeatingCalculatorPage} />
-          <Route path="/research/tonality_diamond" component={TonalityDiamondPage} />
-          <Route path="/research/chord_player" component={ChordPlayerPage} />
+          {routes}
         </Route>
         <Route path='*' component={_404Page} onEnter={_404Page.checkRedirect} />
       </Router>
@@ -82,17 +88,5 @@ export class Routes extends React.Component {
   }
 }
 
-// TODO: update
-export let routes = [
-  'index',
-  'works',
-  'biography',
-  'press',
-  'research',
-  'research/kithara',
-  'research/partch_fraction',
-  'research/converters',
-  'research/soundgen',
-  'research/difftone',
-  '404'
-].concat(tags().map((tag) => 'tags/' + slugify(tag)))
+export let routes = routeComponents::keys()
+  .concat(tags().map((tag) => 'tags/' + slugify(tag)))
