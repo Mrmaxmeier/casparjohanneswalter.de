@@ -108,7 +108,6 @@ class LowerInput extends React.Component {
 
     let cents = fracToCent(this.props.frac)
     let near = Math.round(cents / 100) * 100
-    console.log(charmap[near / 100], near)
     let diff = Math.round((cents - near) * 10) / 10
 
     return charmap[near / 100] + (diff > 0 ? ' +' : ' ') + diff + '¢'
@@ -255,13 +254,11 @@ export class KitharaCalc extends React.Component {
   }
   setPreset (d) {
     let preset = $(d.target).val()
-    console.log('setPreset', preset)
     this.setStateFromPreset(this.state.instrument, preset)
   }
   setInstrument (d) {
     let instrument = $(d.target).val()
     let preset = Object.keys(presets[instrument])[0]
-    console.log('setInstrument', instrument)
     this.setStateFromPreset(instrument, preset)
   }
   setRatioCB (isUpper, index, ratio) {

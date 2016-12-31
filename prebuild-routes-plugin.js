@@ -14,14 +14,14 @@ function requirePatched (asset) {
 
 module.exports = function (options) {
   function buildRoute (routes, route, compilation, base) {
-    console.log('building route', route)
+    console.error('building route', route) // don't disturb stdout
     match({ routes: routes.node, location: route }, (error, redirectLocation, renderProps) => {
       if (error) {
         console.log(error.message)
         throw error
       } else if (redirectLocation) {
         // res.redirect(302, redirectLocation.pathname + redirectLocation.search)
-        console.log(302, redirectLocation.pathname + redirectLocation.search)
+        // console.log(302, redirectLocation.pathname + redirectLocation.search)
         let err = '302 redirect for route ' + route
         throw err
       } else if (renderProps) {

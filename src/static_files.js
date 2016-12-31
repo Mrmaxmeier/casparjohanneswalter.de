@@ -1,4 +1,4 @@
-require('file?name=[name].[ext]!./index.html')
-require('file?name=style.css!sass!./style.scss')
+require('file-loader?name=[name].[ext]!./index.html')
+require('file-loader?name=style.css!sass-loader!./style.scss')
 
-require('file?name=robots.txt!../static/robots.txt')
+require('file-loader?name=robots.txt!../static/robots.txt')
