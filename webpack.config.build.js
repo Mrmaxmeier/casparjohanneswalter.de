@@ -9,6 +9,15 @@ module.exports = Object.assign(config, {
     routes: './src/routes.jsx'
   },
   plugins: [
+    new webpack.optimize.UglifyJsPlugin({
+      compress: {
+        warnings: false
+      }
+    }),
+    new webpack.LoaderOptionsPlugin({
+      minimize: true,
+      debug: false
+    }),
     new webpack.DefinePlugin({
       __IN_BUILD__: JSON.stringify(true)
     }),

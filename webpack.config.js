@@ -31,6 +31,7 @@ module.exports = {
   plugins: [
     new webpack.DefinePlugin({
       __IN_BUILD__: JSON.stringify(false)
-    })
+    }),
+    new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /de|en/)
   ]
 }
