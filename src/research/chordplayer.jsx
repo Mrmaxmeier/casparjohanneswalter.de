@@ -18,14 +18,15 @@ export class ChordPlayer extends Component {
       ),
       playingAll: new Array(rows).fill(false),
       mode: 'ratio',
-      presets: {}
+      presets: {'-- New --': null},
+      preset: '-- New --'
     }
     this.players = new Array(rows).fill(null).map(() => new Array(6).fill(undefined))
     this.inputs = new Array(rows).fill(null).map(() => new Array(6).fill(undefined))
     if (typeof window !== 'undefined') {
       setTimeout(() => {
         this.setState({ presets: this.presets() })
-      })
+      }, 1000)
     }
   }
 
@@ -77,7 +78,7 @@ export class ChordPlayer extends Component {
           this.inputs[ri][i].setValue(input, true)
         })
       })
-      this.setState({ mode: preset.mode })
+      this.setState({ mode: preset.mode, preset: presetName })
     })
   }
 
@@ -156,7 +157,7 @@ export class ChordPlayer extends Component {
                 Preset
               </th>
               <th>
-                <select onChange={this.setPreset.bind(this)}>
+                <select onChange={this.setPreset.bind(this)} value={this.state.preset}>
                   {this.state.presets::keys().map((key) => {
                     return <option key={key} value={key}>{key}</option>
                   })}
@@ -164,7 +165,7 @@ export class ChordPlayer extends Component {
               </th>
               <th>
                 <button onClick={() => {
-                  let name = window.prompt('Preset Name', 'my preset 1')
+                  let name = window.prompt('Preset Name', this.state.preset)
                   let data = this.dumpPreset()
                   let presets = window.localStorage.getItem('chordPlayerPresets')
                   presets = JSON.parse(presets || '{}')
