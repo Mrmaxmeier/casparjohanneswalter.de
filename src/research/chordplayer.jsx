@@ -18,10 +18,15 @@ export class ChordPlayer extends Component {
       ),
       playingAll: new Array(rows).fill(false),
       mode: 'ratio',
-      presets: this.presets()
+      presets: {}
     }
     this.players = new Array(rows).fill(null).map(() => new Array(6).fill(undefined))
     this.inputs = new Array(rows).fill(null).map(() => new Array(6).fill(undefined))
+    if (typeof window !== 'undefined') {
+      setTimeout(() => {
+        this.setState({ presets: this.presets() })
+      })
+    }
   }
 
   resizeArray (arr, length, fill) {
@@ -33,20 +38,17 @@ export class ChordPlayer extends Component {
   }
 
   presets () {
-    if (typeof window !== 'undefined') {
-      let data = window.localStorage.getItem('chordPlayerPresets') || '{}'
-      let presets = {
-        '-- New --': {
-          concertPitch: '440',
-          pitch11: '440 / 9 * 8',
-          rows: 8,
-          mode: 'ratio',
-          data: range(8).map(() => ['1 / 1', '', '', '', '', ''])
-        }
-      }::extend(JSON.parse(data))
-      return presets
-    }
-    return {}
+    let data = window.localStorage.getItem('chordPlayerPresets') || '{}'
+    let presets = {
+      '-- New --': {
+        concertPitch: '440',
+        pitch11: '440 / 9 * 8',
+        rows: 8,
+        mode: 'ratio',
+        data: range(8).map(() => ['1 / 1', '', '', '', '', ''])
+      }
+    }::extend(JSON.parse(data))
+    return presets
   }
 
   setRows (rows, cb) {
