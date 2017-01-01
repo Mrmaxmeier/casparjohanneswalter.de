@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import { pow, gcd, max, abs, fraction } from 'mathjs'
 
-import { RequiresJS, MathInput, PrecNumber, NoteImage, NoteDisplay, CompactFrequencyPlayer } from './components.jsx'
+import { MathInput, PrecNumber, NoteImage, NoteDisplay, CompactFrequencyPlayer } from './components.jsx'
 import { ratioToCents } from './converters.js'
 
 const magic = [
@@ -75,7 +75,6 @@ export class PianoMultiphonicCalculatorII extends Component {
     }
     return (
       <div>
-        <RequiresJS />
         <table>
           <tbody>
             <tr>

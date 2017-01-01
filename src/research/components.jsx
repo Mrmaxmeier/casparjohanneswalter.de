@@ -322,19 +322,6 @@ export class CompactFrequencyPlayer extends Component {
   }
 }
 
-export class RequiresJS extends Component {
-  render () {
-    return (
-      <noscript>
-        For full functionality of this page it is necessary to enable JavaScript.
-        Here are the <a href="http://www.enable-javascript.com" target="_blank">
-          instructions how to enable JavaScript in your web browser
-        </a>.
-      </noscript>
-    )
-  }
-}
-
 export class NoteImage extends Component {
   static propTypes = {
     cents: React.PropTypes.number

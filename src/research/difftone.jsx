@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import { min, max, abs } from 'mathjs'
 
-import {RequiresJS, MathInput, FreqPlayer, SpecificRangeSlider} from './components.jsx'
+import {MathInput, FreqPlayer, SpecificRangeSlider} from './components.jsx'
 
 export class DiffTone extends Component {
   constructor (props) {
@@ -28,7 +28,6 @@ export class DiffTone extends Component {
     let val = this.state.inverted ? (v) => (1 / v) * freq1 * freq2 : (v) => v
     return (
       <div>
-        <RequiresJS />
         <table>
           <tbody>
             <tr>

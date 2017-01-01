@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 
-import { RequiresJS, MathInput, NoteDisplay, NoteImage, CompactFrequencyPlayer } from './components.jsx'
+import { MathInput, NoteDisplay, NoteImage, CompactFrequencyPlayer } from './components.jsx'
 import { concertPitchToC0, ratioToCents } from './converters.js'
 import { range } from 'underscore'
 import { clone, keys, extend } from 'underline'
@@ -99,7 +99,6 @@ export class ChordPlayer extends Component {
     let cents = ratioToCents(this.state.pitch11 / c0)
     return (
       <div>
-        <RequiresJS />
         <table>
           <tbody>
             <tr>

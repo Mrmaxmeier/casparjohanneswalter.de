@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 
-import { RequiresJS, MathInput, PrecNumber, NoteImage, CompactFrequencyPlayer } from './components.jsx'
+import { MathInput, PrecNumber, NoteImage, CompactFrequencyPlayer } from './components.jsx'
 import { ratioToCents, concertPitchToC0 } from './converters.js'
 
 export class HarmonicBeatingCalculator extends Component {
@@ -80,7 +80,6 @@ export class HarmonicBeatingCalculator extends Component {
     let c0 = concertPitchToC0(this.state.concertPitch)
     return (
       <div>
-        <RequiresJS />
         <table>
           <tbody>
             <tr>

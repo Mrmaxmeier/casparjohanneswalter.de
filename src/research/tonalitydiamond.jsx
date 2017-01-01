@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import { abs } from 'mathjs'
 
-import { RequiresJS, MathInput, NoteDisplay, NoteImage, CompactFrequencyPlayer } from './components.jsx'
+import { MathInput, NoteDisplay, NoteImage, CompactFrequencyPlayer } from './components.jsx'
 import { concertPitchToC0, ratioToCents } from './converters.js'
 import { range } from 'underscore'
 
@@ -33,7 +33,6 @@ export class TonalityDiamond extends Component {
     let cents = ratioToCents(this.state.pitch11 / c0)
     return (
       <div>
-        <RequiresJS />
         <table>
           <tbody>
             <tr>

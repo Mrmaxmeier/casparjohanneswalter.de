@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { MathInput, FreqPlayer, PrecNumber, NoteDisplay, RequiresJS } from './components.jsx'
+import { MathInput, FreqPlayer, PrecNumber, NoteDisplay } from './components.jsx'
 import { ratioToCents } from './converters.js'
 
 export class FractionToCents extends Component {
@@ -28,7 +28,6 @@ export class FractionToCents extends Component {
     ] : []
     return (
       <div>
-        <RequiresJS />
         <h4>Fraction to cents</h4>
         <p>Converts numbers zu cents
           (<a onClick={() => { this.refs.input.setValue('5 / 4', true) }}>try 5 / 4</a>)

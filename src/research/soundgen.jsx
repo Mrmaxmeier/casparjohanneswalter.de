@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import { max, sqrt, log } from 'mathjs'
 
-import {RequiresJS, MathInput, FreqPlayer, PrecNumber} from './components.jsx'
+import {MathInput, FreqPlayer, PrecNumber} from './components.jsx'
 
 export class SoundGen extends Component {
   constructor (props) {
@@ -30,7 +30,6 @@ export class SoundGen extends Component {
     let octave = this.state.octave.value || 2
     return (
       <div>
-        <RequiresJS />
         <table>
           <tbody>
             <tr>

@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import { fraction, abs, log } from 'mathjs'
 
-import { RequiresJS, MathInput, PrecNumber } from './components.jsx'
+import { MathInput, PrecNumber } from './components.jsx'
 import { intelligenterMediant, ratioToCents } from './converters.js'
 
 export class FractionWindowing extends Component {
@@ -58,7 +58,6 @@ export class FractionWindowing extends Component {
     let modeFraction = !(this.state.ma && this.state.mb)
     return (
       <div>
-        <RequiresJS />
         <table>
           <tbody>
             <tr>
