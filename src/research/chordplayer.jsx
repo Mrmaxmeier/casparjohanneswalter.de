@@ -31,16 +31,19 @@ export class ChordPlayer extends Component {
   }
 
   presets () {
-    let data = window.localStorage.getItem('chordPlayerPresets') || '{}'
-    let presets = {
-      '-- New --': {
-        concertPitch: '440',
-        pitch11: '440 / 9 * 8',
-        rows: 8,
-        data: range(8).map(() => ['1 / 1', '', '', '', '', ''])
-      }
-    }::extend(JSON.parse(data))
-    return presets
+    if (window) {
+      let data = window.localStorage.getItem('chordPlayerPresets') || '{}'
+      let presets = {
+        '-- New --': {
+          concertPitch: '440',
+          pitch11: '440 / 9 * 8',
+          rows: 8,
+          data: range(8).map(() => ['1 / 1', '', '', '', '', ''])
+        }
+      }::extend(JSON.parse(data))
+      return presets
+    }
+    return {}
   }
 
   setRows (rows, cb) {
