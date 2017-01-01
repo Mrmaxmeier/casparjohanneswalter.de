@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import math from 'mathjs'
+import { format } from 'mathjs'
 
 import { processString, centsToOctave, centsToNote, centsToNoteDiff } from './converters.js'
 import { AudioProvider, SoundGenProvider } from './audio.js'
@@ -9,7 +9,8 @@ export class MathInput extends Component {
     default: React.PropTypes.any,
     onChange: React.PropTypes.func,
     asKind: React.PropTypes.string,
-    wide: React.PropTypes.bool
+    wide: React.PropTypes.bool,
+    size: React.PropTypes.number
   }
   constructor (props) {
     super(props)
@@ -27,10 +28,10 @@ export class MathInput extends Component {
   }
   render () {
     let style = this.props.wide ? {
-      width: '5em',
+      width: '7.5em',
       height: '1.5em'
     } : {
-      width: '3.5em',
+      width: (this.props.size || 3.5) + 'em',
       height: '1.5em'
     }
     if (this.state.error) {
@@ -52,6 +53,10 @@ export class MathInput extends Component {
         />
     )
   }
+
+  text () {
+    return this.refs.elem.value
+  }
 }
 
 export class PrecNumber extends Component {
@@ -63,7 +68,7 @@ export class PrecNumber extends Component {
   }
   render () {
     let precision = this.props.precision || 2
-    let s = math.format(this.props.value, {precision, notation: 'fixed'})
+    let s = format(this.props.value, {precision, notation: 'fixed'})
     let style = Object.assign({
       fontFamily: 'monospace'
     }, this.props.style || {})
