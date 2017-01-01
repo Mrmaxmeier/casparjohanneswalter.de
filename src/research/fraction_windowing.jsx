@@ -16,7 +16,6 @@ export class FractionWindowing extends Component {
   }
 
   render () {
-    console.log(this.state.input)
     let input = fraction(this.state.input)
     let output = intelligenterMediant(input, this.state.precision)
     let smallestDiff = null

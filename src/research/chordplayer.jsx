@@ -16,7 +16,9 @@ export class ChordPlayer extends Component {
       data: new Array(rows).fill(null).map(
         () => range(6).map((i) => i === 0 ? 1 : null)
       ),
-      playingAll: new Array(rows).fill(false)
+      playingAll: new Array(rows).fill(false),
+      mode: 'ratio',
+      presets: this.presets()
     }
     this.players = new Array(rows).fill(null).map(() => new Array(6).fill(undefined))
     this.inputs = new Array(rows).fill(null).map(() => new Array(6).fill(undefined))
@@ -31,13 +33,14 @@ export class ChordPlayer extends Component {
   }
 
   presets () {
-    if (window) {
+    if (typeof window !== 'undefined') {
       let data = window.localStorage.getItem('chordPlayerPresets') || '{}'
       let presets = {
         '-- New --': {
           concertPitch: '440',
           pitch11: '440 / 9 * 8',
           rows: 8,
+          mode: 'ratio',
           data: range(8).map(() => ['1 / 1', '', '', '', '', ''])
         }
       }::extend(JSON.parse(data))
@@ -63,7 +66,7 @@ export class ChordPlayer extends Component {
   setPreset (d) {
     let presetName = d.target.value
     console.log('setPreset', presetName)
-    let preset = this.presets()[presetName]
+    let preset = this.state.presets[presetName]
     this.setRows(preset.rows, () => {
       this.refs.concertPitch.setValue(preset.concertPitch, true)
       this.refs.pitch11.setValue(preset.pitch11, true)
@@ -72,12 +75,14 @@ export class ChordPlayer extends Component {
           this.inputs[ri][i].setValue(input, true)
         })
       })
+      this.setState({ mode: preset.mode })
     })
   }
 
   dumpPreset () {
     return {
       rows: this.state.rows,
+      mode: this.state.mode,
       concertPitch: this.refs.concertPitch.text(),
       pitch11: this.refs.pitch11.text(),
       data: range(this.state.rows).map((ri) => {
@@ -122,6 +127,17 @@ export class ChordPlayer extends Component {
               </th>
             </tr>
             <tr>
+              <th>Mode</th>
+              <th>
+                <select onChange={(e) => {
+                  this.setState({ mode: e.target.value })
+                }} value={this.state.mode}>
+                  <option value="ratio">Ratio</option>
+                  <option value="cents">Cents</option>
+                </select>
+              </th>
+            </tr>
+            <tr>
               <th>Rows</th>
               <th>
                 <input type="number" name="rows"
@@ -139,7 +155,7 @@ export class ChordPlayer extends Component {
               </th>
               <th>
                 <select onChange={this.setPreset.bind(this)}>
-                  {this.presets()::keys().map((key) => {
+                  {this.state.presets::keys().map((key) => {
                     return <option key={key} value={key}>{key}</option>
                   })}
                 </select>
@@ -152,6 +168,7 @@ export class ChordPlayer extends Component {
                   presets = JSON.parse(presets || '{}')
                   presets[name] = data
                   window.localStorage.setItem('chordPlayerPresets', JSON.stringify(presets))
+                  this.setState({ presets })
                 }}>
                   Save current state...
                 </button>
@@ -167,6 +184,10 @@ export class ChordPlayer extends Component {
                 <tr key={rowi}>
                   <th>{rowi}</th>
                   {row.map((e, i) => {
+                    let freq = {
+                      ratio: (pitch, r) => pitch * r,
+                      cents: (pitch, r) => pitch * Math.pow(2, r / 1200)
+                    }[this.state.mode](this.state.pitch11, e)
                     return (
                       <th key={i} style={{padding: '4px'}}>
                         <MathInput size={7} asKind="mathjs" default={i === 0 ? '1 / 1' : ''}
@@ -179,7 +200,7 @@ export class ChordPlayer extends Component {
                               this.inputs[rowi][i] = ref
                             }
                           }} />
-                        <CompactFrequencyPlayer freq={this.state.pitch11 * e}
+                        <CompactFrequencyPlayer freq={freq}
                           ref={(ref) => {
                             if (this.players && this.players[rowi]) {
                               this.players[rowi][i] = ref
