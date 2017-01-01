@@ -3,7 +3,9 @@ let path = require('path')
 
 module.exports = {
   entry: {
-    index: './src/index.jsx'
+    index: './src/index.jsx',
+    react: ['react', 'react-dom'],
+    mathjs: 'mathjs'
   },
   output: {
     path: path.resolve('build'),
@@ -32,6 +34,6 @@ module.exports = {
     new webpack.DefinePlugin({
       __IN_BUILD__: JSON.stringify(false)
     }),
-    new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /de|en/)
+    new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /de|en/)
   ]
 }

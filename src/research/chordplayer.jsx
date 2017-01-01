@@ -195,7 +195,7 @@ export class ChordPlayer extends Component {
                         <MathInput size={7} asKind="mathjs" default={i === 0 ? '1 / 1' : ''}
                           onChange={(v) => {
                             let data = this.state.data::clone()
-                            data[rowi][i] = v.value || null
+                            data[rowi][i] = v.value
                             this.setState({ data })
                           }} ref={(ref) => {
                             if (this.inputs && this.inputs[rowi]) {
