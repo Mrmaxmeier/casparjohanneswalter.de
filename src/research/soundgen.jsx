@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import math from 'mathjs'
+import { max, sqrt, log } from 'mathjs'
 
 import {RequiresJS, MathInput, FreqPlayer, PrecNumber} from './components.jsx'
 
@@ -20,8 +20,8 @@ export class SoundGen extends Component {
   }
   defaultVolume (index, freq) {
     let refFreq = freq || this.state.freq.value || 440
-    refFreq = math.max(refFreq, 32)
-    let sC = 1 / math.sqrt(refFreq / 16)
+    refFreq = max(refFreq, 32)
+    let sC = 1 / sqrt(refFreq / 16)
     return Math.pow(sC, index)
   }
   render () {
@@ -58,7 +58,7 @@ export class SoundGen extends Component {
             <tr>
               <th>Sound color</th>
               <th>
-                <PrecNumber precision={3} value={1 / math.sqrt(refFreq / 16)} />
+                <PrecNumber precision={3} value={1 / sqrt(refFreq / 16)} />
               </th>
             </tr>
             <tr>
@@ -84,7 +84,7 @@ export class SoundGen extends Component {
         <table>
           <tbody>
               {Array(32).fill().map((_, i) => {
-                let freq = Math.pow(octave, math.log(i + 1, 2)) * refFreq
+                let freq = Math.pow(octave, log(i + 1, 2)) * refFreq
                 return <FreqPlayer showTypePicker={false}
                           inTable freq={freq} key={i}
                           defaultVolume={this.defaultVolume(i)}

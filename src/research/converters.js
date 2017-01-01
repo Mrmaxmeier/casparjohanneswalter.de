@@ -1,4 +1,4 @@
-import math, { fraction } from 'mathjs'
+import { fraction, log, pow, mod, floor, abs, eval as mathEval } from 'mathjs'
 import { find } from 'underline'
 
 export function processString (data, via) {
@@ -6,14 +6,14 @@ export function processString (data, via) {
     string: (data) => data,
     mathjs: (data) => {
       try {
-        return { value: math.eval(data) }
+        return { value: mathEval(data) }
       } catch (error) {
         return { error }
       }
     },
     'mathjs-ignoreerror': (data) => {
       try {
-        return math.eval(data)
+        return mathEval(data)
       } catch (error) {
         return undefined
       }
@@ -23,11 +23,11 @@ export function processString (data, via) {
 }
 
 export function ratioToCents (ratio) {
-  return math.log(ratio, 2) * 1200
+  return log(ratio, 2) * 1200
 }
 
 export function centsToRatio (cents) {
-  return math.pow(2, cents / 1200)
+  return pow(2, cents / 1200)
 }
 
 export function centsToOctave (cents) {
@@ -49,13 +49,13 @@ export function centsToNote (cents) {
     'bA', 'A',
     'bB', 'B'
   ]
-  let n = math.mod(cents + 50, 1200)
+  let n = mod(cents + 50, 1200)
   let i = Math.trunc(n / 100)
   return notes[i]
 }
 
 export function centsToNoteDiff (cents) {
-  cents = math.mod(cents, 1200)
+  cents = mod(cents, 1200)
   let noteCents = Math.trunc(cents / 100) * 100
   let diff = Math.abs(cents - noteCents)
   if (diff < 50) {
@@ -66,16 +66,16 @@ export function centsToNoteDiff (cents) {
 }
 
 export function concertPitchToC0 (reference) {
-  return reference / math.pow(2, (1 / 12) * 57)
+  return reference / pow(2, (1 / 12) * 57)
 }
 
 export function centsToFrequency (cents, a4) {
-  return math.pow(2, (cents / 1200)) * concertPitchToC0(a4)
+  return pow(2, (cents / 1200)) * concertPitchToC0(a4)
 }
 
 export function intelligenterMediant (zahl, precision) {
   precision = precision || 2
-  let a = math.floor(zahl.n / zahl.d)
+  let a = floor(zahl.n / zahl.d)
   let b = a + 1
   let fractions = [
     fraction(a, 1),
@@ -101,7 +101,7 @@ export function intelligenterMediant (zahl, precision) {
     }
 
     let current = fractions[fractions.length - 1]
-    if (math.abs(current - zahl) < 1 / Math.pow(10, precision)) {
+    if (abs(current - zahl) < 1 / Math.pow(10, precision)) {
       break
     }
   }

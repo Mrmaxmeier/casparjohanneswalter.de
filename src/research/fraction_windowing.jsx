@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import math from 'mathjs'
+import { fraction, abs, log } from 'mathjs'
 
 import { RequiresJS, MathInput, PrecNumber } from './components.jsx'
 import { intelligenterMediant, ratioToCents } from './converters.js'
@@ -17,14 +17,14 @@ export class FractionWindowing extends Component {
 
   render () {
     console.log(this.state.input)
-    let input = math.fraction(this.state.input)
+    let input = fraction(this.state.input)
     let output = intelligenterMediant(input, this.state.precision)
     let smallestDiff = null
     let smaller = [false]
     let classifications = []
     for (let i = 0; i < output.length; i++) {
       let e = output[i]
-      let currentDiff = math.abs(e - input)
+      let currentDiff = abs(e - input)
       if (smallestDiff === null || currentDiff < smallestDiff) {
         smallestDiff = currentDiff
         classifications.push('good')
@@ -40,7 +40,7 @@ export class FractionWindowing extends Component {
       if (c !== s && i > 1) {
         let a = output[i - 1]
         let b = output[i - 2]
-        if (math.abs(a - input) < math.abs(b - input)) {
+        if (abs(a - input) < abs(b - input)) {
           classifications[i - 1] = 'best'
         } else {
           classifications[i - 2] = 'best'
@@ -51,7 +51,7 @@ export class FractionWindowing extends Component {
     classifications[classifications.length - 1] = 'best'
     let checkMaMb = (ma, mb) => {
       if (ma && mb) {
-        let input = (math.log(ma / mb) / math.log(2))
+        let input = (log(ma / mb) / log(2))
         this.refs.input.setValue(input, false)
         this.setState({ input })
       }
@@ -98,7 +98,7 @@ export class FractionWindowing extends Component {
               </th>
               {!modeFraction ? (
               <th>
-                Cents: <PrecNumber value={ratioToCents(math.fraction(this.state.ma, this.state.mb))} />
+                Cents: <PrecNumber value={ratioToCents(fraction(this.state.ma, this.state.mb))} />
               </th>
               ) : null}
             </tr>
@@ -141,7 +141,7 @@ export class FractionWindowing extends Component {
                 final: 'orange'
               }[classifications[i]]
               let cents = modeFraction ? ratioToCents(f) : f * 1200
-              let inputCents = modeFraction ? ratioToCents(input) : ratioToCents(math.fraction(this.state.ma, this.state.mb))
+              let inputCents = modeFraction ? ratioToCents(input) : ratioToCents(fraction(this.state.ma, this.state.mb))
               return (
                 <tr key={i} style={{ background: color }}>
                   <th>#{i + 1}</th>

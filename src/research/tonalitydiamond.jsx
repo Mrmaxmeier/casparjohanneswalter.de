@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import math from 'mathjs'
+import { abs } from 'mathjs'
 
 import { RequiresJS, MathInput, NoteDisplay, NoteImage, CompactFrequencyPlayer } from './components.jsx'
 import { concertPitchToC0, ratioToCents } from './converters.js'
@@ -70,7 +70,7 @@ export class TonalityDiamond extends Component {
             {diamond.map((row, rowi) => {
               return (
                 <tr key={rowi}>
-                  {range(math.abs(5 - rowi)).map((_, i) => {
+                  {range(abs(5 - rowi)).map((_, i) => {
                     return (
                       <th key={i} />
                     )
@@ -100,7 +100,7 @@ export class TonalityDiamond extends Component {
                       )
                     }
                   })}
-                  {range(math.abs(5 - rowi)).map((_, i) => {
+                  {range(abs(5 - rowi)).map((_, i) => {
                     return (
                       <th key={i} />
                     )

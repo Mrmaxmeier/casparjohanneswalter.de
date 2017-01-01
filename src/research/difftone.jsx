@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import math from 'mathjs'
+import { min, max, abs } from 'mathjs'
 
 import {RequiresJS, MathInput, FreqPlayer, SpecificRangeSlider} from './components.jsx'
 
@@ -22,8 +22,8 @@ export class DiffTone extends Component {
   render () {
     let freq1 = this.state.freq1.value || 440
     let freq2 = this.state.freq2.value || 550
-    let smaller = math.min(freq1, freq2)
-    let bigger = math.max(freq1, freq2)
+    let smaller = min(freq1, freq2)
+    let bigger = max(freq1, freq2)
     let error = this.state.freq1.error || this.state.freq2.error
     let val = this.state.inverted ? (v) => (1 / v) * freq1 * freq2 : (v) => v
     return (
@@ -101,7 +101,7 @@ export class DiffTone extends Component {
             <FreqPlayer text="Freq 1:" defaultVolume={0.8} showTypePicker inTable freq={val(freq1)} />
             <FreqPlayer text="Freq 2:" defaultVolume={0.8} showTypePicker inTable freq={val(freq2)} />
             <FreqPlayer text="Diff 1:" defaultVolume={0.5} showTypePicker inTable freq={val(bigger - smaller)} />
-            <FreqPlayer text="Diff 2:" defaultVolume={0.3} showTypePicker inTable freq={val(math.abs(smaller * 2 - bigger))} />
+            <FreqPlayer text="Diff 2:" defaultVolume={0.3} showTypePicker inTable freq={val(abs(smaller * 2 - bigger))} />
           </tbody>
         </table>
       </div>

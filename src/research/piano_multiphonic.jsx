@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import math from 'mathjs'
+import { pow, gcd, max, abs, fraction } from 'mathjs'
 
 import { RequiresJS, MathInput, PrecNumber, NoteImage, NoteDisplay, CompactFrequencyPlayer } from './components.jsx'
 import { ratioToCents } from './converters.js'
@@ -26,24 +26,24 @@ export class PianoMultiphonicCalculatorII extends Component {
   }
 
   render () {
-    let a = (this.state.concertPitch / math.pow(2, 3 / 4)) / 16
-    let b = a * math.pow(2, this.state.tone / 12)
-    let freq = b * math.pow(2, this.state.octave)
+    let a = (this.state.concertPitch / pow(2, 3 / 4)) / 16
+    let b = a * pow(2, this.state.tone / 12)
+    let freq = b * pow(2, this.state.octave)
     let p1 = this.state.p1
     let p2 = this.state.p2
     let error = null
     let fractions = []
     if (p1 && p2) {
-      if (math.gcd(p1, p2) !== 1) {
-        error = 'Greatest common divisor: ' + math.gcd(p1, p2)
+      if (gcd(p1, p2) !== 1) {
+        error = 'Greatest common divisor: ' + gcd(p1, p2)
       } else {
         let l = [
-          math.max(p1, p2),
-          math.min(p1, p2)
+          max(p1, p2),
+          min(p1, p2)
         ]
         while (true) {
           let diff = l[l.length - 2] - l[l.length - 1]
-          let absdiff = math.abs(diff)
+          let absdiff = abs(diff)
           if (absdiff === 0) {
             l.pop()
             break
@@ -60,16 +60,16 @@ export class PianoMultiphonicCalculatorII extends Component {
           }
         })
         fractions = [
-          math.fraction(0, 1),
-          math.fraction(1, 2),
-          math.fraction(1, 3)
+          fraction(0, 1),
+          fraction(1, 2),
+          fraction(1, 3)
         ]
         for (let i = 3; i < newl.length; i++) {
           let nennerId = newl[i] - newl[i - 1]
           let nennerIndex = newl.indexOf(nennerId)
           let f1 = fractions[nennerIndex]
           let f2 = fractions[i - 1]
-          fractions.push(math.fraction(f1.n + f2.n, newl[i]))
+          fractions.push(fraction(f1.n + f2.n, newl[i]))
         }
       }
     }
@@ -151,7 +151,7 @@ export class PianoMultiphonicCalculatorII extends Component {
               <th />
             </tr>
             {fractions.map((f, i) => {
-              let freqC0 = this.state.concertPitch / math.pow(2, (1 / 12) * 57)
+              let freqC0 = this.state.concertPitch / pow(2, (1 / 12) * 57)
               let cents = ratioToCents((freq * f.d) / freqC0)
               return (
                 <tr key={i}>

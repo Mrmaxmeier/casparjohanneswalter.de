@@ -1,5 +1,5 @@
 import Pizzicato from 'pizzicato'
-import math from 'mathjs'
+import { max, sqrt, log } from 'mathjs'
 
 export class AudioProvider {
   constructor (options, wavetype) {
@@ -56,14 +56,14 @@ export class AudioProvider {
 export class SoundGenProvider extends AudioProvider {
   volume (index) {
     let refFreq = this.options.frequency
-    refFreq = math.max(refFreq, 32)
-    let sC = 1 / math.sqrt(refFreq / 16)
+    refFreq = max(refFreq, 32)
+    let sC = 1 / sqrt(refFreq / 16)
     return Math.pow(sC, index) * this.options.volume
   }
 
   frequency (index) {
     let octave = 2
-    return Math.pow(octave, math.log(index + 1, 2)) * this.options.frequency
+    return Math.pow(octave, log(index + 1, 2)) * this.options.frequency
   }
 
   constructor (options) {
