@@ -1,4 +1,4 @@
-import { fraction, log, pow, mod, floor, abs, eval as mathEval } from 'mathjs'
+import { fraction, log, pow, mod, floor, abs, number, eval as mathEval } from 'mathjs'
 import { find } from 'underline'
 
 export function processString (data, via) {
@@ -23,7 +23,7 @@ export function processString (data, via) {
 }
 
 export function ratioToCents (ratio) {
-  return log(ratio, 2) * 1200
+  return log(number(ratio), 2) * 1200
 }
 
 export function centsToRatio (cents) {
