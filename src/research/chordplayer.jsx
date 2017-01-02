@@ -165,6 +165,9 @@ export class ChordPlayer extends PureComponent {
               <th>
                 <button onClick={() => {
                   let name = window.prompt('Preset Name', this.state.preset)
+                  if (name === null) {
+                    return
+                  }
                   let data = this.dumpPreset()
                   let presets = window.localStorage.getItem('chordPlayerPresets')
                   presets = JSON.parse(presets || '{}')
@@ -219,7 +222,8 @@ export class ChordPlayer extends PureComponent {
                         playingAll[rowi] = !isPlaying
                         this.setState({ playingAll })
                         this.players[rowi].forEach((p, i) => {
-                          if (this.state.data[rowi][i] !== null || isPlaying) {
+                          let data = this.state.data[rowi][i]
+                          if ((data !== null && data !== undefined) || isPlaying) {
                             p.setPlaying(!isPlaying)
                           }
                         })
