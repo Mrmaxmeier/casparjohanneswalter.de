@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React, {PureComponent} from 'react'
 import { abs } from 'mathjs'
 
 import { MathInput, NoteDisplay, NoteImage, CompactFrequencyPlayer } from './components.jsx'
@@ -19,7 +19,7 @@ let diamond = [
                       [[4, 11]]
 ]
 
-export class TonalityDiamond extends Component {
+export class TonalityDiamond extends PureComponent {
   constructor (props) {
     super(props)
     this.state = {

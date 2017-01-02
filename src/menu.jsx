@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router'
 
-class MenuLink extends React.Component {
+class MenuLink extends React.PureComponent {
   static propTypes = {
     name: React.PropTypes.string,
     id: React.PropTypes.string
@@ -16,7 +16,7 @@ class MenuLink extends React.Component {
   }
 }
 
-export class Menu extends React.Component {
+export class Menu extends React.PureComponent {
   render () {
     let items = [
       { id: 'index', name: 'Home' },

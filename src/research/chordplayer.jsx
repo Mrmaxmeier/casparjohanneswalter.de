@@ -1,11 +1,11 @@
-import React, {Component} from 'react'
+import React, {PureComponent} from 'react'
 
 import { MathInput, NoteDisplay, NoteImage, CompactFrequencyPlayer } from './components.jsx'
 import { concertPitchToC0, ratioToCents } from './converters.js'
 import { range } from 'underscore'
 import { clone, keys, extend } from 'underline'
 
-export class ChordPlayer extends Component {
+export class ChordPlayer extends PureComponent {
   constructor (props) {
     super(props)
     let rows = 8

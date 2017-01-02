@@ -1,8 +1,8 @@
-import React, { Component } from 'react'
+import React, { PureComponent } from 'react'
 import { MathInput, FreqPlayer, PrecNumber, NoteDisplay } from './components.jsx'
 import { ratioToCents } from './converters.js'
 
-export class FractionToCents extends Component {
+export class FractionToCents extends PureComponent {
   constructor (props) {
     super(props)
     this.state = {
@@ -76,7 +76,7 @@ export class FractionToCents extends Component {
   }
 }
 
-export class FrequencyToPitch extends Component {
+export class FrequencyToPitch extends PureComponent {
   constructor (props) {
     super(props)
     this.state = {

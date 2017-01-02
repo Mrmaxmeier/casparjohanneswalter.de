@@ -5,7 +5,7 @@ import { filter, find, contains, map } from 'underline'
 import { rows, sorted as sortedWorks } from '../works.js'
 import { tags, groups as tagGroups, slugify } from '../tags.js'
 
-class MenuTag extends React.Component {
+class MenuTag extends React.PureComponent {
   static propTypes = {
     tag: React.PropTypes.object
   }
@@ -28,7 +28,7 @@ class MenuTag extends React.Component {
   }
 }
 
-class WorkSummary extends React.Component {
+class WorkSummary extends React.PureComponent {
   static propTypes = {
     work: React.PropTypes.object
   }
@@ -72,7 +72,7 @@ class WorkSummary extends React.Component {
   }
 }
 
-export class WorksPage extends React.Component {
+export class WorksPage extends React.PureComponent {
   static propTypes = {
     params: React.PropTypes.object
   }

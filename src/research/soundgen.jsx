@@ -1,9 +1,9 @@
-import React, {Component} from 'react'
+import React, {PureComponent} from 'react'
 import { max, sqrt, log } from 'mathjs'
 
 import {MathInput, FreqPlayer, PrecNumber} from './components.jsx'
 
-export class SoundGen extends Component {
+export class SoundGen extends PureComponent {
   constructor (props) {
     super(props)
     this.state = {

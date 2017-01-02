@@ -1,10 +1,10 @@
-import React, {Component} from 'react'
+import React, {PureComponent} from 'react'
 import { fraction, abs, log } from 'mathjs'
 
 import { MathInput, PrecNumber } from './components.jsx'
 import { intelligenterMediant, ratioToCents } from './converters.js'
 
-export class FractionWindowing extends Component {
+export class FractionWindowing extends PureComponent {
   constructor (props) {
     super(props)
     this.state = {

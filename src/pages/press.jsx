@@ -1,6 +1,6 @@
 import React from 'react'
 
-export class PressPage extends React.Component {
+export class PressPage extends React.PureComponent {
   render () {
     return (
       <div>

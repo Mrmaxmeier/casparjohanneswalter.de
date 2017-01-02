@@ -1,9 +1,9 @@
-import React, {Component} from 'react'
+import React, {PureComponent} from 'react'
 
 import { MathInput, PrecNumber, NoteImage, CompactFrequencyPlayer } from './components.jsx'
 import { ratioToCents, concertPitchToC0 } from './converters.js'
 
-export class HarmonicBeatingCalculator extends Component {
+export class HarmonicBeatingCalculator extends PureComponent {
 
   constructor (props) {
     super(props)

@@ -3,7 +3,7 @@ import moment from 'moment'
 
 import { Menu } from './menu.jsx'
 
-export class App extends React.Component {
+export class App extends React.PureComponent {
   static propTypes = {
     children: React.PropTypes.any
   }

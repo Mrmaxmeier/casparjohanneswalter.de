@@ -22,7 +22,7 @@ import { tags, slugify } from './tags.js'
 let rr = require('react-router')
 let history = __IN_BUILD__ ? rr.browserHistory : rr.hashHistory // eslint-disable-line no-undef
 
-class _404Page extends React.Component {
+class _404Page extends React.PureComponent {
   static propTypes = {
     location: React.PropTypes.object
   }
@@ -66,7 +66,7 @@ let routeComponents = {
   '/research/chord_player': ChordPlayerPage
 }
 
-export class Routes extends React.Component {
+export class Routes extends React.PureComponent {
   static propTypes = {
     analytics: React.PropTypes.bool
   }

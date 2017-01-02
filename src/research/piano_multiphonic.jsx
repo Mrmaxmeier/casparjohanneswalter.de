@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React, {PureComponent} from 'react'
 import { pow, gcd, max, abs, fraction } from 'mathjs'
 
 import { MathInput, PrecNumber, NoteImage, NoteDisplay, CompactFrequencyPlayer } from './components.jsx'
@@ -14,7 +14,7 @@ const magic = [
   'b♭', 'b'
 ]
 
-export class PianoMultiphonicCalculatorII extends Component {
+export class PianoMultiphonicCalculatorII extends PureComponent {
 
   constructor (props) {
     super(props)

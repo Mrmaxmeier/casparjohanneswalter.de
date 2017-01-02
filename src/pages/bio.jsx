@@ -1,6 +1,6 @@
 import React from 'react'
 
-export class BioPage extends React.Component {
+export class BioPage extends React.PureComponent {
   render () {
     return (
       <section className="bio">

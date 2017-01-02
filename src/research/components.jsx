@@ -1,10 +1,10 @@
-import React, { Component } from 'react'
+import React, { PureComponent } from 'react'
 import { format } from 'mathjs'
 
 import { processString, centsToOctave, centsToNote, centsToNoteDiff } from './converters.js'
 import { AudioProvider, SoundGenProvider } from './audio.js'
 
-export class MathInput extends Component {
+export class MathInput extends PureComponent {
   static propTypes = {
     default: React.PropTypes.any,
     onChange: React.PropTypes.func,
@@ -59,7 +59,7 @@ export class MathInput extends Component {
   }
 }
 
-export class PrecNumber extends Component {
+export class PrecNumber extends PureComponent {
   static propTypes = {
     value: React.PropTypes.number,
     precision: React.PropTypes.number,
@@ -82,7 +82,7 @@ export class PrecNumber extends Component {
   }
 }
 
-export class SpecificRangeSlider extends Component {
+export class SpecificRangeSlider extends PureComponent {
   static propTypes = {
     defaultMin: React.PropTypes.number,
     defaultMax: React.PropTypes.number,
@@ -145,7 +145,7 @@ export class SpecificRangeSlider extends Component {
   }
 }
 
-export class FreqPlayer extends Component {
+export class FreqPlayer extends PureComponent {
   static propTypes = {
     freq: React.PropTypes.number,
     custom: React.PropTypes.bool,
@@ -268,7 +268,7 @@ export class FreqPlayer extends Component {
   }
 }
 
-export class CompactFrequencyPlayer extends Component {
+export class CompactFrequencyPlayer extends PureComponent {
   static propTypes = {
     freq: React.PropTypes.number,
     buttonStyle: React.PropTypes.object
@@ -322,7 +322,7 @@ export class CompactFrequencyPlayer extends Component {
   }
 }
 
-export class NoteImage extends Component {
+export class NoteImage extends PureComponent {
   static propTypes = {
     cents: React.PropTypes.number
   }
@@ -340,7 +340,7 @@ export class NoteImage extends Component {
   }
 }
 
-export class NoteDisplay extends Component {
+export class NoteDisplay extends PureComponent {
   static propTypes = {
     cents: React.PropTypes.number
   }

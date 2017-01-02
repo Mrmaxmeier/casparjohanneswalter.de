@@ -1,9 +1,9 @@
-import React, {Component} from 'react'
+import React, {PureComponent} from 'react'
 import { min, max, abs } from 'mathjs'
 
 import {MathInput, FreqPlayer, SpecificRangeSlider} from './components.jsx'
 
-export class DiffTone extends Component {
+export class DiffTone extends PureComponent {
   constructor (props) {
     super(props)
     this.state = {

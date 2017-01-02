@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React, {PureComponent} from 'react'
 import { Link } from 'react-router'
 
 import { KitharaCalc } from '../research/kithara_components.js'
@@ -12,7 +12,7 @@ import { HarmonicBeatingCalculator } from '../research/harmonic_beating.jsx'
 import { TonalityDiamond } from '../research/tonalitydiamond.jsx'
 import { ChordPlayer } from '../research/chordplayer.jsx'
 
-export class Kithara extends Component {
+export class Kithara extends PureComponent {
   render () {
     return (
       <div>
@@ -55,7 +55,7 @@ export class Kithara extends Component {
   }
 }
 
-export class PartchFraction extends Component {
+export class PartchFraction extends PureComponent {
   render () {
     return (
       <div>
@@ -72,7 +72,7 @@ export class PartchFraction extends Component {
   }
 }
 
-export class Converters extends Component {
+export class Converters extends PureComponent {
   render () {
     return (
       <div>
@@ -84,7 +84,7 @@ export class Converters extends Component {
   }
 }
 
-export class SoundGenPage extends Component {
+export class SoundGenPage extends PureComponent {
   render () {
     return (
       <div>
@@ -101,7 +101,7 @@ export class SoundGenPage extends Component {
   }
 }
 
-export class DiffTonePage extends Component {
+export class DiffTonePage extends PureComponent {
   render () {
     return (
       <div>
@@ -112,7 +112,7 @@ export class DiffTonePage extends Component {
   }
 }
 
-export class FractionWindowingPage extends Component {
+export class FractionWindowingPage extends PureComponent {
   render () {
     return (
       <div>
@@ -123,7 +123,7 @@ export class FractionWindowingPage extends Component {
   }
 }
 
-export class PianoMultiphonicCalculatorIIPage extends Component {
+export class PianoMultiphonicCalculatorIIPage extends PureComponent {
   render () {
     return (
       <div>
@@ -134,7 +134,7 @@ export class PianoMultiphonicCalculatorIIPage extends Component {
   }
 }
 
-export class HarmonicBeatingCalculatorPage extends Component {
+export class HarmonicBeatingCalculatorPage extends PureComponent {
   render () {
     return (
       <div>
@@ -145,7 +145,7 @@ export class HarmonicBeatingCalculatorPage extends Component {
   }
 }
 
-export class TonalityDiamondPage extends Component {
+export class TonalityDiamondPage extends PureComponent {
   render () {
     return (
       <div>
@@ -156,7 +156,7 @@ export class TonalityDiamondPage extends Component {
   }
 }
 
-export class ChordPlayerPage extends Component {
+export class ChordPlayerPage extends PureComponent {
   render () {
     return (
       <div>
@@ -167,7 +167,7 @@ export class ChordPlayerPage extends Component {
   }
 }
 
-export class ResearchPage extends Component {
+export class ResearchPage extends PureComponent {
   render () {
     // TODO
     return (
