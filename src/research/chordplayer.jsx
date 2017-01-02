@@ -33,7 +33,7 @@ export class ChordPlayer extends PureComponent {
   resizeArray (arr, length, fill) {
     let result = arr.slice(0, length)
     while (result.length < length) {
-      result.push(fill)
+      result.push(fill())
     }
     return result
   }
@@ -59,8 +59,8 @@ export class ChordPlayer extends PureComponent {
           row.forEach((player) => player.setPlaying(false))
         })
     }
-    let playingAll = this.resizeArray(this.state.playingAll, rows, false)
-    let data = this.resizeArray(this.state.data, rows, range(6).map((i) => i === 0 ? 1 : null))
+    let playingAll = this.resizeArray(this.state.playingAll, rows, () => false)
+    let data = this.resizeArray(this.state.data, rows, () => range(6).map((i) => i === 0 ? 1 : null))
     this.setState({ rows, playingAll, data }, cb)
   }
 
@@ -188,7 +188,7 @@ export class ChordPlayer extends PureComponent {
               let isPlaying = this.state.playingAll[rowi]
               return (
                 <tr key={rowi}>
-                  <th>{rowi}</th>
+                  <th>{rowi + 1}</th>
                   {row.map((e, i) => {
                     let freq = {
                       ratio: (pitch, r) => pitch * r,
