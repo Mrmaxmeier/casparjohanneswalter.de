@@ -293,6 +293,9 @@ export class CompactFrequencyPlayer extends PureComponent {
   }
 
   setPlaying (isPlaying) {
+    if (!this.props.freq) {
+      return
+    }
     if (isPlaying) {
       this.provider.play()
     } else {
@@ -316,7 +319,7 @@ export class CompactFrequencyPlayer extends PureComponent {
       <div>
         <button style={style} onClick={() => {
           this.setPlaying(!isPlaying)
-        }}>{isPlaying ? 'Stop' : 'Play'}</button>
+        }} disabled={!this.props.freq}>{isPlaying ? 'Stop' : 'Play'}</button>
       </div>
     )
   }

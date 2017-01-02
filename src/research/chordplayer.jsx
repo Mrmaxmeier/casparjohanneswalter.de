@@ -21,12 +21,12 @@ export class ChordPlayer extends PureComponent {
       presets: {'-- New --': null},
       preset: '-- New --'
     }
-    this.players = new Array(rows).fill(null).map(() => new Array(6).fill(undefined))
-    this.inputs = new Array(rows).fill(null).map(() => new Array(6).fill(undefined))
+    this.players = []
+    this.inputs = []
     if (typeof window !== 'undefined') {
       setTimeout(() => {
         this.setState({ presets: this.presets() })
-      }, 1000)
+      }, 100)
     }
   }
 
@@ -59,8 +59,6 @@ export class ChordPlayer extends PureComponent {
           row.forEach((player) => player.setPlaying(false))
         })
     }
-    this.players = this.resizeArray(this.players, rows, new Array(6).fill(undefined))
-    this.inputs = this.resizeArray(this.inputs, rows, new Array(6).fill(undefined))
     let playingAll = this.resizeArray(this.state.playingAll, rows, false)
     let data = this.resizeArray(this.state.data, rows, range(6).map((i) => i === 0 ? 1 : null))
     this.setState({ rows, playingAll, data }, cb)
@@ -68,7 +66,6 @@ export class ChordPlayer extends PureComponent {
 
   setPreset (d) {
     let presetName = d.target.value
-    console.log('setPreset', presetName)
     let preset = this.state.presets[presetName]
     this.setRows(preset.rows, () => {
       this.refs.concertPitch.setValue(preset.concertPitch, true)
@@ -97,6 +94,10 @@ export class ChordPlayer extends PureComponent {
   render () {
     let c0 = concertPitchToC0(this.state.concertPitch)
     let cents = ratioToCents(this.state.pitch11 / c0)
+
+
+    this.players = range(this.state.rows).map(() => new Array(6).fill(null))
+    this.inputs = range(this.state.rows).map(() => new Array(6).fill(null))
     return (
       <div>
         <table>
@@ -201,13 +202,13 @@ export class ChordPlayer extends PureComponent {
                             data[rowi][i] = v.value
                             this.setState({ data })
                           }} ref={(ref) => {
-                            if (this.inputs && this.inputs[rowi]) {
+                            if (this.inputs[rowi]) {
                               this.inputs[rowi][i] = ref
                             }
                           }} />
                         <CompactFrequencyPlayer freq={freq}
                           ref={(ref) => {
-                            if (this.players && this.players[rowi]) {
+                            if (this.players[rowi]) {
                               this.players[rowi][i] = ref
                             }
                           }} />
@@ -223,7 +224,7 @@ export class ChordPlayer extends PureComponent {
                         this.setState({ playingAll })
                         this.players[rowi].forEach((p, i) => {
                           let data = this.state.data[rowi][i]
-                          if ((data !== null && data !== undefined) || isPlaying) {
+                          if ((data !== null) || isPlaying) {
                             p.setPlaying(!isPlaying)
                           }
                         })
