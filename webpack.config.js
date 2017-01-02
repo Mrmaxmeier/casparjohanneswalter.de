@@ -35,5 +35,6 @@ module.exports = {
       __IN_BUILD__: JSON.stringify(false)
     }),
     new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /de|en/)
-  ]
+  ],
+  devtool: 'source-map'
 }
