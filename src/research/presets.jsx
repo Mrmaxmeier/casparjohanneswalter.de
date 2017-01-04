@@ -73,7 +73,7 @@ export class Presets extends PureComponent {
         </th>
         <th>
           <button onClick={() => {
-            let data = this.dumpPreset()
+            let data = this.props.current()
             let string = JSON.stringify(data, null, 2)
             download(string, this.state.preset + '.json', 'application/json')
             console.log(string)
