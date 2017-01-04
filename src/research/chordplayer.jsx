@@ -214,6 +214,17 @@ export class ChordPlayer extends PureComponent {
                     }
                   }} />
               </th>
+              <th>
+                <button onClick={() => {
+                  let presets = window.localStorage.getItem('chordPlayerPresets')
+                  presets = JSON.parse(presets || '{}')
+                  delete presets[this.state.preset]
+                  window.localStorage.setItem('chordPlayerPresets', JSON.stringify(presets))
+                  this.setState({presets, preset: presets::keys()[0]})
+                }} disabled={this.state.preset === '-- New --'}>
+                  Delete
+                </button>
+              </th>
             </tr>
           </tbody>
         </table>
