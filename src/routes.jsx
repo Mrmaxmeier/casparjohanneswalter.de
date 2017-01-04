@@ -10,11 +10,7 @@ import { WorksPage } from './pages/works.jsx'
 import { BioPage } from './pages/bio.jsx'
 import { PressPage } from './pages/press.jsx'
 import {
-  ResearchPage, Kithara, PartchFraction,
-  Converters, SoundGenPage, DiffTonePage,
-  FractionWindowingPage, PianoMultiphonicCalculatorIIPage,
-  HarmonicBeatingCalculatorPage, TonalityDiamondPage,
-  ChordPlayerPage
+  ResearchPage, subpages as researchSubPages
 } from './pages/research.jsx'
 
 import { tags, slugify } from './tags.js'
@@ -53,18 +49,20 @@ let routeComponents = {
   '/tags/:tag': WorksPage,
   '/biography': BioPage,
   '/press': PressPage,
-  '/research': ResearchPage,
-  '/research/kithara': Kithara,
-  '/research/partch_fraction': PartchFraction,
-  '/research/converters': Converters,
-  '/research/soundgen': SoundGenPage,
-  '/research/difftone': DiffTonePage,
-  '/research/fraction_windowing': FractionWindowingPage,
-  '/research/piano_multiphonic_calculator_2': PianoMultiphonicCalculatorIIPage,
-  '/research/harmonic_beating_calculator': HarmonicBeatingCalculatorPage,
-  '/research/tonality_diamond': TonalityDiamondPage,
-  '/research/chord_player': ChordPlayerPage
+  '/research': ResearchPage
 }
+
+researchSubPages.forEach((page) => {
+  routeComponents['/research/' + page.id] = () => {
+    return (
+      <div>
+        <h3>{page.title}</h3>
+        {page.description ? page.description() : null}
+        <page.component />
+      </div>
+    )
+  }
+})
 
 export class Routes extends React.PureComponent {
   static propTypes = {
