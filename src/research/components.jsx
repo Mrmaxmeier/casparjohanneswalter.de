@@ -54,6 +54,10 @@ export class MathInput extends PureComponent {
     )
   }
 
+  calc (value) {
+    return processString(value, this.props.asKind)
+  }
+
   text () {
     return this.refs.elem.value
   }
