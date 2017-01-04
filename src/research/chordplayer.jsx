@@ -4,6 +4,7 @@ import { MathInput, NoteDisplay, NoteImage, CompactFrequencyPlayer } from './com
 import { concertPitchToC0, ratioToCents } from './converters.js'
 import { range } from 'underscore'
 import { clone, keys, extend } from 'underline'
+import download from 'downloadjs'
 
 export class ChordPlayer extends PureComponent {
   constructor (props) {
@@ -64,9 +65,8 @@ export class ChordPlayer extends PureComponent {
     this.setState({ rows, playingAll, data }, cb)
   }
 
-  setPreset (d) {
-    let presetName = d.target.value
-    let preset = this.state.presets[presetName]
+  setPreset (name) {
+    let preset = this.state.presets[name]
     this.setRows(preset.rows, () => {
       this.refs.concertPitch.setValue(preset.concertPitch, true)
       this.refs.pitch11.setValue(preset.pitch11, true)
@@ -75,7 +75,7 @@ export class ChordPlayer extends PureComponent {
           this.inputs[ri][i].setValue(input, true)
         })
       })
-      this.setState({ mode: preset.mode, preset: presetName })
+      this.setState({ mode: preset.mode, preset: name })
     })
   }
 
@@ -157,7 +157,7 @@ export class ChordPlayer extends PureComponent {
                 Preset
               </th>
               <th>
-                <select onChange={this.setPreset.bind(this)} value={this.state.preset}>
+                <select onChange={(e) => this.setPreset(e.target.value)} value={this.state.preset}>
                   {this.state.presets::keys().map((key) => {
                     return <option key={key} value={key}>{key}</option>
                   })}
@@ -176,8 +176,43 @@ export class ChordPlayer extends PureComponent {
                   window.localStorage.setItem('chordPlayerPresets', JSON.stringify(presets))
                   this.setState({ presets })
                 }}>
-                  Save current state...
+                  Save preset
                 </button>
+              </th>
+              <th>
+                <button onClick={() => {
+                  let data = this.dumpPreset()
+                  let string = JSON.stringify(data, null, 2)
+                  download(string, this.state.preset + '.json', 'application/json')
+                  console.log(string)
+                }} disabled={this.state.preset === '-- New --'}>
+                  Export to file
+                </button>
+              </th>
+              <th>
+                <button onClick={() => {
+                  let e = new window.MouseEvent('click')
+                  this.refs.filepicker.dispatchEvent(e)
+                }}>
+                  Import file
+                </button>
+                <input ref="filepicker" type="file" style={{display: 'none'}}
+                  onChange={(event) => {
+                    let file = event.target.files[0]
+                    let name = file.name.replace('.json', '')
+                    let reader = new window.FileReader()
+                    reader.readAsText(file)
+                    reader.onload = () => {
+                      let data = JSON.parse(reader.result)
+                      let presets = window.localStorage.getItem('chordPlayerPresets')
+                      presets = JSON.parse(presets || '{}')
+                      presets[name] = data
+                      window.localStorage.setItem('chordPlayerPresets', JSON.stringify(presets))
+                      this.setState({ presets }, () => {
+                        this.setPreset(name)
+                      })
+                    }
+                  }} />
               </th>
             </tr>
           </tbody>
