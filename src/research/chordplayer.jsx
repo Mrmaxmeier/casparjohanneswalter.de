@@ -2,9 +2,9 @@ import React, {PureComponent} from 'react'
 
 import { MathInput, NoteDisplay, NoteImage, CompactFrequencyPlayer } from './components.jsx'
 import { concertPitchToC0, ratioToCents } from './converters.js'
+import { Presets } from './presets.jsx'
 import { range } from 'underscore'
-import { clone, keys, extend } from 'underline'
-import download from 'downloadjs'
+import { clone } from 'underline'
 
 export class ChordPlayer extends PureComponent {
   constructor (props) {
@@ -18,17 +18,10 @@ export class ChordPlayer extends PureComponent {
         () => range(6).map((i) => i === 0 ? 1 : null)
       ),
       playingAll: new Array(rows).fill(false),
-      mode: 'ratio',
-      presets: {'-- New --': null},
-      preset: '-- New --'
+      mode: 'ratio'
     }
     this.players = []
     this.inputs = []
-    if (typeof window !== 'undefined') {
-      setTimeout(() => {
-        this.setState({ presets: this.presets() })
-      }, 100)
-    }
   }
 
   resizeArray (arr, length, fill) {
@@ -37,20 +30,6 @@ export class ChordPlayer extends PureComponent {
       result.push(fill())
     }
     return result
-  }
-
-  presets () {
-    let data = window.localStorage.getItem('chordPlayerPresets') || '{}'
-    let presets = {
-      '-- New --': {
-        concertPitch: '440',
-        pitch11: '440 / 9 * 8',
-        rows: 8,
-        mode: 'ratio',
-        data: range(8).map(() => ['1 / 1', '', '', '', '', ''])
-      }
-    }::extend(JSON.parse(data))
-    return presets
   }
 
   setRows (rows, cb) {
@@ -65,8 +44,7 @@ export class ChordPlayer extends PureComponent {
     this.setState({ rows, playingAll, data }, cb)
   }
 
-  setPreset (name) {
-    let preset = this.state.presets[name]
+  onPreset (name, preset) {
     this.setRows(preset.rows, () => {
       this.refs.concertPitch.setValue(preset.concertPitch, true)
       this.refs.pitch11.setValue(preset.pitch11, true)
@@ -75,7 +53,7 @@ export class ChordPlayer extends PureComponent {
           this.inputs[ri][i].setValue(input, true)
         })
       })
-      this.setState({ mode: preset.mode, preset: name })
+      this.setState({ mode: preset.mode })
     })
   }
 
@@ -152,80 +130,14 @@ export class ChordPlayer extends PureComponent {
                   }}/>
               </th>
             </tr>
-            <tr>
-              <th>
-                Preset
-              </th>
-              <th>
-                <select onChange={(e) => this.setPreset(e.target.value)} value={this.state.preset}>
-                  {this.state.presets::keys().map((key) => {
-                    return <option key={key} value={key}>{key}</option>
-                  })}
-                </select>
-              </th>
-              <th>
-                <button onClick={() => {
-                  let name = window.prompt('Preset Name', this.state.preset)
-                  if (name === null) {
-                    return
-                  }
-                  let data = this.dumpPreset()
-                  let presets = window.localStorage.getItem('chordPlayerPresets')
-                  presets = JSON.parse(presets || '{}')
-                  presets[name] = data
-                  window.localStorage.setItem('chordPlayerPresets', JSON.stringify(presets))
-                  this.setState({ presets })
-                }}>
-                  Save preset
-                </button>
-              </th>
-              <th>
-                <button onClick={() => {
-                  let data = this.dumpPreset()
-                  let string = JSON.stringify(data, null, 2)
-                  download(string, this.state.preset + '.json', 'application/json')
-                  console.log(string)
-                }} disabled={this.state.preset === '-- New --'}>
-                  Export to file
-                </button>
-              </th>
-              <th>
-                <button onClick={() => {
-                  let e = new window.MouseEvent('click')
-                  this.refs.filepicker.dispatchEvent(e)
-                }}>
-                  Import file
-                </button>
-                <input ref="filepicker" type="file" style={{display: 'none'}}
-                  onChange={(event) => {
-                    let file = event.target.files[0]
-                    let name = file.name.replace('.json', '')
-                    let reader = new window.FileReader()
-                    reader.readAsText(file)
-                    reader.onload = () => {
-                      let data = JSON.parse(reader.result)
-                      let presets = window.localStorage.getItem('chordPlayerPresets')
-                      presets = JSON.parse(presets || '{}')
-                      presets[name] = data
-                      window.localStorage.setItem('chordPlayerPresets', JSON.stringify(presets))
-                      this.setState({ presets }, () => {
-                        this.setPreset(name)
-                      })
-                    }
-                  }} />
-              </th>
-              <th>
-                <button onClick={() => {
-                  let presets = window.localStorage.getItem('chordPlayerPresets')
-                  presets = JSON.parse(presets || '{}')
-                  delete presets[this.state.preset]
-                  window.localStorage.setItem('chordPlayerPresets', JSON.stringify(presets))
-                  this.setState({presets, preset: presets::keys()[0]})
-                }} disabled={this.state.preset === '-- New --'}>
-                  Delete
-                </button>
-              </th>
-            </tr>
+            <Presets name='chordPlayerPresets' default={{
+              concertPitch: '440',
+              pitch11: '440 / 9 * 8',
+              rows: 8,
+              mode: 'ratio',
+              data: range(8).map(() => ['1 / 1', '', '', '', '', ''])
+            }} ref='presets' onChange={this.onPreset.bind(this)}
+              current={this.dumpPreset.bind(this)} />
           </tbody>
         </table>
         <table>
