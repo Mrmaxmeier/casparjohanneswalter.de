@@ -28,6 +28,15 @@ let layoutIndex = octaveLayout.map((row) =>
   })
 )
 
+let layoutText = [
+  'des+', 'dis+', 'ges+', 'as+', 'ais+',
+  'cis+', 'es+', 'fis+', 'gis+', 'b+',
+  'c+', 'd+', 'e+', 'f+', 'g+', 'a+', 'h+',
+  'des', 'dis', 'eis', 'ges', 'as', 'ais', 'his',
+  'cis', 'es', 'fis', 'gis', 'b',
+  'c', 'd', 'e', 'f', 'g', 'a', 'h', 'c'
+]
+
 export class ArciorganoPlayer extends PureComponent {
   constructor (props) {
     super(props)
@@ -89,9 +98,9 @@ export class ArciorganoPlayer extends PureComponent {
             this.inputs[index] = ref
           }} />
         <CompactFrequencyPlayer freq={freq}
-          ref={(ref) => {
+          text={layoutText[index]} ref={(ref) => {
             this.players[index] = ref
-          }} buttonStyle={small ? {padding: '.5em'} : {}} />
+          }} buttonStyle={small ? {padding: '.5em', width: '100%'} : {width: '100%'}} />
       </div>
     )
   }
@@ -186,7 +195,8 @@ export class ArciorganoPlayer extends PureComponent {
                         return (
                           <th key={i} style={{padding: '0'}}>
                             <CompactFrequencyPlayer freq={freq}
-                              buttonStyle={small ? {padding: '.5em'} : {}} />
+                              buttonStyle={small ? {padding: '.5em', width: '3.15em'} : {width: '3.95em'}}
+                              text={layoutText[index]} />
                           </th>
                         )
                       } else {

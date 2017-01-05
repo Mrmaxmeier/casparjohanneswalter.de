@@ -275,7 +275,8 @@ export class FreqPlayer extends PureComponent {
 export class CompactFrequencyPlayer extends PureComponent {
   static propTypes = {
     freq: React.PropTypes.number,
-    buttonStyle: React.PropTypes.object
+    buttonStyle: React.PropTypes.object,
+    text: React.PropTypes.string
   }
 
   constructor (props) {
@@ -319,11 +320,12 @@ export class CompactFrequencyPlayer extends PureComponent {
   render () {
     let isPlaying = this.state.isPlaying
     let style = Object.assign({background: isPlaying ? '#f15f55' : '#2196f3'}, this.props.buttonStyle || {})
+    let text = this.props.text ? this.props.text : (isPlaying ? 'Stop' : 'Play')
     return (
       <div>
         <button style={style} onClick={() => {
           this.setPlaying(!isPlaying)
-        }} disabled={!this.props.freq}>{isPlaying ? 'Stop' : 'Play'}</button>
+        }} disabled={!this.props.freq}>{text}</button>
       </div>
     )
   }
