@@ -28,14 +28,24 @@ let layoutIndex = octaveLayout.map((row) =>
   })
 )
 
-let layoutText = [
-  'des+', 'dis+', 'ges+', 'as+', 'ais+',
-  'cis+', 'es+', 'fis+', 'gis+', 'b+',
-  'c+', 'd+', 'e+', 'f+', 'g+', 'a+', 'h+',
-  'des', 'dis', 'eis', 'ges', 'as', 'ais', 'his',
-  'cis', 'es', 'fis', 'gis', 'b',
-  'c', 'd', 'e', 'f', 'g', 'a', 'h', 'c'
-]
+let layoutLabels = {
+  normal: [
+    'des+', 'dis+', 'ges+', 'as+', 'ais+',
+    'cis+', 'es+', 'fis+', 'gis+', 'b+',
+    'c+', 'd+', 'e+', 'f+', 'g+', 'a+', 'h+',
+    'des', 'dis', 'eis', 'ges', 'as', 'ais', 'his',
+    'cis', 'es', 'fis', 'gis', 'b',
+    'c', 'd', 'e', 'f', 'g', 'a', 'h', 'c'
+  ],
+  partch: [
+    '8/5', '7/4', '16/15', '6/5', '9/7',
+    '25/16', '9/5', '33/32', '7/6', '27/20',
+    '3/2', '5/3', '11/6', '1/1', '9/8', '5/4', '7/5',
+    '11/7', '12/7', '15/7', '21/20', '32/27', '14/11', '10/7',
+    '14/9', '16/9', '81/80', '8/7', '4/3',
+    '16/11', '18/11', '20/11', '160/81', '10/9', '11/9', '11/8', '16/11'
+  ]
+}
 
 export class ArciorganoPlayer extends PureComponent {
   constructor (props) {
@@ -46,7 +56,9 @@ export class ArciorganoPlayer extends PureComponent {
       concertPitch: 440,
       pitch11: 440 / 9 * 8,
       data: new Array(37).fill(null),
-      mode: 'ratio'
+      mode: 'ratio',
+      muted: false,
+      label: 'normal'
     }
     this.players = []
     this.inputs = []
@@ -68,13 +80,14 @@ export class ArciorganoPlayer extends PureComponent {
       input.setValue(preset.data[i])
       return result.value
     })
-    this.setState({ mode: preset.mode, data })
+    this.setState({ mode: preset.mode, data, label: preset.label })
   }
 
   dumpPreset () {
     return {
       octaves: this.state.octaves,
       mode: this.state.mode,
+      label: this.state.label,
       concertPitch: this.refs.concertPitch.text(),
       pitch11: this.refs.pitch11.text(),
       data: this.inputs.map((i) => i.text())
@@ -97,8 +110,8 @@ export class ArciorganoPlayer extends PureComponent {
           }} ref={(ref) => {
             this.inputs[index] = ref
           }} />
-        <CompactFrequencyPlayer freq={freq}
-          text={layoutText[index]} ref={(ref) => {
+        <CompactFrequencyPlayer freq={freq} muted={this.state.muted}
+          text={layoutLabels[this.state.label][index]} ref={(ref) => {
             this.players[index] = ref
           }} buttonStyle={small ? {padding: '.5em', width: '100%'} : {width: '100%'}} />
       </div>
@@ -108,7 +121,6 @@ export class ArciorganoPlayer extends PureComponent {
   render () {
     let c0 = concertPitchToC0(this.state.concertPitch)
     let cents = ratioToCents(this.state.pitch11 / c0)
-
 
     this.players = range(this.state.rows).fill(null)
     this.inputs = range(this.state.rows).fill(null)
@@ -153,6 +165,15 @@ export class ArciorganoPlayer extends PureComponent {
                   <option value="cents">Cents</option>
                 </select>
               </th>
+              <th>Note Label</th>
+              <th>
+                <select onChange={(e) => {
+                  this.setState({ label: e.target.value })
+                }} value={this.state.label}>
+                  <option value="normal">Normal</option>
+                  <option value="partch">Partch</option>
+                </select>
+              </th>
             </tr>
             <tr>
               <th>Octaves</th>
@@ -174,6 +195,14 @@ export class ArciorganoPlayer extends PureComponent {
               data: range(37).map(() => '')
             }} ref='presets' onChange={this.onPreset.bind(this)}
               current={this.dumpPreset.bind(this)} />
+            <tr>
+              <th>Mute</th>
+              <th>
+                <button onClick={() => {
+                  this.setState({muted: !this.state.muted})
+                }}>{this.state.muted ? 'un' : ''}mute</button>
+              </th>
+            </tr>
           </tbody>
         </table>
 
@@ -196,7 +225,7 @@ export class ArciorganoPlayer extends PureComponent {
                           <th key={i} style={{padding: '0'}}>
                             <CompactFrequencyPlayer freq={freq}
                               buttonStyle={small ? {padding: '.5em', width: '3.15em'} : {width: '3.95em'}}
-                              text={layoutText[index]} />
+                              text={layoutLabels[this.state.label][index]} muted={this.state.muted} />
                           </th>
                         )
                       } else {

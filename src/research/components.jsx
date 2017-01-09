@@ -275,6 +275,7 @@ export class FreqPlayer extends PureComponent {
 export class CompactFrequencyPlayer extends PureComponent {
   static propTypes = {
     freq: React.PropTypes.number,
+    muted: React.PropTypes.bool,
     buttonStyle: React.PropTypes.object,
     text: React.PropTypes.string
   }
@@ -315,6 +316,13 @@ export class CompactFrequencyPlayer extends PureComponent {
 
   componentDidUpdate (prevProps, prevState) {
     this.updateProvider()
+    if (prevProps.muted !== this.props.muted) {
+      if (this.props.muted) {
+        this.provider.stop()
+      } else if (this.state.isPlaying) {
+        this.provider.play()
+      }
+    }
   }
 
   render () {
@@ -325,7 +333,7 @@ export class CompactFrequencyPlayer extends PureComponent {
       <div>
         <button style={style} onClick={() => {
           this.setPlaying(!isPlaying)
-        }} disabled={!this.props.freq}>{text}</button>
+        }} disabled={!this.props.freq || this.props.muted}>{text}</button>
       </div>
     )
   }
