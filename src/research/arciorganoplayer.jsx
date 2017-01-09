@@ -80,7 +80,11 @@ export class ArciorganoPlayer extends PureComponent {
       input.setValue(preset.data[i])
       return result.value
     })
-    this.setState({ mode: preset.mode, data, label: preset.label })
+    this.setState({
+      mode: preset.mode,
+      label: preset.label || 'normal',
+      data
+    })
   }
 
   dumpPreset () {
