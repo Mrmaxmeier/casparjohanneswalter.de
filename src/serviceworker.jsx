@@ -25,7 +25,7 @@ export class ServiceWorkerController extends PureComponent {
 
   register () {
     if (typeof navigator !== 'undefined' && 'serviceWorker' in navigator) {
-      navigator.serviceWorker.register('service-worker.js').then((reg) => {
+      navigator.serviceWorker.register('/service-worker.js').then((reg) => {
         reg.onupdatefound = () => {
           var installingWorker = reg.installing
 
