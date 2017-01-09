@@ -1,6 +1,8 @@
 let webpack = require('webpack')
 let React = require('react')
 let PrebuildRoutesPlugin = require('./prebuild-routes-plugin.js')
+let SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin')
+
 let config = require('./webpack.config.js')
 
 module.exports = Object.assign(config, {
@@ -44,6 +46,11 @@ module.exports = Object.assign(config, {
       require: 'routes',
       sitemap: true,
       sitemapFilter: (route) => !(route.includes('tags/') || route === '404')
+    }),
+    new SWPrecacheWebpackPlugin({
+      cacheId: 'casparjohanneswalter',
+      filename: 'service-worker.js',
+      maximumFileSizeToCacheInBytes: 4194304
     })
   ]
 })

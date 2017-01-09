@@ -35,17 +35,11 @@ module.exports = {
     new webpack.DefinePlugin({
       __IN_BUILD__: JSON.stringify(false)
     }),
-    new SWPrecacheWebpackPlugin(
-      {
-        cacheId: 'casparjohanneswalter',
-        filename: 'service-worker.js',
-        maximumFileSizeToCacheInBytes: 4194304,
-        runtimeCaching: [{
-          handler: 'cacheFirst',
-          urlPattern: /[.]mp3$/
-        }]
-      }
-    ),
+    new SWPrecacheWebpackPlugin({
+      cacheId: 'casparjohanneswalter',
+      filename: 'service-worker.js',
+      maximumFileSizeToCacheInBytes: 4194304
+    }),
     new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /de|en/)
   ],
   devtool: 'source-map'
