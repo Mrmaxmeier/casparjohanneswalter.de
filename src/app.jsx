@@ -2,6 +2,7 @@ import React from 'react'
 import moment from 'moment'
 
 import { Menu } from './menu.jsx'
+import { ServiceWorkerController } from './serviceworker.jsx'
 
 export class App extends React.PureComponent {
   static propTypes = {
@@ -14,7 +15,13 @@ export class App extends React.PureComponent {
         <Menu />
         {this.props.children}
         <footer>
-          <p>© 2015 - {moment().format('YYYY')} Caspar Johannes Walter <br /> All Rights Reserved</p>
+          <p>
+            © 2015 - {moment().format('YYYY')} Caspar Johannes Walter
+            <br />
+            All Rights Reserved
+            <br />
+          </p>
+          <ServiceWorkerController />
         </footer>
       </div>
     )

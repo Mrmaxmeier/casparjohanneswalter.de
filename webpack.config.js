@@ -1,5 +1,6 @@
 let webpack = require('webpack')
 let path = require('path')
+let SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin')
 
 module.exports = {
   entry: {
@@ -34,6 +35,17 @@ module.exports = {
     new webpack.DefinePlugin({
       __IN_BUILD__: JSON.stringify(false)
     }),
+    new SWPrecacheWebpackPlugin(
+      {
+        cacheId: 'casparjohanneswalter',
+        filename: 'service-worker.js',
+        maximumFileSizeToCacheInBytes: 4194304,
+        runtimeCaching: [{
+          handler: 'cacheFirst',
+          urlPattern: /[.]mp3$/
+        }]
+      }
+    ),
     new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /de|en/)
   ],
   devtool: 'source-map'
