@@ -65,7 +65,7 @@ export class Settings extends PureComponent {
     let state = current::clone()
     for (let setting of settings) {
       if (setting.serialize) {
-        Object.assign(state, setting.serialize())
+        setting.serialize(state)
       }
     }
     return state
@@ -77,7 +77,7 @@ export class ConcertPitchSetting extends Settings {
   static default = 440;
   cls () { return ConcertPitchSetting }
   dump () { return this.refs.input.getValue() }
-  serialize () { return this.refs.input.text() }
+  serialize (v) { v.concertPitch = this.refs.input.text() }
   deserialize (preset) { this.refs.input.setValue(preset.concertPitch, true) }
 
   render () {
@@ -95,12 +95,11 @@ export class ConcertPitchSetting extends Settings {
   }
 }
 
-
 export class Pitch11Setting extends Settings {
   static field = 'pitch11';
   static default = 440 / 9 * 8;
   cls () { return Pitch11Setting }
-  serialize () { return this.refs.input.text() }
+  serialize (v) { v.pitch11 = this.refs.input.text() }
   deserialize (preset) { this.refs.input.setValue(preset.pitch11, true) }
   render () {
     let c0 = concertPitchToC0(this.props.concertPitch)
@@ -149,6 +148,7 @@ export class MutedSetting extends Settings {
   static field = 'muted';
   static default = false;
   cls () { return MutedSetting }
+  serialize (v) { delete v.muted }
   render () {
     let muted = this.state.value
     return (
