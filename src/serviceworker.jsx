@@ -10,7 +10,9 @@ export class ServiceWorkerController extends PureComponent {
   }
 
   componentDidMount () {
-    this.register()
+    if (typeof window !== 'undefined' && window.location.port !== '8080') {
+      this.register()
+    }
   }
 
   render () {
