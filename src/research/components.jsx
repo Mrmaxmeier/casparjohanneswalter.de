@@ -63,6 +63,80 @@ export class MathInput extends PureComponent {
   }
 }
 
+export class FractionInput extends PureComponent {
+  static propTypes = {
+    onValue: React.PropTypes.func,
+    disabled: React.PropTypes.bool,
+    value: React.PropTypes.object
+  }
+  constructor (props) {
+    super(props)
+    this.state = {
+      numerator: null,
+      denominator: null
+    }
+  }
+
+  handleChange (n, d) {
+    if (n !== null && d !== null) {
+      this.props.onValue({
+        numerator: n,
+        denominator: d
+      })
+    }
+  }
+
+  componentWillReceiveProps (nextProps) {
+    if (nextProps.value) {
+      this.setState(nextProps.value)
+    }
+  }
+
+  render () {
+    let style = {
+      textAlign: 'center',
+      width: '5em',
+      maxWidth: '5em',
+      color: this.props.disabled ? '#444' : null
+    }
+
+    let tdStyle = {
+      width: '5em',
+      maxWidth: '5em',
+      padding: 0
+    }
+
+    return (
+      <table style={{margin: 0}}>
+        <tbody>
+          <tr>
+            <td style={Object.assign({borderBottom: '2px black solid'}, tdStyle)}>
+              <input type='text'
+                value={this.state.numerator || ''} onChange={(e) => {
+                  let numerator = parseFloat(e.target.value) || null
+                  this.handleChange(numerator, this.state.denominator)
+                  this.setState({ numerator })
+                }}
+                style={style} ref='input' disabled={this.props.disabled} />
+            </td>
+          </tr>
+          <tr>
+            <td style={tdStyle}>
+              <input type='text'
+                value={this.state.denominator || ''} onChange={(e) => {
+                  let denominator = parseFloat(e.target.value) || null
+                  this.handleChange(this.state.numerator, denominator)
+                  this.setState({ denominator })
+                }}
+                style={style} ref='input' disabled={this.props.disabled} />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    )
+  }
+}
+
 export class PrecNumber extends PureComponent {
   static propTypes = {
     value: React.PropTypes.number,
