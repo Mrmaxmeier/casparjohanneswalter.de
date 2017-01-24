@@ -11,7 +11,9 @@ import { PianoMultiphonicCalculatorII } from '../research/piano_multiphonic.jsx'
 import { HarmonicBeatingCalculator } from '../research/harmonic_beating.jsx'
 import { TonalityDiamond } from '../research/tonalitydiamond.jsx'
 import { ChordPlayer } from '../research/chordplayer.jsx'
+import { ChordPlayer2 } from '../research/chordplayer2.jsx'
 import { ArciorganoPlayer } from '../research/arciorganoplayer.jsx'
+import { FrettedInstrumentPlayer } from '../research/fretted_instrument_player.jsx'
 // import { MeanToneCircle } from '../research/mean_tone_circle.jsx'
 
 
@@ -127,9 +129,19 @@ let musicCalculators = [
     component: ChordPlayer
   },
   {
+    id: 'chord_player_2',
+    title: 'Chord Player II',
+    component: ChordPlayer2
+  },
+  {
     id: 'arciorgano_player',
     title: 'Arciorgano Player',
     component: ArciorganoPlayer
+  },
+  {
+    id: 'fretted_instrument_player',
+    title: 'Fretted Instrument Player',
+    component: FrettedInstrumentPlayer
   }
 ]
 
