@@ -54,16 +54,17 @@ export class AudioProvider {
 }
 
 export class SoundGenProvider extends AudioProvider {
-  volume (index) {
-    let refFreq = this.options.frequency
+  volume (index, f) {
+    let refFreq = f || this.options.frequency
     refFreq = max(refFreq, 32)
     let sC = 1 / sqrt(refFreq / 16)
-    return Math.pow(sC, index) * this.options.volume
+    return (Math.pow(sC, index) * this.options.volume) || 0
   }
 
-  frequency (index) {
+  frequency (index, f) {
     let octave = 2
-    return Math.pow(octave, log(index + 1, 2)) * this.options.frequency
+    let freq = f || this.options.frequency
+    return Math.pow(octave, log(index + 1, 2)) * freq
   }
 
   constructor (options) {
@@ -101,6 +102,19 @@ export class SoundGenProvider extends AudioProvider {
     this.stop()
   }
 
+  linearRampFrequency (fromFreq, toFreq, duration) {
+    this._waves.forEach((wave, index) => {
+      if (wave) {
+        let f = this.frequency(index, fromFreq)
+        let t = this.frequency(index, toFreq)
+        wave.volume = this.volume(index, toFreq)
+        let param = wave.sourceNode.frequency
+        param.setValueAtTime(f, Pizzicato.context.currentTime)
+        param.linearRampToValueAtTime(t, Pizzicato.context.currentTime + duration / 1000)
+      }
+    })
+  }
+
   setOptions (options) {
     this.options = options
     if (this._waves[0]) {
@@ -109,7 +123,7 @@ export class SoundGenProvider extends AudioProvider {
           wave.frequency = this.frequency(index)
         })
       }
-      if (options.volume) {
+      if (options.volume || options.frequency) {
         this._waves.forEach((wave, index) => {
           wave.volume = this.volume(index)
         })
