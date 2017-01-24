@@ -10,7 +10,7 @@ import {
   ConcertPitchSetting,
   Pitch11Setting,
   RatioCentsModeSetting,
-  MuteSetting
+  MutedSetting
 } from './settings.jsx'
 import { Presets } from './presets.jsx'
 import { resizeArray } from './utils.js'
@@ -56,7 +56,7 @@ export class FrettedInstrumentPlayer extends PureComponent {
       ConcertPitchSetting,
       Pitch11Setting,
       RatioCentsModeSetting,
-      MuteSetting,
+      MutedSetting,
       RowsColumnsSetting
     )
     this.state = Object.assign(this.state, {
@@ -65,11 +65,6 @@ export class FrettedInstrumentPlayer extends PureComponent {
       additional: new Array(9).fill(null),
       muted: false
     })
-    this.players = []
-    this.inputs = {
-      columns: [],
-      rows: []
-    }
   }
 
   onPreset (_, preset) {
@@ -97,10 +92,10 @@ export class FrettedInstrumentPlayer extends PureComponent {
               let columnData = resizeArray(this.state.columnData, v.columns)
               this.setState({ rowData, columnData, rows: v.rows, columns: v.columns })
             }} ref="size" />
+            <MutedSetting updateState={updateState} />
             {
               /*
                 <RatioCentsModeSetting updateState={updateState} />
-                <MuteSetting />
                 TODO
               */
             }
@@ -130,6 +125,26 @@ export class FrettedInstrumentPlayer extends PureComponent {
                     this.setState({ columnData })
                   }} value={v} />
                 </th>
+              )}
+            </tr>
+            <tr>
+              <th> 0 </th>
+              <th></th>
+              {columnData.map((column, coli) => {
+                if (!column) {
+                  return (
+                    <th key={coli}></th>
+                  )
+                }
+                let v = math.fraction(column.numerator, column.denominator)
+                let freq = v.valueOf() * this.state.pitch11
+                return (
+                  <th key={coli}>
+                    <CompactFrequencyPlayer freq={freq} muted={this.state.muted}
+                      text={v.n + ' / ' + v.d} buttonStyle={{width: '100%'}} />
+                  </th>
+                )
+              }
               )}
             </tr>
             {rowData.map((row, rowi) =>

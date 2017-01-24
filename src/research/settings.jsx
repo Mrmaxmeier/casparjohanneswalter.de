@@ -128,10 +128,10 @@ export class RatioCentsModeSetting extends Settings {
   }
 }
 
-export class MuteSetting extends Settings {
-  static field = 'mute';
+export class MutedSetting extends Settings {
+  static field = 'muted';
   static default = false;
-  cls () { return MuteSetting }
+  cls () { return MutedSetting }
   render () {
     let muted = this.state.value
     return (
