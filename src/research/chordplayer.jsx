@@ -2,6 +2,7 @@ import React, {PureComponent} from 'react'
 
 import { MathInput, NoteDisplay, NoteImage, CompactFrequencyPlayer } from './components.jsx'
 import { concertPitchToC0, ratioToCents } from './converters.js'
+import { resizeArray } from './utils.js'
 import { Presets } from './presets.jsx'
 import { range } from 'underscore'
 import { clone } from 'underline'
@@ -24,14 +25,6 @@ export class ChordPlayer extends PureComponent {
     this.inputs = []
   }
 
-  resizeArray (arr, length, fill) {
-    let result = arr.slice(0, length)
-    while (result.length < length) {
-      result.push(fill())
-    }
-    return result
-  }
-
   setRows (rows, cb) {
     if (rows < this.state.rows) {
       this.players.filter((_, i) => i >= rows)
@@ -39,8 +32,8 @@ export class ChordPlayer extends PureComponent {
           row.forEach((player) => player.setPlaying(false))
         })
     }
-    let playingAll = this.resizeArray(this.state.playingAll, rows, () => false)
-    let data = this.resizeArray(this.state.data, rows, () => range(6).map((i) => i === 0 ? 1 : null))
+    let playingAll = resizeArray(this.state.playingAll, rows, () => false)
+    let data = resizeArray(this.state.data, rows, () => range(6).map((i) => i === 0 ? 1 : null))
     this.setState({ rows, playingAll, data }, cb)
   }
 

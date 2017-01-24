@@ -64,14 +64,6 @@ export class ArciorganoPlayer extends PureComponent {
     this.inputs = []
   }
 
-  resizeArray (arr, length, fill) {
-    let result = arr.slice(0, length)
-    while (result.length < length) {
-      result.push(fill())
-    }
-    return result
-  }
-
   onPreset (name, preset) {
     this.refs.concertPitch.setValue(preset.concertPitch, true)
     this.refs.pitch11.setValue(preset.pitch11, true)
@@ -226,14 +218,14 @@ export class ArciorganoPlayer extends PureComponent {
                           cents: (pitch, r) => pitch * Math.pow(2, r / 1200 + oc)
                         }[this.state.mode](this.state.pitch11, this.state.data[index])
                         return (
-                          <th key={i} style={{padding: '0'}}>
+                          <td key={i} style={{padding: '0'}}>
                             <CompactFrequencyPlayer freq={freq}
                               buttonStyle={small ? {padding: '.5em', width: '3.15em'} : {width: '3.95em'}}
                               text={layoutLabels[this.state.label][index]} muted={this.state.muted} />
-                          </th>
+                          </td>
                         )
                       } else {
-                        return <th key={i} style={{padding: '0'}} />
+                        return <td key={i} style={{padding: '0'}} />
                       }
                     })}
                   </tr>
@@ -251,13 +243,13 @@ export class ArciorganoPlayer extends PureComponent {
                 <tr key={rowi}>
                   {row.map((isThing, i) => {
                     return (
-                      <th key={i} style={{padding: '0px'}}>
+                      <td key={i} style={{padding: '0px'}}>
                         {
                           isThing
                           ? this.renderElement(layoutIndex[rowi][i], (rowi !== 2) && (rowi !== 5))
                           : null
                         }
-                      </th>
+                      </td>
                     )
                   })}
                 </tr>
