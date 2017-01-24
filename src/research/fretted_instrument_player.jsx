@@ -2,8 +2,6 @@ import React, {PureComponent} from 'react'
 import math from 'mathjs'
 import romanize from 'romanize'
 
-math.config({number: 'Fraction'}) // :(
-
 import { CompactFrequencyPlayer, FractionInput } from './components.jsx'
 import {
   Settings,
