@@ -60,8 +60,7 @@ export class FrettedInstrumentPlayer extends PureComponent {
     this.state = Object.assign(this.state, {
       columnData: new Array(7).fill(null),
       rowData: new Array(9).fill(null),
-      additional: new Array(9).fill(null),
-      muted: false
+      additional: new Array(9).fill(null)
     })
   }
 

@@ -6,7 +6,7 @@ import download from 'downloadjs'
 export class Presets extends PureComponent {
   static propTypes = {
     name: React.PropTypes.string,
-    default: React.PropTypes.object, // TODO: handle null
+    default: React.PropTypes.object,
     onChange: React.PropTypes.func,
     current: React.PropTypes.func
   }
@@ -47,7 +47,11 @@ export class Presets extends PureComponent {
           <select onChange={(e) => {
             let preset = e.target.value
             let data = this.state.presets[preset]
-            this.setState({preset}, () => this.props.onChange(preset, data))
+            this.setState({preset}, () => {
+              if (data) {
+                this.props.onChange(preset, data)
+              }
+            })
           }} value={this.state.preset}>
             {this.state.presets::keys().map((key) => {
               return <option key={key} value={key}>{key}</option>
@@ -65,7 +69,9 @@ export class Presets extends PureComponent {
             presets[name] = data
             this.setState({ presets, preset: name }, () => {
               this.save()
-              this.props.onChange(name, data)
+              if (data) {
+                this.props.onChange(name, data)
+              }
             })
           }}>
             Save preset
@@ -100,7 +106,9 @@ export class Presets extends PureComponent {
                 presets[name] = data
                 this.save()
                 this.setState({ presets, preset: name }, () => {
-                  this.props.onChange(name, data)
+                  if (data) {
+                    this.props.onChange(name, data)
+                  }
                 })
               }
             }} />
@@ -111,7 +119,9 @@ export class Presets extends PureComponent {
             delete presets[this.state.preset]
             let current = presets::keys()[0]
             this.setState({presets, preset: current}, () => {
-              this.props.onChange(current, presets[current])
+              if (presets[current]) {
+                this.props.onChange(current, presets[current])
+              }
               this.save()
             })
           }} disabled={this.state.preset === '-- New --'}>
