@@ -6,7 +6,7 @@ import download from 'downloadjs'
 export class Presets extends PureComponent {
   static propTypes = {
     name: React.PropTypes.string,
-    default: React.PropTypes.object,
+    default: React.PropTypes.object, // TODO: handle null
     onChange: React.PropTypes.func,
     current: React.PropTypes.func
   }
