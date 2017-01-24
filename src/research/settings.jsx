@@ -52,7 +52,7 @@ export class Settings extends PureComponent {
         setting.setState({value: preset}) // TODO: filter preset keys
       } else {
         setting.setState({
-          [cls.field]: preset[cls.field]
+          [cls.field]: preset[cls.field] || cls.default
         })
       }
     }
