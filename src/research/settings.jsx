@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react'
 
+import { clone } from 'underline'
 
 import { MathInput, NoteDisplay, NoteImage } from './components.jsx'
 import { concertPitchToC0, ratioToCents } from './converters.js'
@@ -48,7 +49,9 @@ export class Settings extends PureComponent {
   static onPreset = (settings, preset) => {
     for (let setting of settings) {
       let cls = setting.cls()
-      if (typeof cls.default === 'object') {
+      if (setting.deserialize) {
+        setting.deserialize(preset)
+      } else if (typeof cls.default === 'object') {
         setting.setState({value: preset}) // TODO: filter preset keys
       } else {
         setting.setState({
@@ -57,6 +60,16 @@ export class Settings extends PureComponent {
       }
     }
   }
+
+  static dumpPreset = (settings, current) => {
+    let state = current::clone()
+    for (let setting of settings) {
+      if (setting.serialize) {
+        Object.assign(state, setting.serialize())
+      }
+    }
+    return state
+  }
 }
 
 export class ConcertPitchSetting extends Settings {
@@ -64,6 +77,8 @@ export class ConcertPitchSetting extends Settings {
   static default = 440;
   cls () { return ConcertPitchSetting }
   dump () { return this.refs.input.getValue() }
+  serialize () { return this.refs.input.text() }
+  deserialize (preset) { this.refs.input.setValue(preset.concertPitch, true) }
 
   render () {
     return (
@@ -85,6 +100,8 @@ export class Pitch11Setting extends Settings {
   static field = 'pitch11';
   static default = 440 / 9 * 8;
   cls () { return Pitch11Setting }
+  serialize () { return this.refs.input.text() }
+  deserialize (preset) { this.refs.input.setValue(preset.pitch11, true) }
   render () {
     let c0 = concertPitchToC0(this.props.concertPitch)
     let cents = ratioToCents(this.state.value / c0)

@@ -98,7 +98,13 @@ export class FrettedInstrumentPlayer extends PureComponent {
             }
             <Presets name='fretted' ref='presets'
               onChange={this.onPreset.bind(this)}
-              current={() => this.state::clone()} />
+              current={() => {
+                return Settings.dumpPreset([
+                  this.refs.size,
+                  this.refs.concertPitch,
+                  this.refs.pitch11
+                ], this.state)
+              }} />
           </tbody>
         </table>
 
