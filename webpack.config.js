@@ -21,7 +21,7 @@ module.exports = {
       test: /\.jpe?g$/i,
       loaders: [
         'file-loader?hash=sha512&digest=hex&name=[hash].[ext]',
-        'image-webpack-loader?bypassOnDebug&optimizationLevel=7&interlaced=false?progressive=true'
+        'image-webpack-loader?bypassOnDebug&optipng.optimizationLevel=7&gifsicle.interlaced=false?progressive=true'
       ]
     }, {
       test: /\.(ttf|eot|svg|woff(2)?)(\?[a-z0-9=&.]+)?$/,

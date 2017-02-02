@@ -9,7 +9,7 @@ import { clone } from 'underline'
 let octaveLayout = [
   ' X X   X X X   ',
   ' X X   X X X   ',
-  'X X X X X X X  ',
+  'X X X X X X X X',
   ' X X X X X X X ',
   ' X X   X X X   ',
   'X X X X X X X X'
@@ -32,20 +32,24 @@ let layoutLabels = {
   normal: [
     'des+', 'dis+', 'ges+', 'as+', 'ais+',
     'cis+', 'es+', 'fis+', 'gis+', 'b+',
-    'c+', 'd+', 'e+', 'f+', 'g+', 'a+', 'h+',
+    'c+', 'd+', 'e+', 'f+', 'g+', 'a+', 'h+', 'c+',
     'des', 'dis', 'eis', 'ges', 'as', 'ais', 'his',
     'cis', 'es', 'fis', 'gis', 'b',
     'c', 'd', 'e', 'f', 'g', 'a', 'h', 'c'
   ],
   partch: [
     '8/5', '7/4', '16/15', '6/5', '9/7',
-    '14/9', '9/5', '33/32', '8/7', '27/20',
+    '14/9', '9/5', '33/32', '8/7', '27/20', '3/2',
     '3/2', '5/3', '11/6', '1/1', '11/10', '5/4', '7/5',
     '11/7', '12/7', '15/7', '21/20', '7/6', '14/11', '10/7',
     '32/21', '16/9', '81/80', '9/8', '4/3',
     '16/11', '18/11', '20/11', '160/81', '12/11', '11/9', '11/8', '16/11'
   ]
 }
+
+layoutLabels['ces_fes'] = layoutLabels['normal']::clone()
+layoutLabels['ces_fes'][20] = 'fes'
+layoutLabels['ces_fes'][24] = 'ces'
 
 export class ArciorganoPlayer extends PureComponent {
   constructor (props) {
@@ -55,7 +59,7 @@ export class ArciorganoPlayer extends PureComponent {
       octaves,
       concertPitch: 440,
       pitch11: 440 / 9 * 8,
-      data: new Array(37).fill(null),
+      data: new Array(38).fill(null),
       mode: 'ratio',
       muted: false,
       label: 'normal'
@@ -67,6 +71,13 @@ export class ArciorganoPlayer extends PureComponent {
   onPreset (name, preset) {
     this.refs.concertPitch.setValue(preset.concertPitch, true)
     this.refs.pitch11.setValue(preset.pitch11, true)
+    if (preset.data.length === 37) {
+      // index 17 is missing...
+      // compat w/ old presets
+      let other = preset.data.splice(17, 37)
+      preset.data.push('')
+      preset.data = preset.data.concat(other)
+    }
     let data = this.inputs.map((input, i) => {
       let result = input.calc(preset.data[i])
       input.setValue(preset.data[i])
@@ -167,6 +178,7 @@ export class ArciorganoPlayer extends PureComponent {
                   this.setState({ label: e.target.value })
                 }} value={this.state.label}>
                   <option value="normal">Normal</option>
+                  <option value="ces_fes">Normal (ces/fes)</option>
                   <option value="partch">Partch</option>
                 </select>
               </th>
@@ -188,7 +200,7 @@ export class ArciorganoPlayer extends PureComponent {
               pitch11: '440 / 9 * 8',
               rows: 8,
               mode: 'ratio',
-              data: range(37).map(() => '')
+              data: range(38).map(() => '')
             }} ref='presets' onChange={this.onPreset.bind(this)}
               current={this.dumpPreset.bind(this)} />
             <tr>
