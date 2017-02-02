@@ -11,15 +11,6 @@ module.exports = Object.assign(config, {
     routes: './src/routes.jsx'
   },
   plugins: [
-    new webpack.optimize.UglifyJsPlugin({
-      compress: {
-        screw_ie8: true,
-        warnings: false
-      },
-      output: {
-        comments: false
-      }
-    }),
     new webpack.LoaderOptionsPlugin({
       minimize: true,
       debug: false
@@ -52,5 +43,6 @@ module.exports = Object.assign(config, {
       filename: 'service-worker.js',
       maximumFileSizeToCacheInBytes: 4194304
     })
-  ]
+  ],
+  devtool: undefined
 })
