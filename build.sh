@@ -1,6 +1,12 @@
 #!/bin/bash
 set -e
 
+echo "$ git pull"
+git pull
+
+echo "$ yarn install"
+yarn install
+
 echo "$ rm -rf build"
 rm -rf build
 
