@@ -20,7 +20,7 @@ let tdWidth = {
   maxWidth: '7em'
 }
 
-export class RatioInput extends React.PureComponent {
+export class RatioInput extends React.Component {
   static propTypes = {
     changeCB: React.PropTypes.func,
     data: React.PropTypes.number,
@@ -65,7 +65,7 @@ export class RatioInput extends React.PureComponent {
   }
 }
 
-class LowerInput extends React.PureComponent {
+class LowerInput extends React.Component {
   static propTypes = {
     isUpper: React.PropTypes.bool,
     frac: React.PropTypes.any,
@@ -169,7 +169,7 @@ class LowerInput extends React.PureComponent {
   }
 }
 
-class Row extends React.PureComponent {
+class Row extends React.Component {
   static propTypes = {
     data: React.PropTypes.array,
     overtone: React.PropTypes.any,
@@ -217,7 +217,7 @@ class Row extends React.PureComponent {
   }
 }
 
-export class KitharaCalc extends React.PureComponent {
+export class KitharaCalc extends React.Component {
   constructor (props) {
     super(props)
     this.state = this.setStateFromPreset('Kithara I', 'Hexad 1, green', false)
