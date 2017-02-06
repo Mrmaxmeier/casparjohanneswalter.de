@@ -7,15 +7,22 @@ import { range } from 'underscore'
 import { clone } from 'underline'
 
 let octaveLayout = [
-  ' X X   X X X   ',
-  ' X X   X X X   ',
-  'X X X X X X X X',
+  ' 0 0   X X X   ',
+  ' 0 0   X X X   ',
+  '0 0 0 X X X X X',
   ' X X X X X X X ',
   ' X X   X X X   ',
   'X X X X X X X X'
-].map((s) => {
+]
+
+let octave0Disabled = octaveLayout.map((s) => {
   let chars = s.split('')
-  return chars.map((c) => c === 'X')
+  return chars.map((c) => c === '0')
+})
+
+octaveLayout = octaveLayout.map((s) => {
+  let chars = s.split('')
+  return chars.map((c) => c !== ' ')
 })
 
 let _idx = -1
@@ -41,7 +48,7 @@ let layoutLabels = {
     '8/5', '7/4', '16/15', '6/5', '9/7',
     '14/9', '9/5', '33/32', '8/7', '27/20',
     '3/2', '5/3', '11/6', '1/1', '11/10', '5/4', '7/5', '3/2',
-    '11/7', '12/7', '15/7', '21/20', '7/6', '14/11', '10/7',
+    '11/7', '12/7', '15/8', '21/20', '7/6', '14/11', '10/7',
     '32/21', '16/9', '81/80', '9/8', '4/3',
     '16/11', '18/11', '20/11', '160/81', '12/11', '11/9', '11/8', '16/11'
   ]
@@ -101,11 +108,12 @@ export class ArciorganoPlayer extends PureComponent {
     }
   }
 
-  renderElement (index, small) {
+  renderElement (index, small, disabled) {
     let freq = {
       ratio: (pitch, r) => pitch * r,
       cents: (pitch, r) => pitch * Math.pow(2, r / 1200)
     }[this.state.mode](this.state.pitch11, this.state.data[index])
+    let muted = this.state.muted || disabled
     return (
       <div>
         <MathInput size={small ? 3.15 : 3.95} asKind="mathjs" default=''
@@ -117,7 +125,7 @@ export class ArciorganoPlayer extends PureComponent {
           }} ref={(ref) => {
             this.inputs[index] = ref
           }} />
-        <CompactFrequencyPlayer freq={freq} muted={this.state.muted}
+        <CompactFrequencyPlayer freq={freq} muted={muted}
           text={layoutLabels[this.state.label][index]} ref={(ref) => {
             this.players[index] = ref
           }} buttonStyle={small ? {padding: '.5em', width: '100%'} : {width: '100%'}} />
@@ -258,7 +266,7 @@ export class ArciorganoPlayer extends PureComponent {
                       <td key={i} style={{padding: '0px'}}>
                         {
                           isThing
-                          ? this.renderElement(layoutIndex[rowi][i], (rowi !== 2) && (rowi !== 5))
+                          ? this.renderElement(layoutIndex[rowi][i], (rowi !== 2) && (rowi !== 5), octave0Disabled[rowi][i])
                           : null
                         }
                       </td>
