@@ -71,6 +71,7 @@ export class SoundGenProvider extends AudioProvider {
     super(options)
     this.count = 16
     this._waves = Array(this.count).fill()
+    this._freq = null
   }
 
   init () {
@@ -103,14 +104,22 @@ export class SoundGenProvider extends AudioProvider {
   }
 
   linearRampFrequency (fromFreq, toFreq, duration) {
+    this._freq = toFreq
     this._waves.forEach((wave, index) => {
       if (wave) {
         let f = this.frequency(index, fromFreq)
         let t = this.frequency(index, toFreq)
-        wave.volume = this.volume(index, toFreq)
         let param = wave.sourceNode.frequency
         param.setValueAtTime(f, Pizzicato.context.currentTime)
         param.linearRampToValueAtTime(t, Pizzicato.context.currentTime + duration / 1000)
+      }
+    })
+  }
+
+  setVol (volume, duration) {
+    this._waves.forEach((wave, index) => {
+      if (wave && this._freq) {
+        wave.volume = this.volume(index, this._freq) * volume
       }
     })
   }

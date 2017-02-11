@@ -6,6 +6,15 @@ import { Presets } from './presets.jsx'
 import { range } from 'underscore'
 import { clone } from 'underline'
 
+const presets = {
+  'ArcOrg_mode1_meantone31': require('./presets/ArcOrg_mode1_meantone31.json'),
+  'ArcOrg_mode2_1-4comma_adapted': require('./presets/ArcOrg_mode2_1-4comma_adapted.json'),
+  'ArcOrg_mode3_Walter_pseudorein': require('./presets/ArcOrg_mode3_Walter_pseudorein.json'),
+  'ArcOrg_mode4_Partch': require('./presets/ArcOrg_mode4_Partch.json'),
+  'ArcOrg_mode6_1-3Comma_ad': require('./presets/ArcOrg_mode6_1-3Comma_ad.json'),
+  'ArcOrg_mode7_Salinas24+12': require('./presets/ArcOrg_mode7_Salinas24+12.json')
+}
+
 let octaveLayout = [
   ' 0 0   X X X   ',
   ' 0 0   X X X   ',
@@ -210,6 +219,7 @@ export class ArciorganoPlayer extends PureComponent {
               mode: 'ratio',
               data: range(38).map(() => '')
             }} ref='presets' onChange={this.onPreset.bind(this)}
+              presets={presets}
               current={this.dumpPreset.bind(this)} />
             <tr>
               <th>Mute</th>

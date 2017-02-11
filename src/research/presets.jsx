@@ -8,12 +8,13 @@ export class Presets extends PureComponent {
     name: React.PropTypes.string,
     default: React.PropTypes.object,
     onChange: React.PropTypes.func,
-    current: React.PropTypes.func
+    current: React.PropTypes.func,
+    presets: React.PropTypes.object
   }
   constructor (props) {
     super(props)
     this.state = {
-      presets: {'-- New --': null},
+      presets: Object.assign({'-- New --': null}, this.props.presets || {}),
       preset: '-- New --'
     }
     if (typeof window !== 'undefined') {
@@ -25,9 +26,9 @@ export class Presets extends PureComponent {
 
   load () {
     let data = window.localStorage.getItem(this.props.name) || '{}'
-    let presets = {
-      '-- New --': this.props.default
-    }::extend(JSON.parse(data))
+    let presets = Object.assign({
+      '-- New --': null
+    }, this.props.presets || {})::extend(JSON.parse(data))
     this.setState({ presets })
     return presets
   }

@@ -23,13 +23,13 @@ let parseInput = (str) => {
     a: lerpFunctions.linear,
     b: lerpFunctions.inverse_linear,
     c: lerpFunctions.exponential
-  }[lerpID[0]] || lerpFunctions.exponential
+  }[lerpID[0]]
   return { frequencies, lerpFunc }
 }
 
 let lerpFunctions = {
   linear: (t, from, to) => from + (to - from) * t,
-  exponential: (t, from, to) => from * Math.pow(to / from, t),
+  exponential: (t, from, to) => from * Math.pow(to / from, t), // from = 0 => NaN
   inverse_linear: (t, from, to) => (to * from) / ((1 - t) * to + from * t),
   chunky: (t, from, to) => lerpFunctions.inverse_linear(Math.round(t * 2) / 2, from, to),
   sin: (t, from, to) => from + (to - from) * Math.sin(t * Math.PI * 2)
@@ -40,7 +40,10 @@ class Player extends PureComponent {
     duration: React.PropTypes.number,
     startFreq: React.PropTypes.number,
     endFreq: React.PropTypes.number,
-    lerpFunc: React.PropTypes.func
+    startVol: React.PropTypes.number,
+    endVol: React.PropTypes.number,
+    freqLerp: React.PropTypes.func,
+    volLerp: React.PropTypes.func
   }
 
   constructor (props) {
@@ -56,7 +59,7 @@ class Player extends PureComponent {
     this.startTime = null
   }
 
-  doLerp (duration, from, to) {
+  doLerp (duration, changes) {
     this.startTime = window.performance.now()
     let lerpWindow = 5 // 5
     this.interval = setInterval(() => {
@@ -66,8 +69,14 @@ class Player extends PureComponent {
       if (tFrom >= 1) {
         clearInterval(this.interval)
       }
-      let freqFrom = this.props.lerpFunc(Math.min(tFrom, 1), from, to)
-      let freqTo = this.props.lerpFunc(Math.min(tTo, 1), from, to)
+      tFrom = Math.min(tFrom, 1)
+      tTo = Math.min(tTo, 1)
+
+      let volTo = this.props.volLerp(tTo, changes.volume[0], changes.volume[1])
+      this.provider.setVol(volTo, lerpWindow)
+
+      let freqFrom = this.props.freqLerp(tFrom, changes.freq[0], changes.freq[1])
+      let freqTo = this.props.freqLerp(tTo, changes.freq[0], changes.freq[1])
       this.provider.linearRampFrequency(freqFrom, freqTo, lerpWindow)
     }, lerpWindow)
   }
@@ -76,8 +85,12 @@ class Player extends PureComponent {
     if (!this.props.startFreq || !this.props.endFreq) {
       return false
     }
+    this.provider.setVol(this.props.startVol)
     this.provider.play()
-    this.doLerp(this.props.duration, this.props.startFreq, this.props.endFreq)
+    this.doLerp(this.props.duration, {
+      freq: [this.props.startFreq, this.props.endFreq],
+      volume: [this.props.startVol, this.props.endVol]
+    })
     this.setState({playing: true})
   }
 
@@ -237,11 +250,16 @@ export class ChordPlayer2 extends PureComponent {
               let frequencies = input.frequencies
               let freqStart = freqFunc(this.state.pitch11, frequencies[0])
               let freqEnd = freqFunc(this.state.pitch11, frequencies[1] || frequencies[0])
+              let vol = parseInput(this.state.volume[rowi][i])
+              let volumes = vol.frequencies.map((v) => v / 100)
 
               return (
                 <td key={i}>
                   <Player startFreq={freqStart} endFreq={freqEnd}
-                      lerpFunc={input.lerpFunc} duration={this.state.duration[rowi]}
+                      startVol={volumes[0]} endVol={volumes[1] || volumes[0]}
+                      freqLerp={input.lerpFunc || lerpFunctions.exponential}
+                      volLerp={vol.lerpFunc || lerpFunctions.linear}
+                      duration={this.state.duration[rowi]}
                       ref={(ref) => {
                         if (this.players[rowi]) {
                           this.players[rowi][i] = ref
