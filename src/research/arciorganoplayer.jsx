@@ -7,12 +7,13 @@ import { range } from 'underscore'
 import { clone } from 'underline'
 
 const presets = {
-  'ArcOrg_mode1_meantone31': require('./presets/ArcOrg_mode1_meantone31.json'),
-  'ArcOrg_mode2_1-4comma_adapted': require('./presets/ArcOrg_mode2_1-4comma_adapted.json'),
-  'ArcOrg_mode3_Walter_pseudorein': require('./presets/ArcOrg_mode3_Walter_pseudorein.json'),
-  'ArcOrg_mode4_Partch': require('./presets/ArcOrg_mode4_Partch.json'),
-  'ArcOrg_mode6_1-3Comma_ad': require('./presets/ArcOrg_mode6_1-3Comma_ad.json'),
-  'ArcOrg_mode7_Salinas24+12': require('./presets/ArcOrg_mode7_Salinas24+12.json')
+  'Mode1_meantone31': require('./presets/ArcOrg_mode1_meantone31.json'),
+  'Mode2_1-4comma_adapted': require('./presets/ArcOrg_mode2_1-4comma_adapted.json'),
+  'Mode3_Walter_pseudorein': require('./presets/ArcOrg_mode3_Walter_pseudorein.json'),
+  'Mode4_Partch': require('./presets/ArcOrg_mode4_Partch.json'),
+  'Mode5_EDO34': require('./presets/ArcOrg_mode5_EDO34.json'),
+  'Mode6_1-3Comma_ad': require('./presets/ArcOrg_mode6_1-3Comma_ad.json'),
+  'Mode7_Salinas24+12': require('./presets/ArcOrg_mode7_Salinas24+12.json')
 }
 
 let octaveLayout = [
@@ -102,6 +103,7 @@ export class ArciorganoPlayer extends PureComponent {
     this.setState({
       mode: preset.mode,
       label: preset.label || 'normal',
+      octaves: preset.octaves,
       data
     })
   }
