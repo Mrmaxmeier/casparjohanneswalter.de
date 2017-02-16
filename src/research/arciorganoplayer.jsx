@@ -236,7 +236,7 @@ export class ArciorganoPlayer extends PureComponent {
 
         {range(this.state.octaves - 1, 0, -1).map((oc) =>
           <div key={oc}>
-            <h3>Octave {oc}</h3>
+            <h3>Octave {oc + 2}</h3>
             <table>
               <tbody>
                 {octaveLayout.map((row, rowi) =>
@@ -267,7 +267,7 @@ export class ArciorganoPlayer extends PureComponent {
           </div>
         )}
 
-        <h3>Octave 0</h3>
+        <h3>Octave 2</h3>
         <table>
           <tbody>
             {octaveLayout.map((row, rowi) => {

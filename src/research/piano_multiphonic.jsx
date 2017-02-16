@@ -1,5 +1,5 @@
 import React, {PureComponent} from 'react'
-import { pow, gcd, max, abs, fraction } from 'mathjs'
+import { pow, gcd, max, min, abs, fraction } from 'mathjs'
 
 import { MathInput, PrecNumber, NoteImage, NoteDisplay, CompactFrequencyPlayer } from './components.jsx'
 import { ratioToCents } from './converters.js'
@@ -51,11 +51,11 @@ export class PianoMultiphonicCalculatorII extends PureComponent {
           l.push(absdiff)
         }
         l.reverse()
-        let min = 0
+        let min_ = 0
         let newl = []
         l.forEach((e) => {
-          if (e > min) {
-            min = e
+          if (e > min_) {
+            min_ = e
             newl.push(e)
           }
         })
