@@ -33,6 +33,7 @@
     "moment": "^2.14.1",
     "node-sass": "^4.0.0",
     "pizzicato": "^0.5.0",
+    "raven-js": "^3.10.0",
     "react": "^15.3.1",
     "react-dom": "^15.3.1",
     "react-ga": "^2.1.1",
@@ -40,7 +41,7 @@
     "romanize": "^0.1.2",
     "sass-loader": "^4.1.1",
     "style-loader": "^0.13.1",
-    "sw-precache-webpack-plugin": "^0.8.0",
+    "sw-precache-webpack-plugin": "^0.9.0",
     "underline": "^1.0.4",
     "webpack": "^2.2.0"
   },
