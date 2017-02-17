@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react'
+import React, { PureComponent, PropTypes } from 'react'
 import { format } from 'mathjs'
 
 import { processString, centsToOctave, centsToNote, centsToNoteDiff } from './converters.js'
@@ -6,11 +6,11 @@ import { AudioProvider, SoundGenProvider } from './audio.js'
 
 export class MathInput extends PureComponent {
   static propTypes = {
-    default: React.PropTypes.any,
-    onChange: React.PropTypes.func,
-    asKind: React.PropTypes.string,
-    wide: React.PropTypes.bool,
-    size: React.PropTypes.number
+    default: PropTypes.any,
+    onChange: PropTypes.func,
+    asKind: PropTypes.string,
+    wide: PropTypes.bool,
+    size: PropTypes.number
   }
   constructor (props) {
     super(props)
@@ -65,9 +65,9 @@ export class MathInput extends PureComponent {
 
 export class FractionInput extends PureComponent {
   static propTypes = {
-    onValue: React.PropTypes.func,
-    disabled: React.PropTypes.bool,
-    value: React.PropTypes.object
+    onValue: PropTypes.func,
+    disabled: PropTypes.bool,
+    value: PropTypes.object
   }
   constructor (props) {
     super(props)
@@ -139,10 +139,10 @@ export class FractionInput extends PureComponent {
 
 export class PrecNumber extends PureComponent {
   static propTypes = {
-    value: React.PropTypes.number,
-    precision: React.PropTypes.number,
-    digits: React.PropTypes.number,
-    style: React.PropTypes.object
+    value: PropTypes.number,
+    precision: PropTypes.number,
+    digits: PropTypes.number,
+    style: PropTypes.object
   }
   render () {
     let precision = this.props.precision || 2
@@ -162,10 +162,10 @@ export class PrecNumber extends PureComponent {
 
 export class SpecificRangeSlider extends PureComponent {
   static propTypes = {
-    defaultMin: React.PropTypes.number,
-    defaultMax: React.PropTypes.number,
-    step: React.PropTypes.number,
-    onChange: React.PropTypes.func
+    defaultMin: PropTypes.number,
+    defaultMax: PropTypes.number,
+    step: PropTypes.number,
+    onChange: PropTypes.func
   }
 
   constructor (props) {
@@ -225,12 +225,12 @@ export class SpecificRangeSlider extends PureComponent {
 
 export class FreqPlayer extends PureComponent {
   static propTypes = {
-    freq: React.PropTypes.number,
-    custom: React.PropTypes.bool,
-    inTable: React.PropTypes.bool,
-    showTypePicker: React.PropTypes.bool,
-    defaultVolume: React.PropTypes.number,
-    text: React.PropTypes.string
+    freq: PropTypes.number,
+    custom: PropTypes.bool,
+    inTable: PropTypes.bool,
+    showTypePicker: PropTypes.bool,
+    defaultVolume: PropTypes.number,
+    text: PropTypes.string
   }
 
   constructor (props) {
@@ -348,10 +348,10 @@ export class FreqPlayer extends PureComponent {
 
 export class CompactFrequencyPlayer extends PureComponent {
   static propTypes = {
-    freq: React.PropTypes.number,
-    muted: React.PropTypes.bool,
-    buttonStyle: React.PropTypes.object,
-    text: React.PropTypes.string
+    freq: PropTypes.number,
+    muted: PropTypes.bool,
+    buttonStyle: PropTypes.object,
+    text: PropTypes.string
   }
 
   constructor (props) {
@@ -415,7 +415,7 @@ export class CompactFrequencyPlayer extends PureComponent {
 
 export class NoteImage extends PureComponent {
   static propTypes = {
-    cents: React.PropTypes.number
+    cents: PropTypes.number
   }
   render () {
     let a = Math.floor((this.props.cents + 100 / 12) * 72 / 1200)
@@ -433,7 +433,7 @@ export class NoteImage extends PureComponent {
 
 export class NoteDisplay extends PureComponent {
   static propTypes = {
-    cents: React.PropTypes.number
+    cents: PropTypes.number
   }
   render () {
     let cents = this.props.cents
@@ -446,6 +446,29 @@ export class NoteDisplay extends PureComponent {
           {diff > 0 ? ' +' : ' '}
           {diff !== 0 ? <PrecNumber value={diff} precision={1} /> : null}
           {diff !== 0 ? '¢' : null}
+      </div>
+    )
+  }
+}
+
+export class StringValueVisualisation extends PureComponent {
+  static propTypes = {
+    value: PropTypes.number
+  }
+
+  render () {
+    let offset = this.props.value * 196 + 0.9
+    return (
+      <div style={{position: 'relative'}}>
+        <img src={require('./KlavierSaite.png')} />
+        <div style={{
+          background: 'red',
+          width: '5px',
+          height: '30%',
+          position: 'absolute',
+          top: '40%',
+          left: 'calc(' + offset + '% - 2px)'
+        }} />
       </div>
     )
   }

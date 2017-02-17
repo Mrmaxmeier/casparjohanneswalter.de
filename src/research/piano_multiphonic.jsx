@@ -1,7 +1,10 @@
 import React, {PureComponent} from 'react'
 import { pow, gcd, max, min, abs, fraction } from 'mathjs'
 
-import { MathInput, PrecNumber, NoteImage, NoteDisplay, CompactFrequencyPlayer } from './components.jsx'
+import {
+  MathInput, PrecNumber, NoteImage,
+  NoteDisplay, CompactFrequencyPlayer, StringValueVisualisation
+} from './components.jsx'
 import { ratioToCents } from './converters.js'
 
 const magic = [
@@ -32,6 +35,7 @@ export class PianoMultiphonicCalculatorII extends PureComponent {
     let p1 = this.state.p1
     let p2 = this.state.p2
     let error = null
+    let result = null
     let fractions = []
     if (p1 && p2) {
       if (gcd(p1, p2) !== 1) {
@@ -71,6 +75,7 @@ export class PianoMultiphonicCalculatorII extends PureComponent {
           let f2 = fractions[i - 1]
           fractions.push(fraction(f1.n + f2.n, newl[i]))
         }
+        result = fractions[fractions.length - 1].valueOf()
       }
     }
     return (
@@ -174,6 +179,9 @@ export class PianoMultiphonicCalculatorII extends PureComponent {
             })}
           </tbody>
         </table>
+        {result ? (
+          <StringValueVisualisation value={result} />
+        ) : null}
       </div>
     )
   }

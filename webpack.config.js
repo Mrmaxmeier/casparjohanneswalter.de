@@ -18,7 +18,7 @@ module.exports = {
       exclude: /node_modules/,
       loader: 'babel-loader'
     }, {
-      test: /\.jpe?g$/i,
+      test: /\.(jpe?g$|png)/i,
       loaders: [
         'file-loader?hash=sha512&digest=hex&name=[hash].[ext]',
         'image-webpack-loader?bypassOnDebug&optipng.optimizationLevel=7&gifsicle.interlaced=false?progressive=true'
