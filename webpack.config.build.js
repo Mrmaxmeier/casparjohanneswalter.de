@@ -11,9 +11,11 @@ module.exports = Object.assign(config, {
     routes: './src/routes.jsx'
   },
   plugins: [
-    new webpack.LoaderOptionsPlugin({
-      minimize: true,
-      debug: false
+    new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /de|en/),
+    new webpack.optimize.UglifyJsPlugin({
+      compress: {warnings: false},
+      output: {comments: false},
+      sourceMap: true
     }),
     new webpack.DefinePlugin({
       __IN_BUILD__: JSON.stringify(true)
@@ -41,8 +43,7 @@ module.exports = Object.assign(config, {
     new SWPrecacheWebpackPlugin({
       cacheId: 'casparjohanneswalter',
       filename: 'service-worker.js',
-      maximumFileSizeToCacheInBytes: 4194304
+      maximumFileSizeToCacheInBytes: 1048576
     })
-  ],
-  devtool: undefined
+  ]
 })

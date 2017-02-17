@@ -1,4 +1,5 @@
 require('./static_files.js')
+require('es6-shim')
 
 import React from 'react'
 import { render } from 'react-dom'
