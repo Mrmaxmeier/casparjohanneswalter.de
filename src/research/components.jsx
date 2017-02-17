@@ -460,7 +460,7 @@ export class StringValueVisualisation extends PureComponent {
     let offset = this.props.value * 196 + 0.9
     return (
       <div style={{position: 'relative'}}>
-        <img src={require('../KlavierSaite.png')} />
+        <img src={require('../../assets/KlavierSaite.png')} />
         <div style={{
           background: 'red',
           width: '5px',

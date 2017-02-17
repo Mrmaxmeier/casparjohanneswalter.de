@@ -126,7 +126,10 @@ let musicCalculators = [
   {
     id: 'chord_player',
     title: 'Chord Player I',
-    component: ChordPlayer
+    component: ChordPlayer,
+    description: function chordPlayerDescription () {
+      return <p><a href="/static/chord_player_1_manual.pdf">Introduction</a></p>
+    }
   },
   {
     id: 'chord_player_2',

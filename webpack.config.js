@@ -10,7 +10,8 @@ module.exports = {
   },
   output: {
     path: path.resolve('build'),
-    filename: '[name].js'
+    filename: '[name].js',
+    publicPath: '//casparjohanneswalter.de/'
   },
   module: {
     loaders: [{
