@@ -23,7 +23,7 @@ export class PianoMultiphonicCalculatorII extends PureComponent {
     super(props)
     this.state = {
       concertPitch: 442,
-      octave: 0,
+      octave: 1,
       tone: 0
     }
   }

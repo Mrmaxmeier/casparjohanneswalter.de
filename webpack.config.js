@@ -38,7 +38,7 @@ module.exports = {
     new SWPrecacheWebpackPlugin({
       cacheId: 'casparjohanneswalter',
       filename: 'service-worker.js',
-      maximumFileSizeToCacheInBytes: 4194304
+      maximumFileSizeToCacheInBytes: 1048576
     }),
     new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /de|en/)
   ],
