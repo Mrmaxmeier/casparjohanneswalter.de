@@ -1,5 +1,6 @@
 import React, { PureComponent, PropTypes } from 'react'
 import { format } from 'mathjs'
+import { map } from 'underline'
 
 import { processString, centsToOctave, centsToNote, centsToNoteDiff } from './converters.js'
 import { AudioProvider, SoundGenProvider } from './audio.js'
@@ -453,22 +454,29 @@ export class NoteDisplay extends PureComponent {
 
 export class StringValueVisualisation extends PureComponent {
   static propTypes = {
-    value: PropTypes.number
+    values: PropTypes.objectOf(PropTypes.number)
   }
 
   render () {
-    let offset = this.props.value * 196 + 0.9
     return (
       <div style={{position: 'relative'}}>
         <img src={require('../../assets/KlavierSaite.png')} />
-        <div style={{
-          background: 'red',
-          width: '5px',
-          height: '30%',
-          position: 'absolute',
-          top: '40%',
-          left: 'calc(' + offset + '% - 2px)'
-        }} />
+        {this.props.values::map((value, color) => {
+          let offset = value * 196 + 0.9
+          if (value === undefined || value === null) {
+            return null
+          }
+          return (
+            <div key={color} style={{
+              background: color,
+              width: '5px',
+              height: '30%',
+              position: 'absolute',
+              top: '40%',
+              left: 'calc(' + offset + '% - 2px)'
+            }} />
+          )
+        })}
       </div>
     )
   }
