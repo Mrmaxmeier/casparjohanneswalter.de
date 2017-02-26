@@ -2,7 +2,7 @@ import React, {PureComponent} from 'react'
 import { pow, gcd, max, min, abs, fraction } from 'mathjs'
 
 import {
-  MathInput, PrecNumber, NoteImage,
+  MathInput, PrecNumber, NoteImage, PlayAllButton,
   NoteDisplay, CompactFrequencyPlayer, StringValueVisualisation
 } from './components.jsx'
 import { ratioToCents } from './converters.js'
@@ -106,6 +106,7 @@ export class PianoMultiphonicCalculatorII extends PureComponent {
   renderData (data) {
     let fractions = data.fractions
     let freq = data.freq
+    let players = []
     return (
       <table>
         <tbody>
@@ -115,9 +116,7 @@ export class PianoMultiphonicCalculatorII extends PureComponent {
             <th>Note</th>
             <th />
             <th>
-              <button disabled={fractions.length < 1} onClick={() => {}}>
-                Play All
-              </button>
+              <PlayAllButton disabled={fractions.length < 1} playerRefs={players} />
             </th>
           </tr>
           {fractions.map((f, i) => {
@@ -138,7 +137,7 @@ export class PianoMultiphonicCalculatorII extends PureComponent {
                   <NoteImage cents={cents} />
                 </th>
                 <th>
-                  <CompactFrequencyPlayer freq={freq * f.d} />
+                  <CompactFrequencyPlayer freq={freq * f.d} ref={(el) => { players.push(el) }} />
                 </th>
               </tr>
             )

@@ -254,7 +254,9 @@ export class FreqPlayer extends PureComponent {
     })
   }
 
+  valInvalid () { return !this.props.freq }
   setPlaying (isPlaying) {
+    if (this.valInvalid()) { return }
     if (isPlaying) {
       this.provider.play()
     } else {
@@ -373,10 +375,9 @@ export class CompactFrequencyPlayer extends PureComponent {
     })
   }
 
+  valInvalid () { return !this.props.freq }
   setPlaying (isPlaying) {
-    if (!this.props.freq) {
-      return
-    }
+    if (this.valInvalid()) { return }
     if (isPlaying) {
       this.provider.play()
     } else {
@@ -478,6 +479,40 @@ export class StringValueVisualisation extends PureComponent {
           )
         })}
       </div>
+    )
+  }
+}
+
+export class PlayAllButton extends PureComponent {
+  static propTypes = {
+    playerRefs: PropTypes.array,
+    disabled: PropTypes.bool
+  }
+
+  constructor (props) {
+    super(props)
+    this.state = {
+      active: false
+    }
+    this.toggle = this.toggle.bind(this)
+  }
+
+  toggle () {
+    this.setState({ active: !this.state.active })
+    this.props.playerRefs.forEach((p, i) => {
+      if ((!p.valInvalid()) || this.state.active) {
+        p.setPlaying(!this.state.active)
+      }
+    })
+  }
+
+  render () {
+    return (
+      <button
+        style={{background: this.state.active ? '#f15f55' : '#2196f3'}}
+        onClick={this.toggle} disabled={this.props.disabled}>
+        {this.state.active ? 'Stop All' : 'Play All'}
+      </button>
     )
   }
 }

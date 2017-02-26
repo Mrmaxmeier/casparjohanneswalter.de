@@ -1,6 +1,6 @@
 import React, {PureComponent} from 'react'
 
-import { MathInput, NoteDisplay, NoteImage } from './components.jsx'
+import { MathInput, NoteDisplay, NoteImage, PlayAllButton } from './components.jsx'
 import { concertPitchToC0, ratioToCents, processString } from './converters.js'
 import { Presets } from './presets.jsx'
 import { resizeArray } from './utils.js'
@@ -102,8 +102,10 @@ class Player extends PureComponent {
     this.setState({playing: false})
   }
 
-  setPlaying (playing) {
-    if (playing) {
+  valInvalid () { return (!this.props.startFreq || !this.props.endFreq) }
+  setPlaying (isPlaying) {
+    if (this.valInvalid()) { return }
+    if (isPlaying) {
       this.play()
     } else {
       this.stop()
@@ -140,7 +142,6 @@ export class ChordPlayer2 extends PureComponent {
         () => range(6).map((i) => '50')
       ),
       duration: new Array(rows).fill(2000),
-      playingAll: new Array(rows).fill(false),
       mode: 'ratio'
     }
     this.players = []
@@ -153,9 +154,8 @@ export class ChordPlayer2 extends PureComponent {
           row.forEach((player) => player.setPlaying(false))
         })
     }
-    let playingAll = resizeArray(this.state.playingAll, rows, () => false)
-    let data = resizeArray(this.state.data, rows, () => range(6).map((i) => i === 0 ? 1 : null))
-    this.setState({ rows, playingAll, data }, cb)
+    let data = resizeArray(this.state.data, rows, () => range(6).map((i) => i === 0 ? '1' : ''))
+    this.setState({ rows, data }, cb)
   }
 
   onPreset (name, preset) {
@@ -182,7 +182,6 @@ export class ChordPlayer2 extends PureComponent {
   }
 
   rowTable (row, rowi) {
-    let isPlaying = this.state.playingAll[rowi]
     return (
       <table>
         <tbody>
@@ -228,17 +227,7 @@ export class ChordPlayer2 extends PureComponent {
           </tr>
           <tr>
             <th>
-              <button style={{background: isPlaying ? '#f15f55' : '#2196f3'}} onClick={() => {
-                let playingAll = this.state.playingAll::clone()
-                playingAll[rowi] = !isPlaying
-                this.setState({ playingAll })
-                this.players[rowi].forEach((p, i) => {
-                  let data = this.state.data[rowi][i]
-                  if ((data !== null) || isPlaying) {
-                    p.setPlaying(!isPlaying)
-                  }
-                })
-              }}>{isPlaying ? 'Stop All' : 'Play All'}</button>
+              <PlayAllButton playerRefs={this.players[rowi]} />
             </th>
             {row.map((_, i) => {
               let freqText = this.state.data[rowi][i]

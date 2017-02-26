@@ -1,6 +1,6 @@
 import React, {PureComponent} from 'react'
 
-import { MathInput, NoteDisplay, NoteImage, CompactFrequencyPlayer } from './components.jsx'
+import { MathInput, NoteDisplay, NoteImage, CompactFrequencyPlayer, PlayAllButton } from './components.jsx'
 import { concertPitchToC0, ratioToCents } from './converters.js'
 import { resizeArray } from './utils.js'
 import { Presets } from './presets.jsx'
@@ -166,21 +166,9 @@ export class ChordPlayer extends PureComponent {
                       </th>
                     )
                   })}
-                  <th></th>
+                  <th />
                   <th>
-                    <div>
-                      <button style={{background: isPlaying ? '#f15f55' : '#2196f3'}} onClick={() => {
-                        let playingAll = this.state.playingAll::clone()
-                        playingAll[rowi] = !isPlaying
-                        this.setState({ playingAll })
-                        this.players[rowi].forEach((p, i) => {
-                          let data = this.state.data[rowi][i]
-                          if ((data !== null) || isPlaying) {
-                            p.setPlaying(!isPlaying)
-                          }
-                        })
-                      }}>{isPlaying ? 'Stop All' : 'Play All'}</button>
-                    </div>
+                    <PlayAllButton playerRefs={this.players[rowi]} />
                   </th>
                 </tr>
               )
