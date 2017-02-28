@@ -136,14 +136,13 @@ export class ChordPlayer extends PureComponent {
         <table>
           <tbody>
             {this.state.data.map((row, rowi) => {
-              let isPlaying = this.state.playingAll[rowi]
               return (
                 <tr key={rowi}>
                   <th>{rowi + 1}</th>
                   {row.map((e, i) => {
                     let freq = {
                       ratio: (pitch, r) => pitch * r,
-                      cents: (pitch, r) => pitch * Math.pow(2, r / 1200)
+                      cents: (pitch, r) => r ? pitch * Math.pow(2, r / 1200) : null
                     }[this.state.mode](this.state.pitch11, e)
                     return (
                       <th key={i} style={{padding: '4px'}}>
