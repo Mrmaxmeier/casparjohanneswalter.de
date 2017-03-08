@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react'
 import { MathInput, FreqPlayer, PrecNumber, NoteDisplay } from './components.jsx'
-import { ratioToCents } from './converters.js'
+import { ratioToCents, concertPitchToC0 } from './converters.js'
 
 export class FractionToCents extends PureComponent {
   constructor (props) {
@@ -95,6 +95,8 @@ export class FrequencyToPitch extends PureComponent {
     let reference = this.state.reference.value || 440
     let error = this.state.input.error || this.state.reference.error
     let canRender = this.state.input.value !== null && this.state.input.value !== undefined
+    let c0 = concertPitchToC0(reference)
+    let cents = ratioToCents(input / c0)
 
     return (
       <div>
@@ -130,7 +132,7 @@ export class FrequencyToPitch extends PureComponent {
               <tr>
                 <th>Pitch</th>
                 <th>
-                  <NoteDisplay a4={reference} input={input} />
+                  <NoteDisplay cents={cents} />
                 </th>
               </tr>
             ) : null}
