@@ -1,4 +1,5 @@
 import React, {PureComponent} from 'react'
+import PropTypes from 'prop-types'
 
 import { MathInput, NoteDisplay, NoteImage, PlayAllButton } from './components.jsx'
 import { concertPitchToC0, ratioToCents, processString } from './converters.js'
@@ -37,13 +38,13 @@ let lerpFunctions = {
 
 class Player extends PureComponent {
   static propTypes = {
-    duration: React.PropTypes.number,
-    startFreq: React.PropTypes.number,
-    endFreq: React.PropTypes.number,
-    startVol: React.PropTypes.number,
-    endVol: React.PropTypes.number,
-    freqLerp: React.PropTypes.func,
-    volLerp: React.PropTypes.func
+    duration: PropTypes.number,
+    startFreq: PropTypes.number,
+    endFreq: PropTypes.number,
+    startVol: PropTypes.number,
+    endVol: PropTypes.number,
+    freqLerp: PropTypes.func,
+    volLerp: PropTypes.func
   }
 
   constructor (props) {

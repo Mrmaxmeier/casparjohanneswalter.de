@@ -1,5 +1,5 @@
-
 import React from 'react'
+import PropTypes from 'prop-types'
 
 import { keys, map, clone, extend } from 'underline'
 
@@ -22,12 +22,12 @@ let tdWidth = {
 
 export class RatioInput extends React.Component {
   static propTypes = {
-    changeCB: React.PropTypes.func,
-    data: React.PropTypes.number,
-    disabled: React.PropTypes.bool,
-    highlighted: React.PropTypes.bool,
-    isUpper: React.PropTypes.bool,
-    tabIndex: React.PropTypes.number
+    changeCB: PropTypes.func,
+    data: PropTypes.number,
+    disabled: PropTypes.bool,
+    highlighted: PropTypes.bool,
+    isUpper: PropTypes.bool,
+    tabIndex: PropTypes.number
   }
   handleChange (c) {
     if (this.props.changeCB) {
@@ -67,15 +67,15 @@ export class RatioInput extends React.Component {
 
 class LowerInput extends React.Component {
   static propTypes = {
-    isUpper: React.PropTypes.bool,
-    frac: React.PropTypes.any,
-    octave: React.PropTypes.any,
-    index: React.PropTypes.number,
-    tabIndex: React.PropTypes.number,
-    setOvertone: React.PropTypes.func,
-    applyCB: React.PropTypes.func,
-    setOctaveCB: React.PropTypes.func,
-    overtone: React.PropTypes.any
+    isUpper: PropTypes.bool,
+    frac: PropTypes.any,
+    octave: PropTypes.any,
+    index: PropTypes.number,
+    tabIndex: PropTypes.number,
+    setOvertone: PropTypes.func,
+    applyCB: PropTypes.func,
+    setOctaveCB: PropTypes.func,
+    overtone: PropTypes.any
   }
   getImg () {
     // TODO: components/NoteImage
@@ -171,13 +171,13 @@ class LowerInput extends React.Component {
 
 class Row extends React.Component {
   static propTypes = {
-    data: React.PropTypes.array,
-    overtone: React.PropTypes.any,
-    isUpper: React.PropTypes.bool,
-    setCB: React.PropTypes.func,
-    setOvertone: React.PropTypes.func,
-    setOctave: React.PropTypes.func,
-    applyCB: React.PropTypes.func
+    data: PropTypes.array,
+    overtone: PropTypes.any,
+    isUpper: PropTypes.bool,
+    setCB: PropTypes.func,
+    setOvertone: PropTypes.func,
+    setOctave: PropTypes.func,
+    applyCB: PropTypes.func
   }
   render () {
     let data = this.props.data

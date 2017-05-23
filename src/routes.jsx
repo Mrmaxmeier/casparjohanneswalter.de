@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { Router, Route, Link, IndexRedirect } from 'react-router'
 import ReactGA from 'react-ga'
 import { dependencies } from '../package.json'
@@ -20,7 +21,7 @@ let history = __IN_BUILD__ ? rr.browserHistory : rr.hashHistory // eslint-disabl
 
 class _404Page extends React.PureComponent {
   static propTypes = {
-    location: React.PropTypes.object
+    location: PropTypes.object
   }
   static checkRedirect (nextState, replace) {
     let path = nextState.location.pathname
@@ -66,7 +67,7 @@ researchSubPages.forEach((page) => {
 
 export class Routes extends React.PureComponent {
   static propTypes = {
-    analytics: React.PropTypes.bool
+    analytics: PropTypes.bool
   }
   render () {
     let onUpdate = this.props.analytics ? () => {

@@ -1,15 +1,16 @@
 import React, {PureComponent} from 'react'
+import PropTypes from 'prop-types'
 
 import { keys, extend } from 'underline'
 import download from 'downloadjs'
 
 export class Presets extends PureComponent {
   static propTypes = {
-    name: React.PropTypes.string,
-    default: React.PropTypes.object,
-    onChange: React.PropTypes.func,
-    current: React.PropTypes.func,
-    presets: React.PropTypes.object
+    name: PropTypes.string,
+    default: PropTypes.object,
+    onChange: PropTypes.func,
+    current: PropTypes.func,
+    presets: PropTypes.object
   }
   constructor (props) {
     super(props)

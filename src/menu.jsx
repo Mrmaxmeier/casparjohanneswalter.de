@@ -1,10 +1,11 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { Link } from 'react-router'
 
 class MenuLink extends React.PureComponent {
   static propTypes = {
-    name: React.PropTypes.string,
-    id: React.PropTypes.string
+    name: PropTypes.string,
+    id: PropTypes.string
   }
 
   render () {

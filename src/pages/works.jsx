@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { Link } from 'react-router'
 import { filter, find, contains, map } from 'underline'
 
@@ -7,7 +8,7 @@ import { tags, groups as tagGroups, slugify } from '../tags.js'
 
 class MenuTag extends React.PureComponent {
   static propTypes = {
-    tag: React.PropTypes.object
+    tag: PropTypes.object
   }
   render () {
     let tag = this.props.tag
@@ -30,7 +31,7 @@ class MenuTag extends React.PureComponent {
 
 class WorkSummary extends React.PureComponent {
   static propTypes = {
-    work: React.PropTypes.object
+    work: PropTypes.object
   }
   render () {
     let work = this.props.work
@@ -74,7 +75,7 @@ class WorkSummary extends React.PureComponent {
 
 export class WorksPage extends React.PureComponent {
   static propTypes = {
-    params: React.PropTypes.object
+    params: PropTypes.object
   }
   render () {
     let works = sortedWorks()

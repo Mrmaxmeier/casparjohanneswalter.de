@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import moment from 'moment'
 
 import { Menu } from './menu.jsx'
@@ -6,7 +7,7 @@ import { ServiceWorkerController } from './serviceworker.jsx'
 
 export class App extends React.PureComponent {
   static propTypes = {
-    children: React.PropTypes.any
+    children: PropTypes.any
   }
   render () {
     return (

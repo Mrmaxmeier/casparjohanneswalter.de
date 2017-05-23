@@ -1,4 +1,5 @@
 import React, { PureComponent } from 'react'
+import PropTypes from 'prop-types'
 
 import { clone } from 'underline'
 
@@ -8,7 +9,7 @@ import { concertPitchToC0, ratioToCents } from './converters.js'
 
 export class Settings extends PureComponent {
   static propTypes = {
-    updateState: React.PropTypes.func
+    updateState: PropTypes.func
   }
 
   constructor (props) {
