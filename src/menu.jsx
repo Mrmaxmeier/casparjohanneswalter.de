@@ -1,8 +1,8 @@
-import React from 'react'
+import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { Link } from 'react-router'
+import { NavLink } from 'react-router-dom'
 
-class MenuLink extends React.PureComponent {
+class MenuLink extends Component {
   static propTypes = {
     name: PropTypes.string,
     id: PropTypes.string
@@ -10,17 +10,17 @@ class MenuLink extends React.PureComponent {
 
   render () {
     return (
-      <Link to={'/' + this.props.id} activeClassName='active'>
+      <NavLink to={'/' + this.props.id} activeClassName="active" exact={this.props.id === ''}>
         {this.props.name}
-      </Link>
+      </NavLink>
     )
   }
 }
 
-export class Menu extends React.PureComponent {
+export class Menu extends Component {
   render () {
     let items = [
-      { id: 'index', name: 'Home' },
+      { id: '', name: 'Home' },
       { id: 'works', name: 'List of Works' },
       { id: 'biography', name: 'Biography' },
       { id: 'press', name: 'Press' },

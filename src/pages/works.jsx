@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Link } from 'react-router'
+import { NavLink, Link } from 'react-router-dom'
 import { filter, find, contains, map } from 'underline'
 
 import { rows, sorted as sortedWorks } from '../works.js'
@@ -21,7 +21,7 @@ class MenuTag extends React.PureComponent {
         <ul>
           {tag.subtags.map((subtag) => {
             let slug = slugify(subtag)
-            return <Link key={slug} to={'/tags/' + slug}>{subtag}</Link>
+            return <Link key={slug} to={'/works/' + slug}>{subtag}</Link>
           })}
         </ul>
       </li>
@@ -75,26 +75,27 @@ class WorkSummary extends React.PureComponent {
 
 export class WorksPage extends React.PureComponent {
   static propTypes = {
-    params: PropTypes.object
+    match: PropTypes.object
   }
   render () {
     let works = sortedWorks()
-    if (this.props.params.tag !== undefined) {
-      // TODO: label
-      works = works::filter((w) => {
-        let tags = w.tags::map(slugify)
-        return tags::contains(this.props.params.tag)
-      })
-    }
+    let slug = this.props.match && this.props.match.params.tag
 
-    let taggedAs = tags()::find((tag) => slugify(tag) === this.props.params.tag)
+    let taggedAs = tags()::find((tag) => slugify(tag) === slug)
+
+    if (taggedAs) {
+      // TODO: label
+      works = works::filter((w) =>
+        w.tags::map(slugify)::contains(slug)
+      )
+    }
 
     return (
       <div className='works'>
         <nav className='dropdown'>
           <ul>
               <li>
-                  <Link to='/works' activeClassName='active'>All</Link>
+                  <NavLink to='/works' exact activeClassName='active'>All</NavLink>
               </li>
               {tagGroups().map((tag) => <MenuTag key={tag.name} tag={tag} />)}
           </ul>

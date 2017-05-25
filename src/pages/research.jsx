@@ -1,6 +1,8 @@
 import React, {PureComponent} from 'react'
-import { Link } from 'react-router'
+import PropTypes from 'prop-types'
+import { Route, Link, Switch } from 'react-router-dom'
 
+import { _404Page} from './404.jsx'
 import { KitharaCalc } from '../research/kithara_components.js'
 import { Rechner as PartchFraction } from '../research/partch_bruch_rechner.js'
 import { FractionToCents, FrequencyToPitch } from '../research/converterComponents.jsx'
@@ -79,6 +81,7 @@ let partchFractionDescription = () => <p>
     Die vierte Zeile gibt die Teilung vom oberen Bruch durch die Reihe der unteren Brüche aus (die entsprechenden Intervalle unter dem Bruch).
     Die Brüche der beiden unteren Reihen sind so oktaviert, dass sie zwischen 1 und 2 liegen.
   </p>
+
 
 let musicCalculators = [
   {
@@ -162,28 +165,39 @@ let additionalMathTools = [
   }
 ]
 
-export const subpages = [].concat(musicCalculators, additionalMathTools)
+const subpages = [].concat(musicCalculators, additionalMathTools)
 
 export class ResearchPage extends PureComponent {
   render () {
+    let link = (id, title) => <li key={id}>
+        <Link to={'/research/' + id}>{title}</Link>
+      </li>
     return (
       <div>
-        <h3>Music calculators</h3>
-        <ul>
-          {musicCalculators.map((d, i) =>
-            <li key={i}>
-              <Link to={'/research/' + d.id}>{d.title}</Link>
-            </li>
+        <Switch>
+          <Route exact path="/research">
+            <div>
+              <h3>Music calculators</h3>
+              <ul>
+                {musicCalculators.map((d, i) => link(d.id, d.title))}
+              </ul>
+              <h3>Additional Math Tools</h3>
+              <ul>
+                {additionalMathTools.map((d, i) => link(d.id, d.title))}
+              </ul>
+            </div>
+          </Route>
+          {subpages.map((page) =>
+            <Route key={page.id} path={'/research/' + page.id}>
+              <div>
+                <h3>{page.title}</h3>
+                {page.description ? page.description() : null}
+                <page.component />
+              </div>
+            </Route>
           )}
-        </ul>
-        <h3>Additional Math Tools</h3>
-        <ul>
-          {additionalMathTools.map((d, i) =>
-            <li key={i}>
-              <Link to={'/research/' + d.id}>{d.title}</Link>
-            </li>
-          )}
-        </ul>
+          <Route component={_404Page} />
+        </Switch>
       </div>
     )
   }
