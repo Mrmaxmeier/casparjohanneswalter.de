@@ -39,8 +39,8 @@ export class ChordPlayer extends PureComponent {
 
   onPreset (name, preset) {
     this.setRows(preset.rows, () => {
-      this.refs.concertPitch.setValue(preset.concertPitch, true)
-      this.refs.pitch11.setValue(preset.pitch11, true)
+      this.concertPitch.setValue(preset.concertPitch, true)
+      this.pitch11.setValue(preset.pitch11, true)
       preset.data.forEach((row, ri) => {
         row.forEach((input, i) => {
           this.inputs[ri][i].setValue(input, true)
@@ -54,8 +54,8 @@ export class ChordPlayer extends PureComponent {
     return {
       rows: this.state.rows,
       mode: this.state.mode,
-      concertPitch: this.refs.concertPitch.text(),
-      pitch11: this.refs.pitch11.text(),
+      concertPitch: this.concertPitch.text(),
+      pitch11: this.pitch11.text(),
       data: range(this.state.rows).map((ri) => {
         return range(6).map((i) => this.inputs[ri][i].text())
       })
@@ -81,7 +81,7 @@ export class ChordPlayer extends PureComponent {
                   default={440}
                   onChange={(concertPitch) => {
                     this.setState({ concertPitch })
-                  }} ref='concertPitch'/>
+                  }} ref={(e) => { this.concertPitch = e }}/>
               </th>
             </tr>
             <tr>
@@ -91,7 +91,7 @@ export class ChordPlayer extends PureComponent {
                   wide asKind="mathjs-ignoreerror" default="440 / 9 * 8"
                   onChange={(pitch11) => {
                     this.setState({ pitch11 })
-                  }} ref='pitch11'/>
+                  }} ref={(e) => { this.pitch11 = e }} />
               </th>
               <th>
                 <NoteImage cents={cents} />
@@ -116,7 +116,7 @@ export class ChordPlayer extends PureComponent {
               <th>
                 <input type="number" name="rows"
                   min="1" value={this.state.rows}
-                  style={{width: '3em'}} ref='rows'
+                  style={{width: '3em'}} ref={(e) => { this.rows = e }}
                   onChange={(event) => {
                     let rows = parseInt(event.target.value)
                     this.setRows(rows)
@@ -129,7 +129,7 @@ export class ChordPlayer extends PureComponent {
               rows: 8,
               mode: 'ratio',
               data: range(8).map(() => ['1 / 1', '', '', '', '', ''])
-            }} ref='presets' onChange={this.onPreset.bind(this)}
+            }} onChange={this.onPreset.bind(this)}
               current={this.dumpPreset.bind(this)} />
           </tbody>
         </table>

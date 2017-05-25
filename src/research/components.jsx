@@ -22,7 +22,7 @@ export class MathInput extends PureComponent {
     }
   }
   setValue (value, callOnChange) {
-    this.refs.elem.value = value
+    this.elem.value = value
     this.setState({ value })
     if (callOnChange && this.props.onChange) {
       this.props.onChange(processString(value, this.props.asKind))
@@ -40,10 +40,10 @@ export class MathInput extends PureComponent {
       style['color'] = 'red'
     }
     return (
-      <input type='text' ref='elem'
+      <input type='text' ref={(e) => { this.elem = e }}
         defaultValue={this.state.value}
         onChange={(d) => {
-          let value = this.refs.elem.value
+          let value = this.elem.value
           let result = processString(value, this.props.asKind)
           let error = result === undefined || result.error
           this.setState({ value, error })
@@ -61,7 +61,7 @@ export class MathInput extends PureComponent {
   }
 
   text () {
-    return this.refs.elem.value
+    return this.elem.value
   }
 }
 
@@ -119,7 +119,8 @@ export class FractionInput extends PureComponent {
                   this.handleChange(numerator, this.state.denominator)
                   this.setState({ numerator })
                 }}
-                style={style} ref='input' disabled={this.props.disabled} />
+                ref={(e) => { this.input = e }}
+                style={style} disabled={this.props.disabled} />
             </td>
           </tr>
           <tr>
@@ -130,7 +131,8 @@ export class FractionInput extends PureComponent {
                   this.handleChange(this.state.numerator, denominator)
                   this.setState({ denominator })
                 }}
-                style={style} ref='input' disabled={this.props.disabled} />
+                ref={(e) => { this.input = e }}
+                style={style} disabled={this.props.disabled} />
             </td>
           </tr>
         </tbody>
@@ -183,10 +185,10 @@ export class SpecificRangeSlider extends PureComponent {
     let max = this.state.max
     let min = this.state.min
     if (value > max) {
-      this.refs.max.setValue(value)
+      this.max.setValue(value)
       this.setState({ max: value, value: value })
     } else if (value < min) {
-      this.refs.min.setValue(value)
+      this.min.setValue(value)
       this.setState({ min: value, value: value })
     } else {
       this.setState({ value })
@@ -207,19 +209,19 @@ export class SpecificRangeSlider extends PureComponent {
           asKind="mathjs-ignoreerror"
           onChange={(min) => {
             this.setState({min})
-          }} ref="min" />
+          }} ref={(e) => { this.min = e }} />
         <input type="range" style={{width: '20em', verticalAlign: 'middle'}}
           min={min} max={max} step={step} value={this.state.value}
           onChange={(event) => {
             let value = parseFloat(event.target.value)
             this.setState({ value })
             this.props.onChange(value)
-          }} ref="slider" />
+          }} ref={(e) => { this.slider = e }} />
         <MathInput default={this.props.defaultMax}
           asKind="mathjs-ignoreerror"
           onChange={(max) => {
             this.setState({max})
-          }} ref="max" />
+          }} ref={(e) => { this.max = e }} />
       </span>
     )
   }

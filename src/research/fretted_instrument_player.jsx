@@ -67,9 +67,9 @@ export class FrettedInstrumentPlayer extends PureComponent {
   onPreset (_, preset) {
     this.setState(preset)
     Settings.onPreset([
-      this.refs.size,
-      this.refs.concertPitch,
-      this.refs.pitch11
+      this.size,
+      this.concertPitch,
+      this.pitch11
     ], preset)
   }
 
@@ -82,13 +82,13 @@ export class FrettedInstrumentPlayer extends PureComponent {
       <div>
         <table>
           <tbody>
-            <ConcertPitchSetting updateState={updateState} ref="concertPitch" />
-            <Pitch11Setting concertPitch={this.state.concertPitch} updateState={updateState} ref="pitch11" />
+            <ConcertPitchSetting updateState={updateState} ref={(e) => { this.concertPitch = e }} />
+            <Pitch11Setting concertPitch={this.state.concertPitch} updateState={updateState} ref={(e) => { this.pitch11 = e }} />
             <RowsColumnsSetting updateState={(v) => {
               let rowData = resizeArray(this.state.rowData, v.rows)
               let columnData = resizeArray(this.state.columnData, v.columns)
               this.setState({ rowData, columnData, rows: v.rows, columns: v.columns })
-            }} ref="size" />
+            }} ref={(e) => { this.size = e }} />
             <MutedSetting updateState={updateState} />
             {
               /*
@@ -96,13 +96,13 @@ export class FrettedInstrumentPlayer extends PureComponent {
                 TODO
               */
             }
-            <Presets name='fretted' ref='presets'
+            <Presets name='fretted'
               onChange={this.onPreset.bind(this)}
               current={() => {
                 return Settings.dumpPreset([
-                  this.refs.size,
-                  this.refs.concertPitch,
-                  this.refs.pitch11
+                  this.size,
+                  this.concertPitch,
+                  this.pitch11
                 ], this.state)
               }} />
           </tbody>

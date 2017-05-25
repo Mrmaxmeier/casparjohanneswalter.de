@@ -161,8 +161,8 @@ export class ChordPlayer2 extends PureComponent {
 
   onPreset (name, preset) {
     this.setRows(preset.rows, () => {
-      this.refs.concertPitch.setValue(preset.concertPitch, true)
-      this.refs.pitch11.setValue(preset.pitch11, true)
+      this.concertPitch.setValue(preset.concertPitch, true)
+      this.pitch11.setValue(preset.pitch11, true)
       this.setState({
         mode: preset.mode,
         data: preset.data,
@@ -175,8 +175,8 @@ export class ChordPlayer2 extends PureComponent {
     return {
       rows: this.state.rows,
       mode: this.state.mode,
-      concertPitch: this.refs.concertPitch.text(),
-      pitch11: this.refs.pitch11.text(),
+      concertPitch: this.concertPitch.text(),
+      pitch11: this.pitch11.text(),
       data: this.state.data,
       duration: this.state.duration
     }
@@ -281,7 +281,7 @@ export class ChordPlayer2 extends PureComponent {
                   default={440}
                   onChange={(concertPitch) => {
                     this.setState({ concertPitch })
-                  }} ref='concertPitch'/>
+                  }} ref={(e) => { this.concertPitch = e }} />
               </th>
             </tr>
             <tr>
@@ -291,7 +291,7 @@ export class ChordPlayer2 extends PureComponent {
                   wide asKind="mathjs-ignoreerror" default="440 / 9 * 8"
                   onChange={(pitch11) => {
                     this.setState({ pitch11 })
-                  }} ref='pitch11'/>
+                  }} ref={(e) => { this.pitch11 = e }} />
               </th>
               <th>
                 <NoteImage cents={cents} />
@@ -316,14 +316,14 @@ export class ChordPlayer2 extends PureComponent {
               <th>
                 <input type="number" name="rows"
                   min="1" value={this.state.rows}
-                  style={{width: '3em'}} ref='rows'
+                  style={{width: '3em'}} ref={(e) => { this.rows = e }}
                   onChange={(event) => {
                     let rows = parseInt(event.target.value)
                     this.setRows(rows)
                   }}/>
               </th>
             </tr>
-            <Presets name='chordPlayer2Presets' ref='presets'
+            <Presets name='chordPlayer2Presets'
               onChange={this.onPreset.bind(this)}
               current={this.dumpPreset.bind(this)} />
           </tbody>

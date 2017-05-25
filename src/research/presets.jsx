@@ -92,11 +92,11 @@ export class Presets extends PureComponent {
         <th>
           <button onClick={() => {
             let e = new window.MouseEvent('click')
-            this.refs.filepicker.dispatchEvent(e)
+            this.filepicker.dispatchEvent(e)
           }}>
             Import file
           </button>
-          <input ref="filepicker" type="file" style={{display: 'none'}}
+          <input ref={(e) => { this.filepicker = e }} type="file" style={{display: 'none'}}
             onChange={(event) => {
               let file = event.target.files[0]
               let name = file.name.replace('.json', '')

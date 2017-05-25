@@ -51,7 +51,7 @@ export class FractionWindowing extends PureComponent {
     let checkMaMb = (ma, mb) => {
       if (ma && mb) {
         let input = (log(ma / mb) / log(2))
-        this.refs.input.setValue(input, false)
+        this.input.setValue(input, false)
         this.setState({ input })
       }
     }
@@ -64,11 +64,11 @@ export class FractionWindowing extends PureComponent {
               <th>Number or Fraction</th>
               <th>
                 <MathInput
-                  wide asKind="mathjs-ignoreerror" ref="input"
+                  wide asKind="mathjs-ignoreerror" ref={(e) => { this.input = e }}
                   onChange={(input) => {
                     this.setState({ input })
-                    this.refs.ma.setValue('', true)
-                    this.refs.mb.setValue('', true)
+                    this.ma.setValue('', true)
+                    this.mb.setValue('', true)
                   }} />
               </th>
               <th>
@@ -86,13 +86,13 @@ export class FractionWindowing extends PureComponent {
                 <MathInput wide asKind="mathjs-ignoreerror" onChange={(v) => {
                   this.setState({ ma: v })
                   checkMaMb(v, this.state.mb)
-                }} ref='ma' />
+                }} ref={(e) => { this.ma = e }} />
               </th>
               <th>
                 <MathInput wide asKind="mathjs-ignoreerror" onChange={(v) => {
                   this.setState({ mb: v })
                   checkMaMb(this.state.ma, v)
-                }} ref='mb' />
+                }} ref={(e) => { this.mb = e }} />
               </th>
               {!modeFraction ? (
               <th>

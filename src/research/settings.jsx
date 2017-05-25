@@ -77,9 +77,9 @@ export class ConcertPitchSetting extends Settings {
   static field = 'concertPitch';
   static default = 440;
   cls () { return ConcertPitchSetting }
-  dump () { return this.refs.input.getValue() }
-  serialize (v) { v.concertPitch = this.refs.input.text() }
-  deserialize (preset) { this.refs.input.setValue(preset.concertPitch, true) }
+  dump () { return this.input.getValue() }
+  serialize (v) { v.concertPitch = this.input.text() }
+  deserialize (preset) { this.input.setValue(preset.concertPitch, true) }
 
   render () {
     return (
@@ -88,7 +88,7 @@ export class ConcertPitchSetting extends Settings {
         <th>
           <MathInput
             wide asKind="mathjs-ignoreerror"
-            default={440} ref='input'
+            default={440} ref={(e) => { this.input = e }}
             onChange={this.onValue.bind(this)} />
         </th>
       </tr>
@@ -100,8 +100,8 @@ export class Pitch11Setting extends Settings {
   static field = 'pitch11';
   static default = 440 / 9 * 8;
   cls () { return Pitch11Setting }
-  serialize (v) { v.pitch11 = this.refs.input.text() }
-  deserialize (preset) { this.refs.input.setValue(preset.pitch11, true) }
+  serialize (v) { v.pitch11 = this.input.text() }
+  deserialize (preset) { this.input.setValue(preset.pitch11, true) }
   render () {
     let c0 = concertPitchToC0(this.props.concertPitch)
     let cents = ratioToCents(this.state.value / c0)
@@ -111,7 +111,7 @@ export class Pitch11Setting extends Settings {
         <th>
           <MathInput
             wide asKind="mathjs-ignoreerror" default="440 / 9 * 8"
-            onChange={this.onValue.bind(this)} ref='input' />
+            onChange={this.onValue.bind(this)} ref={(e) => { this.input = e }} />
         </th>
         <th>
           <NoteImage cents={cents} />

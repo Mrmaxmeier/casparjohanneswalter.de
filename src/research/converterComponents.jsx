@@ -30,7 +30,7 @@ export class FractionToCents extends PureComponent {
       <div>
         <h4>Fraction to cents</h4>
         <p>Converts numbers zu cents
-          (<a onClick={() => { this.refs.input.setValue('5 / 4', true) }}>try 5 / 4</a>)
+          (<a onClick={() => { this.input.setValue('5 / 4', true) }}>try 5 / 4</a>)
         </p>
         <table>
           <tbody>
@@ -38,7 +38,7 @@ export class FractionToCents extends PureComponent {
               <th>Ratio</th>
               <th>
                 <MathInput
-                  wide asKind="mathjs" ref="input"
+                  wide asKind="mathjs" ref={(e) => { this.input = e }}
                   onChange={(input) => { this.setState({input}) }} />
               </th>
             </tr>
@@ -46,7 +46,7 @@ export class FractionToCents extends PureComponent {
               <th>Freq for 1:1 (hz)</th>
               <th>
                 <MathInput default={440}
-                  wide asKind="mathjs" ref="reference"
+                  wide asKind="mathjs"
                   onChange={(reference) => { this.setState({reference}) }} />
               </th>
             </tr>
@@ -102,7 +102,7 @@ export class FrequencyToPitch extends PureComponent {
       <div>
         <h4>Frequency to pitch</h4>
         <p>Converts frequencies to pitch
-          (<a onClick={() => { this.refs.input.setValue('220', true) }}>try 220</a>)
+          (<a onClick={() => { this.input.setValue('220', true) }}>try 220</a>)
         </p>
         <table>
           <tbody>
@@ -110,7 +110,7 @@ export class FrequencyToPitch extends PureComponent {
               <th>A4 (hz)</th>
               <th>
                 <MathInput default={440}
-                  wide asKind="mathjs" ref="reference"
+                  wide asKind="mathjs"
                   onChange={(reference) => { this.setState({reference}) }} />
               </th>
             </tr>
@@ -118,7 +118,7 @@ export class FrequencyToPitch extends PureComponent {
               <th>Frequency</th>
               <th>
                 <MathInput
-                  wide asKind="mathjs" ref="input"
+                  wide asKind="mathjs" ref={(e) => { this.input = e }}
                   onChange={(input) => { this.setState({input}) }} />
               </th>
             </tr>

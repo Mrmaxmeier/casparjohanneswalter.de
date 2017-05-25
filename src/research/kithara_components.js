@@ -31,7 +31,7 @@ export class RatioInput extends React.Component {
   }
   handleChange (c) {
     if (this.props.changeCB) {
-      this.props.changeCB(this.refs.input.value)
+      this.props.changeCB(this.input.value)
     }
   }
 
@@ -59,7 +59,7 @@ export class RatioInput extends React.Component {
       <td style={tdStyle}>
         <input type='text' tabIndex={this.props.tabIndex}
           value={val} onChange={this.handleChange.bind(this)}
-          style={style} ref='input' disabled={this.props.disabled} />
+          style={style} ref={(e) => { this.input = e }} disabled={this.props.disabled} />
       </td>
     )
   }

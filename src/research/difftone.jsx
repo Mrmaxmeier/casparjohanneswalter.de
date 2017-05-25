@@ -37,14 +37,14 @@ export class DiffTone extends PureComponent {
                   wide asKind="mathjs"
                   onChange={(freq1) => {
                     this.setState({freq1})
-                    this.refs.slider1.setValue(freq1.value)
-                  }} ref="input1" />
+                    this.slider1.setValue(freq1.value)
+                  }} ref={(e) => { this.input1 = e }} />
               </th>
               <th>
                 <SpecificRangeSlider defaultMin={400} defaultMax={600} onChange={(value) => {
                   this.setState({freq1: {value, error: null}})
-                  this.refs.input1.setValue(value)
-                }} ref="slider1" />
+                  this.input1.setValue(value)
+                }} ref={(e) => { this.slider1 = e }} />
               </th>
             </tr>
             <tr>
@@ -54,14 +54,14 @@ export class DiffTone extends PureComponent {
                   wide asKind="mathjs"
                   onChange={(freq2) => {
                     this.setState({freq2})
-                    this.refs.slider2.setValue(freq2.value)
-                  }} ref="input2" />
+                    this.slider2.setValue(freq2.value)
+                  }} ref={(e) => { this.input2 = e }} />
               </th>
               <th>
                 <SpecificRangeSlider defaultMin={400} defaultMax={600} onChange={(value) => {
                   this.setState({freq2: {value, error: null}})
-                  this.refs.input2.setValue(value)
-                }} ref="slider2" />
+                  this.input2.setValue(value)
+                }} ref={(e) => { this.slider2 = e }} />
               </th>
             </tr>
             <tr>

@@ -73,8 +73,8 @@ export class SuperCembaloPlayer extends PureComponent {
   }
 
   onPreset (name, preset) {
-    this.refs.concertPitch.setValue(preset.concertPitch, true)
-    this.refs.pitch11.setValue(preset.pitch11, true)
+    this.concertPitch.setValue(preset.concertPitch, true)
+    this.pitch11.setValue(preset.pitch11, true)
     let data = this.inputs.map((input, i) => {
       let result = input.calc(preset.data[i])
       input.setValue(preset.data[i])
@@ -91,8 +91,8 @@ export class SuperCembaloPlayer extends PureComponent {
     return {
       octaves: this.state.octaves,
       mode: this.state.mode,
-      concertPitch: this.refs.concertPitch.text(),
-      pitch11: this.refs.pitch11.text(),
+      concertPitch: this.concertPitch.text(),
+      pitch11: this.pitch11.text(),
       data: this.inputs.map((i) => i.text())
     }
   }
@@ -139,7 +139,7 @@ export class SuperCembaloPlayer extends PureComponent {
                   default={440}
                   onChange={(concertPitch) => {
                     this.setState({ concertPitch })
-                  }} ref='concertPitch'/>
+                  }} ref={(e) => { this.concertPitch = e }}/>
               </th>
             </tr>
             <tr>
@@ -149,7 +149,7 @@ export class SuperCembaloPlayer extends PureComponent {
                   wide asKind="mathjs-ignoreerror" default="440 / 9 * 8"
                   onChange={(pitch11) => {
                     this.setState({ pitch11 })
-                  }} ref='pitch11'/>
+                  }} ref={(e) => { this.pitch11 = e }} />
               </th>
               <th>
                 <NoteImage cents={cents} />
@@ -187,7 +187,7 @@ export class SuperCembaloPlayer extends PureComponent {
               rows: 8,
               mode: 'ratio',
               data: range(38).map(() => '')
-            }} ref='presets' onChange={this.onPreset.bind(this)}
+            }} onChange={this.onPreset.bind(this)}
               presets={presets}
               current={this.dumpPreset.bind(this)} />
             <tr>
