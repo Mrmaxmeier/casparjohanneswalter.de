@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { BrowserRouter, HashRouter } from 'react-router-dom'
 import ReactGA from 'react-ga'
 
+import { tags, slugify } from './tags.js'
 import { App } from './app.jsx'
 
 export class Routes extends React.PureComponent {
@@ -22,3 +23,12 @@ export class Routes extends React.PureComponent {
     }
   }
 }
+
+export let AppComponent = App
+export let routes = [
+  '/index',
+  '/works',
+  '/biography',
+  '/press',
+  '/research'
+].concat(tags().map((tag) => 'works/' + slugify(tag)))

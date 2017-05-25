@@ -28,17 +28,16 @@ module.exports = Object.assign(config, {
         return base.replace('<main id="app" />', '<main id="app">' + data + '</main>')
       },
       routes: function (routes) {
-        let routesElem = React.createElement(routes.Routes, {})
-        let renderRoutes = (new routes.Routes()).render
+        console.log('routes func', routes)
         return {
-          node: renderRoutes.bind(routesElem)(),
+          node: React.createElement(routes.AppComponent, {}),
           routes: routes.routes
         }
       },
       hostname: 'casparjohanneswalter.de',
       require: 'routes',
       sitemap: true,
-      sitemapFilter: (route) => !(route.includes('tags/') || route === '404')
+      sitemapFilter: (route) => !(route.includes('works/') || route === '404')
     }),
     new SWPrecacheWebpackPlugin({
       cacheId: 'casparjohanneswalter',
