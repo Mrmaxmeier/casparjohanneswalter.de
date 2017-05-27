@@ -418,6 +418,46 @@ export class CompactFrequencyPlayer extends PureComponent {
   }
 }
 
+export class FrequencyNode extends PureComponent {
+  static propTypes = {
+    freq: PropTypes.number,
+    volume: PropTypes.number,
+    playing: PropTypes.bool
+  }
+
+  constructor (props) {
+    super(props)
+    this.provider = new SoundGenProvider({
+      volume: (this.props.volume || 0.5) * 0.2,
+      frequency: this.props.freq
+    })
+  }
+
+  componentWillUnmount () {
+    this.provider.unload()
+  }
+
+  componentDidUpdate (prevProps, prevState) {
+    let props = this.props
+    if (prevProps.playing && !props.playing) {
+      this.provider.stop()
+    }
+    if (prevProps.volume !== props.volume || prevProps.freq !== props.freq) {
+      this.provider.setOptions({
+        volume: (props.volume || 0.5) * 0.2,
+        frequency: props.freq
+      })
+    }
+    if (!prevProps.playing && props.playing) {
+      this.provider.play()
+    }
+  }
+
+  render () {
+    return null
+  }
+}
+
 export class NoteImage extends PureComponent {
   static propTypes = {
     cents: PropTypes.number
