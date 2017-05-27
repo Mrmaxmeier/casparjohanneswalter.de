@@ -1,8 +1,7 @@
 import React, {PureComponent} from 'react'
-import PropTypes from 'prop-types'
 import { Route, Link, Switch } from 'react-router-dom'
 
-import { _404Page} from './404.jsx'
+import { _404Page } from './404.jsx'
 import { KitharaCalc } from '../research/kithara_components.js'
 import { Rechner as PartchFraction } from '../research/partch_bruch_rechner.js'
 import { FractionToCents, FrequencyToPitch } from '../research/converterComponents.jsx'
@@ -19,7 +18,6 @@ import { SuperCembaloPlayer } from '../research/supercembaloplayer.jsx'
 import { FrettedInstrumentPlayer } from '../research/fretted_instrument_player.jsx'
 import { Limit5MatrixPlayer } from '../research/limit5matrix.jsx'
 // import { MeanToneCircle } from '../research/mean_tone_circle.jsx'
-
 
 export class Converters extends PureComponent {
   render () {
@@ -82,7 +80,6 @@ let partchFractionDescription = () => <p>
     Die vierte Zeile gibt die Teilung vom oberen Bruch durch die Reihe der unteren Brüche aus (die entsprechenden Intervalle unter dem Bruch).
     Die Brüche der beiden unteren Reihen sind so oktaviert, dass sie zwischen 1 und 2 liegen.
   </p>
-
 
 let musicCalculators = [
   {
@@ -171,7 +168,7 @@ let additionalMathTools = [
   }
 ]
 
-const subpages = [].concat(musicCalculators, additionalMathTools)
+export const subpages = [].concat(musicCalculators, additionalMathTools)
 
 export class ResearchPage extends PureComponent {
   render () {

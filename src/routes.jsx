@@ -5,6 +5,7 @@ import ReactGA from 'react-ga'
 import createHistory from 'history/createBrowserHistory'
 
 import { tags, slugify } from './tags.js'
+import { subpages as researchPages } from './pages/research.jsx'
 import { App } from './app.jsx'
 
 export class Routes extends React.PureComponent {
@@ -45,4 +46,6 @@ export let routes = [
   '/biography',
   '/press',
   '/research'
-].concat(tags().map((tag) => 'works/' + slugify(tag)))
+]
+  .concat(tags().map((tag) => 'works/' + slugify(tag)))
+  .concat(researchPages.map((page) => 'research/' + page.id))
