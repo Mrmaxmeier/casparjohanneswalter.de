@@ -9,12 +9,14 @@ export class AudioProvider {
     this.wavetype = wavetype || 'sine'
   }
   init () {
+    if (typeof window === 'undefined') { return }
     this.wave = new Pizzicato.Sound({
       source: 'wave',
       options: Object.assign({type: this.wavetype}, this.options)
     })
   }
   play () {
+    if (typeof window === 'undefined') { return }
     if (!this.wave) {
       this.init()
     }
@@ -22,12 +24,14 @@ export class AudioProvider {
     this.playing = true
   }
   stop () {
+    if (typeof window === 'undefined') { return }
     if (this.wave) {
       this.wave.stop()
     }
     this.playing = false
   }
   unload () {
+    if (typeof window === 'undefined') { return }
     this.stop()
     delete this.wave
   }
@@ -75,6 +79,7 @@ export class SoundGenProvider extends AudioProvider {
   }
 
   init () {
+    if (typeof window === 'undefined') { return }
     this._waves = this._waves.map((_, index) => new Pizzicato.Sound({
       source: 'wave',
       options: {
@@ -85,6 +90,7 @@ export class SoundGenProvider extends AudioProvider {
   }
 
   play () {
+    if (typeof window === 'undefined') { return }
     if (!this._waves[0]) {
       this.init()
     }
@@ -93,6 +99,7 @@ export class SoundGenProvider extends AudioProvider {
   }
 
   stop () {
+    if (typeof window === 'undefined') { return }
     if (this._waves[0]) {
       this._waves.forEach((wave) => wave.stop())
     }
@@ -104,6 +111,7 @@ export class SoundGenProvider extends AudioProvider {
   }
 
   linearRampFrequency (fromFreq, toFreq, duration) {
+    if (typeof window === 'undefined') { return }
     this._freq = toFreq
     this._waves.forEach((wave, index) => {
       if (wave) {
