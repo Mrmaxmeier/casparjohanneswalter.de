@@ -19,7 +19,7 @@ export function processString (data, via) {
       }
     }
   }
-  return handlers[via](data)
+  return handlers[via || 'mathjs-ignoreerror'](data)
 }
 
 export function ratioToCents (ratio) {
@@ -106,4 +106,9 @@ export function intelligenterMediant (zahl, precision) {
     }
   }
   return fractions
+}
+
+export function normalizeOctave (n) {
+  let p = Math.floor(Math.log2(n))
+  return n / Math.pow(2, p)
 }

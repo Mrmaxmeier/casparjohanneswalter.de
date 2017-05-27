@@ -17,6 +17,7 @@ import { ChordPlayer2 } from '../research/chordplayer2.jsx'
 import { ArciorganoPlayer } from '../research/arciorganoplayer.jsx'
 import { SuperCembaloPlayer } from '../research/supercembaloplayer.jsx'
 import { FrettedInstrumentPlayer } from '../research/fretted_instrument_player.jsx'
+import { Limit5MatrixPlayer } from '../research/limit5matrix.jsx'
 // import { MeanToneCircle } from '../research/mean_tone_circle.jsx'
 
 
@@ -154,6 +155,11 @@ let musicCalculators = [
     id: 'fretted_instrument_player',
     title: 'Fretted Instrument Player',
     component: FrettedInstrumentPlayer
+  },
+  {
+    id: 'limit5matrix',
+    title: 'Limit-5 Matrix Player',
+    component: Limit5MatrixPlayer
   }
 ]
 
