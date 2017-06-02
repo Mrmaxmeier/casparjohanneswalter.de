@@ -16,7 +16,8 @@ export class Presets extends PureComponent {
     super(props)
     this.state = {
       presets: Object.assign({'-- New --': null}, this.props.presets || {}),
-      preset: '-- New --'
+      preset: '-- New --',
+      localStorageError: false
     }
     if (typeof window !== 'undefined') {
       setTimeout(() => {
@@ -36,7 +37,12 @@ export class Presets extends PureComponent {
 
   save () {
     let data = JSON.stringify(this.state.presets)
-    window.localStorage.setItem(this.props.name, data)
+    try {
+      window.localStorage.setItem(this.props.name, data)
+    } catch (e) {
+      this.setState({ localStorageError: true })
+      console.error(e)
+    }
   }
 
   render () {
@@ -45,6 +51,11 @@ export class Presets extends PureComponent {
         <th>
           Preset
         </th>
+        {this.state.localStorageError ? (
+          <th style={{ color: 'red' }}>
+            {"This session doesn't support local storage of presets."}
+          </th>
+        ) : null}
         <th>
           <select onChange={(e) => {
             let preset = e.target.value
@@ -75,7 +86,7 @@ export class Presets extends PureComponent {
                 this.props.onChange(name, data)
               }
             })
-          }}>
+          }} disabled={this.state.localStorageError}>
             Save preset
           </button>
         </th>
@@ -85,7 +96,7 @@ export class Presets extends PureComponent {
             let string = JSON.stringify(data, null, 2)
             download(string, this.state.preset + '.json', 'application/json')
             console.log(string)
-          }} disabled={this.state.preset === '-- New --'}>
+          }} disabled={this.state.preset === '-- New --' || this.state.localStorageError}>
             Export to file
           </button>
         </th>
@@ -93,7 +104,7 @@ export class Presets extends PureComponent {
           <button onClick={() => {
             let e = new window.MouseEvent('click')
             this.filepicker.dispatchEvent(e)
-          }}>
+          }} disabled={this.state.localStorageError}>
             Import file
           </button>
           <input ref={(e) => { this.filepicker = e }} type="file" style={{display: 'none'}}
@@ -126,7 +137,7 @@ export class Presets extends PureComponent {
               }
               this.save()
             })
-          }} disabled={this.state.preset === '-- New --'}>
+          }} disabled={this.state.preset === '-- New --' || this.state.localStorageError}>
             Delete
           </button>
         </th>
