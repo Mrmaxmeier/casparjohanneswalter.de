@@ -142,7 +142,7 @@ export class ChordPlayer extends PureComponent {
                   {row.map((e, i) => {
                     let freq = {
                       ratio: (pitch, r) => pitch * r,
-                      cents: (pitch, r) => typeof r === "number" ? pitch * Math.pow(2, r / 1200) : null
+                      cents: (pitch, r) => typeof r === 'number' ? pitch * Math.pow(2, r / 1200) : null
                     }[this.state.mode](this.state.pitch11, e)
                     return (
                       <th key={i} style={{padding: '4px'}}>

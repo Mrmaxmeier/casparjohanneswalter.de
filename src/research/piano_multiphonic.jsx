@@ -156,7 +156,7 @@ export class PianoMultiphonicCalculatorII extends PureComponent {
         <table>
           <tbody>
             <tr>
-              <th>Concert Pitch blah</th>
+              <th>Concert Pitch</th>
               <th>
                 <MathInput
                   asKind="mathjs-ignoreerror" default={442}
