@@ -3,7 +3,7 @@ import { range, mapValues } from 'lodash'
 import PropTypes from 'prop-types'
 
 import { MathInput, PrecNumber, FrequencyNode } from './components.jsx'
-import { normalizeOctave, ratioToCents, processString } from './converters.js'
+import { normalizeOctave, ratioToCents } from './converters.js'
 
 const labels = [
   ['A♭', 'C', 'E', 'G♯', 'B♯', 'D♯♯', 'F♯♯♯', 'A♯♯♯', 'C♯♯♯♯'],
@@ -52,11 +52,11 @@ class Row extends PureComponent {
   }
 
   data (x, y) {
-    // TODO: no eval
     return {
-      ji: `3^(${y}) * 5^(${x})`,
-      tanaka: `3^(${y} + -${x} * 8)`,
-      edo53: `2^(((31 * ${y} + 17 * ${x}) % 53) / 53)`
+      ji: 3 ** y * 5 ** x,
+      schismatic: 3 ** (y - x * 8),
+      schismatic_optimized7: ((2 ** 9 * (4 / 7)) ** (1 / 14)) ** (y - x * 8),
+      edo53: 2 ** ((31 * y + 17 * x) % 53 / 53)
     }[this.props.preset]
   }
 
@@ -67,8 +67,7 @@ class Row extends PureComponent {
         <th>{y}</th>
         {range(-4, 5).map(x => {
           const index = (x + 4)
-          let valueS = this.data(x, y)
-          let value = processString(valueS)
+          let value = this.data(x, y)
           let freqRatio = normalizeOctave(value)
           let cents = ratioToCents(freqRatio)
           let freq = freqRatio * centralC * Math.pow(2, this.state.octave[index])
@@ -118,7 +117,8 @@ export class Limit5MatrixPlayer extends PureComponent {
       centralC: 440 / Math.pow(2, 9 / 12),
       preset: 'edo53',
       playing: new Array(WIDTH * HEIGHT).fill(false),
-      save: new Array(8).fill(null)
+      save: new Array(8).fill(null),
+      large: true
     }
     this.rows = {}
   }
@@ -135,14 +135,20 @@ export class Limit5MatrixPlayer extends PureComponent {
   load (index) {
     let save = this.state.save[index]
     Object.keys(save.octave).map((key) => {
-      this.rows[key].setState({ octave: save.octave[key] })
+      if (this.rows[key]) {
+        this.rows[key].setState({ octave: save.octave[key] })
+      }
     })
     Object.keys(save.playing).map((key) => {
-      this.rows[key].setState({ playing: save.playing[key] })
+      if (this.rows[key]) {
+        this.rows[key].setState({ playing: save.playing[key] })
+      }
     })
   }
 
   render () {
+    let large = this.state.large
+    this.rows = {}
     return (
       <div>
         <table>
@@ -165,9 +171,33 @@ export class Limit5MatrixPlayer extends PureComponent {
                   this.setState({preset})
                 }} value={this.state.preset}>
                   <option value="ji">JI</option>
-                  <option value="tanaka">Tanaka</option>
+                  <option value="schismatic">Schismatic-Limit5</option>
+                  <option value="schismatic_optimized7">Schismatic-Limit5-optimized7</option>
                   <option value="edo53">EDO53</option>
                 </select>
+              </td>
+            </tr>
+            <tr>
+              <th>Size</th>
+              <td>
+                <fieldset>
+                  <input
+                    type="radio"
+                    id="large"
+                    value="Large"
+                    checked={this.state.large}
+                    onChange={() => this.setState({ large: true })}
+                  />
+                  <label htmlFor="large"> Large</label><br />
+                  <input
+                    type="radio"
+                    id="small"
+                    value="Small"
+                    checked={!this.state.large}
+                    onChange={() => this.setState({ large: false })}
+                  />
+                  <label htmlFor="small"> Small</label><br />
+                </fieldset>
               </td>
             </tr>
           </tbody>
@@ -205,7 +235,7 @@ export class Limit5MatrixPlayer extends PureComponent {
                 <th key={x}>{x}</th>
               ))}
             </tr>
-            {range(12, -13).map(y => (
+            {range(large ? 12 : 4, large ? -13 : -5).map(y => (
               <Row
                 y={y} key={y}
                 preset={this.state.preset}
