@@ -5,7 +5,8 @@ import { max, sqrt, log } from 'mathjs'
 
 let audio = {}
 if (typeof window !== 'undefined') {
-  audio.context = new window.AudioContext()
+  const AudioContext = window.AudioContext || window.webkitAudioContext
+  audio.context = new AudioContext()
   audio.masterNode = audio.context.createGain()
   audio.masterNode.gain.value = 0.25
   audio.masterNode.connect(audio.context.destination)
