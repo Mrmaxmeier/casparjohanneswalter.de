@@ -2,6 +2,7 @@ import React, {PureComponent} from 'react'
 import { abs } from 'mathjs'
 
 import { MathInput, NoteDisplay, NoteImage, CompactFrequencyPlayer } from './components.jsx'
+import { AudioController, AudioControllerRow } from './audio.jsx'
 import { concertPitchToC0, ratioToCents } from './converters.js'
 import { range } from 'underscore'
 
@@ -33,8 +34,10 @@ export class TonalityDiamond extends PureComponent {
     let cents = ratioToCents(this.state.pitch11 / c0)
     return (
       <div>
+        <AudioController />
         <table>
           <tbody>
+            <AudioControllerRow />
             <tr>
               <th>Concert Pitch a4</th>
               <th>

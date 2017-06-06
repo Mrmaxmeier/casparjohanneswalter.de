@@ -1,10 +1,10 @@
 import React, {PureComponent} from 'react'
 
 import { MathInput, PrecNumber, NoteImage, CompactFrequencyPlayer } from './components.jsx'
+import { AudioController, AudioControllerRow } from './audio.jsx'
 import { ratioToCents, concertPitchToC0 } from './converters.js'
 
 export class HarmonicBeatingCalculator extends PureComponent {
-
   constructor (props) {
     super(props)
     this.state = {
@@ -80,8 +80,10 @@ export class HarmonicBeatingCalculator extends PureComponent {
     let c0 = concertPitchToC0(this.state.concertPitch)
     return (
       <div>
+        <AudioController />
         <table>
           <tbody>
+            <AudioControllerRow />
             <tr>
               <th>Concert Pitch a4</th>
               <th>

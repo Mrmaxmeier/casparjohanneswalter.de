@@ -3,6 +3,7 @@ import math from 'mathjs'
 import romanize from 'romanize'
 
 import { CompactFrequencyPlayer, FractionInput } from './components.jsx'
+import { AudioController, AudioControllerRow } from './audio.jsx'
 import {
   Settings,
   ConcertPitchSetting,
@@ -14,7 +15,6 @@ import { Presets } from './presets.jsx'
 import { resizeArray } from './utils.js'
 import { clone } from 'underline'
 import { range } from 'underscore'
-
 
 class RowsColumnsSetting extends Settings {
   static field = 'size';
@@ -45,7 +45,6 @@ class RowsColumnsSetting extends Settings {
     )
   }
 }
-
 
 export class FrettedInstrumentPlayer extends PureComponent {
   constructor (props) {
@@ -80,8 +79,10 @@ export class FrettedInstrumentPlayer extends PureComponent {
     let updateState = Settings.updateState(this)
     return (
       <div>
+        <AudioController />
         <table>
           <tbody>
+            <AudioControllerRow />
             <ConcertPitchSetting updateState={updateState} ref={(e) => { this.concertPitch = e }} />
             <Pitch11Setting concertPitch={this.state.concertPitch} updateState={updateState} ref={(e) => { this.pitch11 = e }} />
             <RowsColumnsSetting updateState={(v) => {

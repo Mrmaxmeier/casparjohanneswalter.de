@@ -2,7 +2,8 @@ import React, {PureComponent} from 'react'
 import { range, mapValues } from 'lodash'
 import PropTypes from 'prop-types'
 
-import { MathInput, PrecNumber, FrequencyNode } from './components.jsx'
+import { MathInput, PrecNumber } from './components.jsx'
+import { FrequencyNode, AudioController, AudioControllerRow } from './audio.jsx'
 import { normalizeOctave, ratioToCents } from './converters.js'
 
 const labels = [
@@ -126,8 +127,8 @@ export class Limit5MatrixPlayer extends PureComponent {
   save (index) {
     let save = [].concat(this.state.save)
     save[index] = {
-      octave: mapValues(this.rows, (o) => o.state.octave),
-      playing: mapValues(this.rows, (o) => o.state.playing)
+      octave: mapValues(this.rows, (o) => o ? o.state.octave : null),
+      playing: mapValues(this.rows, (o) => o ? o.state.playing : null)
     }
     this.setState({ save })
   }
@@ -135,12 +136,12 @@ export class Limit5MatrixPlayer extends PureComponent {
   load (index) {
     let save = this.state.save[index]
     Object.keys(save.octave).map((key) => {
-      if (this.rows[key]) {
+      if (this.rows[key] && save.octave[key] !== null) {
         this.rows[key].setState({ octave: save.octave[key] })
       }
     })
     Object.keys(save.playing).map((key) => {
-      if (this.rows[key]) {
+      if (this.rows[key] && save.playing[key] !== null) {
         this.rows[key].setState({ playing: save.playing[key] })
       }
     })
@@ -151,8 +152,10 @@ export class Limit5MatrixPlayer extends PureComponent {
     this.rows = {}
     return (
       <div>
+        <AudioController />
         <table>
           <tbody>
+            <AudioControllerRow />
             <tr>
               <th>Pitch Central C</th>
               <td>

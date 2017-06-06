@@ -5,6 +5,7 @@ import {
   MathInput, PrecNumber, NoteImage, PlayAllButton,
   NoteDisplay, CompactFrequencyPlayer, StringValueVisualisation
 } from './components.jsx'
+import { AudioController, AudioControllerRow } from './audio.jsx'
 import { ratioToCents } from './converters.js'
 
 const magic = [
@@ -18,7 +19,6 @@ const magic = [
 ]
 
 export class PianoMultiphonicCalculatorII extends PureComponent {
-
   constructor (props) {
     super(props)
     this.state = {
@@ -153,8 +153,10 @@ export class PianoMultiphonicCalculatorII extends PureComponent {
     let toneOptions = magic.map((v, i) => <option key={i} value={i}>{v}</option>)
     return (
       <div>
+        <AudioController />
         <table>
           <tbody>
+            <AudioControllerRow />
             <tr>
               <th>Concert Pitch</th>
               <th>

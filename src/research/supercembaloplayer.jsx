@@ -1,6 +1,7 @@
 import React, {PureComponent} from 'react'
 
 import { MathInput, NoteDisplay, NoteImage, CompactFrequencyPlayer } from './components.jsx'
+import { AudioController, AudioControllerRow } from './audio.jsx'
 import { concertPitchToC0, ratioToCents } from './converters.js'
 import { Presets } from './presets.jsx'
 import { range } from 'underscore'
@@ -129,8 +130,10 @@ export class SuperCembaloPlayer extends PureComponent {
     this.inputs = range(this.state.rows).fill(null)
     return (
       <div>
+        <AudioController />
         <table>
           <tbody>
+            <AudioControllerRow />
             <tr>
               <th>Concert Pitch a4</th>
               <th>

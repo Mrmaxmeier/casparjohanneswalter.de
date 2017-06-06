@@ -1,6 +1,7 @@
 import React, {PureComponent} from 'react'
 
 import { MathInput, NoteDisplay, NoteImage, CompactFrequencyPlayer, PlayAllButton } from './components.jsx'
+import { AudioController, AudioControllerRow } from './audio.jsx'
 import { concertPitchToC0, ratioToCents } from './converters.js'
 import { resizeArray } from './utils.js'
 import { Presets } from './presets.jsx'
@@ -66,13 +67,14 @@ export class ChordPlayer extends PureComponent {
     let c0 = concertPitchToC0(this.state.concertPitch)
     let cents = ratioToCents(this.state.pitch11 / c0)
 
-
     this.players = range(this.state.rows).map(() => new Array(6).fill(null))
     this.inputs = range(this.state.rows).map(() => new Array(6).fill(null))
     return (
       <div>
+        <AudioController />
         <table>
           <tbody>
+            <AudioControllerRow />
             <tr>
               <th>Concert Pitch a4</th>
               <th>
