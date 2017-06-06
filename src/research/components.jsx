@@ -5,6 +5,7 @@ import { map } from 'underline'
 
 import { processString, centsToOctave, centsToNote, centsToNoteDiff } from './converters.js'
 import { AudioProvider, SoundGenProvider } from './audio.js'
+import { FrequencyNode } from './audio.jsx'
 
 export class MathInput extends PureComponent {
   static propTypes = {
@@ -365,43 +366,12 @@ export class CompactFrequencyPlayer extends PureComponent {
     this.state = {
       isPlaying: false
     }
-    this.provider = new SoundGenProvider({
-      volume: 0.5 * 0.2,
-      frequency: this.props.freq
-    })
-  }
-
-  updateProvider () {
-    this.provider.setOptions({
-      volume: 0.5 * 0.2,
-      frequency: this.props.freq
-    })
   }
 
   valInvalid () { return !this.props.freq }
   setPlaying (isPlaying) {
     if (this.valInvalid()) { return }
-    if (isPlaying) {
-      this.provider.play()
-    } else {
-      this.provider.stop()
-    }
     this.setState({ isPlaying })
-  }
-
-  componentWillUnmount () {
-    this.provider.unload()
-  }
-
-  componentDidUpdate (prevProps, prevState) {
-    this.updateProvider()
-    if (prevProps.muted !== this.props.muted) {
-      if (this.props.muted) {
-        this.provider.stop()
-      } else if (this.state.isPlaying) {
-        this.provider.play()
-      }
-    }
   }
 
   render () {
@@ -413,48 +383,13 @@ export class CompactFrequencyPlayer extends PureComponent {
         <button style={style} onClick={() => {
           this.setPlaying(!isPlaying)
         }} disabled={!this.props.freq || this.props.muted}>{text}</button>
+        <FrequencyNode
+          volume={this.props.muted ? 0 : 0.5}
+          freq={this.props.freq}
+          playing={this.state.isPlaying}
+        />
       </div>
     )
-  }
-}
-
-export class FrequencyNode extends PureComponent {
-  static propTypes = {
-    freq: PropTypes.number,
-    volume: PropTypes.number,
-    playing: PropTypes.bool
-  }
-
-  constructor (props) {
-    super(props)
-    this.provider = new SoundGenProvider({
-      volume: (this.props.volume || 0.5) * 0.2,
-      frequency: this.props.freq
-    })
-  }
-
-  componentWillUnmount () {
-    this.provider.unload()
-  }
-
-  componentDidUpdate (prevProps, prevState) {
-    let props = this.props
-    if (prevProps.playing && !props.playing) {
-      this.provider.stop()
-    }
-    if (prevProps.volume !== props.volume || prevProps.freq !== props.freq) {
-      this.provider.setOptions({
-        volume: (props.volume || 0.5) * 0.2,
-        frequency: props.freq
-      })
-    }
-    if (!prevProps.playing && props.playing) {
-      this.provider.play()
-    }
-  }
-
-  render () {
-    return null
   }
 }
 
