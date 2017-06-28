@@ -4,9 +4,12 @@ let SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin')
 
 module.exports = {
   entry: {
-    index: './src/index.jsx',
+    index: './src/index.jsx', // TODO: tsx
     react: ['react', 'react-dom'],
     mathjs: 'mathjs'
+  },
+  resolve: {
+    extensions: ['.ts', '.tsx', '.js', '.jsx']
   },
   output: {
     path: path.resolve('build'),
@@ -18,6 +21,10 @@ module.exports = {
       test: /\.(js|jsx)$/,
       exclude: /node_modules/,
       loader: 'babel-loader'
+    }, {
+      test: /\.(ts|tsx)$/,
+      exclude: /node_modules/,
+      loader: 'awesome-typescript-loader'
     }, {
       test: /\.(jpe?g$|png)/i,
       loaders: [
