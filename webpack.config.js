@@ -9,7 +9,7 @@ module.exports = {
     mathjs: 'mathjs'
   },
   resolve: {
-    extensions: ['.ts', '.tsx']
+    extensions: ['.ts', '.tsx', '.js']
   },
   output: {
     path: path.resolve('build'),
@@ -21,6 +21,10 @@ module.exports = {
       test: /\.(ts|tsx)$/,
       exclude: /node_modules/,
       loader: 'awesome-typescript-loader'
+    }, {
+      enforce: 'pre',
+      test: /\.js$/,
+      loader: 'source-map-loader'
     }, {
       test: /\.(jpe?g$|png)/i,
       loaders: [
@@ -43,8 +47,13 @@ module.exports = {
       cacheId: 'casparjohanneswalter',
       filename: 'service-worker.js',
       maximumFileSizeToCacheInBytes: 1048576
-    }),
-    new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /de|en/)
+    })
   ],
   devtool: 'source-map'
+  /*
+  externals: {
+    'react': 'React',
+    'react-dom': 'ReactDOM'
+  }
+  */
 }

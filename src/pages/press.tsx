@@ -1,6 +1,7 @@
 import * as React from 'react'
+import { RouteComponentProps } from 'react-router-dom'
 
-export class PressPage extends React.PureComponent {
+export class PressPage extends React.PureComponent<RouteComponentProps<any>, {}> {
   render () {
     return (
       <div>

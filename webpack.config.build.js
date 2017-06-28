@@ -11,7 +11,6 @@ module.exports = Object.assign(config, {
     routes: './src/routes.jsx'
   },
   plugins: [
-    new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /de|en/),
     new webpack.optimize.UglifyJsPlugin({
       compress: {warnings: false},
       output: {comments: false},

@@ -1,11 +1,13 @@
 import * as React from 'react'
-import { BrowserRouter, HashRouter } from 'react-router-dom'
+import { BrowserRouter, HashRouter, Router } from 'react-router-dom'
 import * as ReactGA from 'react-ga'
-import createHistory from 'history/createBrowserHistory'
+import { createBrowserHistory, createHashHistory } from 'history'
 
-import { tags, slugify } from './tags.js'
+import { tags, slugify } from './tags'
 import { subpages as researchPages } from './pages/research'
 import { App } from './app'
+
+declare var __IN_BUILD__: boolean
 
 interface RoutesProps extends React.Props<any> {
     analytics: boolean
@@ -20,21 +22,19 @@ export class Routes extends React.PureComponent<RoutesProps, {}> {
   }
 
   render () {
-    let history = null
+    let history = (__IN_BUILD__
+      ? () => createBrowserHistory()
+      : () => createHashHistory()
+    )()
+
     if (this.props.analytics) {
-      history = createHistory()
       history.listen((location, action) => {
         ReactGA.set({ page: location.pathname })
         ReactGA.pageview(location.pathname)
       })
     }
-    return __IN_BUILD__ // eslint-disable-line no-undef
-      ? <BrowserRouter history={history}>
-          <App />
-        </BrowserRouter>
-      : <HashRouter history={history}>
-          <App />
-        </HashRouter>
+
+    return <Router history={history}><App /></Router>
   }
 }
 

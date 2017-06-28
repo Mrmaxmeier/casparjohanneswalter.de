@@ -1,19 +1,22 @@
-import 'es6-shim'
-import React from 'react'
+require('es6-shim')
+import * as React from 'react'
 import { render } from 'react-dom'
-import ReactGA from 'react-ga'
-import Raven from 'raven-js'
+import 'react-router'
+import 'react-router-dom'
+import * as ReactGA from 'react-ga'
+import * as Raven from 'raven-js'
 
 import { Routes } from './routes'
+import './static_files'
 
-require('./static_files.js')
+declare var __IN_BUILD__: boolean
 
-if (__IN_BUILD__) { // eslint-disable-line no-undef
+if (__IN_BUILD__) {
   Raven.config('https://d0d4207778da4c05a0006fd4ed80322a@sentry.ente.ninja/3').install()
   ReactGA.initialize('UA-39068556-2')
 }
 
 render(
-  <Routes analytics={__IN_BUILD__} />, // eslint-disable-line no-undef
+  <Routes analytics={__IN_BUILD__} />,
   document.getElementById('app')
 )

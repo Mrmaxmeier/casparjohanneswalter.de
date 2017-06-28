@@ -1,7 +1,9 @@
 import { works } from './works'
 import { mapValues, values } from 'lodash'
 
-let groupsJson = require('../tags.json')
+let groupsJson = require<{
+  [key: string]: string[]
+}>('../tags.json')
 
 export function tags () {
   let l: string[] = []

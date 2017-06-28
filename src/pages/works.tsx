@@ -1,9 +1,9 @@
 import * as React from 'react'
-import { NavLink, Link, match } from 'react-router-dom'
-import { filter, find, contains, map } from 'underline'
+import { NavLink, Link, match, RouteComponentProps } from 'react-router-dom'
+import { filter, find } from 'lodash'
 
-import { rows, sorted as sortedWorks } from '../works.js'
-import { tags, groups as tagGroups, slugify } from '../tags.js'
+import { rows, sorted as sortedWorks, Work } from '../works'
+import { tags, groups as tagGroups, slugify } from '../tags'
 
 class MenuTag extends React.PureComponent<{
   tag: {
@@ -31,39 +31,39 @@ class MenuTag extends React.PureComponent<{
   }
 }
 
-class WorkSummary extends React.PureComponent<{ work: {} }, {}> {
+class WorkSummary extends React.PureComponent<{ work: Work }, {}> {
   render () {
     let work = this.props.work
-    let tagif = (key, f) => {
-      if (work[key] !== undefined) {
-        return f(work[key])
+    function tagif<T, O> (data: T, f: (d: T) => O): O | null {
+      if (data !== undefined) {
+        return f(data)
       } else {
         return null
       }
     }
-    let p = (data) => <p>{data}</p>
+    let p = (data: any) => <p>{data}</p>
     return (
       <div className='work'>
         <h3>
           {work.title}
-          {tagif('dateStr', (dateStr) => <em> ({dateStr})</em>)}
-          {tagif('date', (date) => <em> ({date})</em>)}
+          {tagif(work.dateStr, (dateStr) => <em> ({dateStr})</em>)}
+          {tagif(work.date, (date) => <em> ({date})</em>)}
         </h3>
-        {tagif('subtitle', p)}
-        {tagif('instrumentation', p)}
-        {tagif('text', p)}
-        {tagif('dateStr', p)}
-        {tagif('duration', p)}
-        {tagif('commision', p)}
-        {tagif('dedication', p)}
-        {tagif('1st performance', p)}
-        {tagif('documentation', p)}
-        {tagif('content', (content) => <div>Content; TODO: markdown</div>)}
-        {tagif('media', (media) => media.map(
+        {tagif(work.subtitle, p)}
+        {tagif(work.instrumentation, p)}
+        {tagif(work.text, p)}
+        {tagif(work.dateStr, p)}
+        {tagif(work.duration, p)}
+        {tagif(work.commision, p)}
+        {tagif(work.dedication, p)}
+        {tagif(work['1st performance'], p)}
+        {tagif(work.documentation, p)}
+        {tagif(work.content, (content) => <div>Content; TODO: markdown</div>)}
+        {tagif(work.media, (media) => (media || []).map(
           (m, i) => (
             <span key={i}>
               <a href={m[1]}>{m[0]}</a>
-              {i !== media.length - 1 ? <span> - </span> : null}
+              {i !== (media || []).length - 1 ? <span> - </span> : null}
             </span>
           )
         ))}
@@ -72,7 +72,7 @@ class WorkSummary extends React.PureComponent<{ work: {} }, {}> {
   }
 }
 
-export class WorksPage extends React.PureComponent<{ match: match<{ tag: string }> }, {}> {
+export class WorksPage extends React.PureComponent<RouteComponentProps<any>, {}> {
   render () {
     let works = sortedWorks()
     let slug = this.props.match && this.props.match.params.tag
@@ -82,7 +82,7 @@ export class WorksPage extends React.PureComponent<{ match: match<{ tag: string 
     if (taggedAs) {
       // TODO: label
       works = works.filter((w) =>
-        w.tags.map(slugify).contains(slug)
+        w.tags.map(slugify).indexOf(slug) !== -1
       )
     }
 

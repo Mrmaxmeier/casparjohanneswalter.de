@@ -1,16 +1,26 @@
 import { sortBy } from 'lodash'
 
-function requireAll (context) {
-  return context.keys().map(context)
-}
-
-interface Work {
+export interface Work {
   year?: number,
   index?: number,
   tags: string[]
+  title: string,
+  date?: string,
+  dateStr?: string,
+  subtitle?: string,
+  instrumentation?: string,
+  text?: string,
+  duration?: string,
+  commision?: string,
+  dedication?: string,
+  ['1st performance']?: string,
+  documentation?: string,
+  content?: string,
+  media?: string[]
 }
 
-export let works: Work[] = requireAll(require.context('../works', false, /\.json$/))
+let reqContext = require.context('../works', false, /\.json$/)
+export let works: Work[] = reqContext.keys().map(reqContext)
 
 export function sorted () {
   return sortBy(works, (work) => {
