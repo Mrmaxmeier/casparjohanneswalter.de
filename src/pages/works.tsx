@@ -1,15 +1,17 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-import { NavLink, Link } from 'react-router-dom'
+import * as React from 'react'
+import { NavLink, Link, match } from 'react-router-dom'
 import { filter, find, contains, map } from 'underline'
 
 import { rows, sorted as sortedWorks } from '../works.js'
 import { tags, groups as tagGroups, slugify } from '../tags.js'
 
-class MenuTag extends React.PureComponent {
-  static propTypes = {
-    tag: PropTypes.object
+class MenuTag extends React.PureComponent<{
+  tag: {
+    show: boolean,
+    name: string,
+    subtags: string[]
   }
+}, {}> {
   render () {
     let tag = this.props.tag
     if (!tag.show) {
@@ -29,10 +31,7 @@ class MenuTag extends React.PureComponent {
   }
 }
 
-class WorkSummary extends React.PureComponent {
-  static propTypes = {
-    work: PropTypes.object
-  }
+class WorkSummary extends React.PureComponent<{ work: {} }, {}> {
   render () {
     let work = this.props.work
     let tagif = (key, f) => {
@@ -73,20 +72,17 @@ class WorkSummary extends React.PureComponent {
   }
 }
 
-export class WorksPage extends React.PureComponent {
-  static propTypes = {
-    match: PropTypes.object
-  }
+export class WorksPage extends React.PureComponent<{ match: match<{ tag: string }> }, {}> {
   render () {
     let works = sortedWorks()
     let slug = this.props.match && this.props.match.params.tag
 
-    let taggedAs = tags()::find((tag) => slugify(tag) === slug)
+    let taggedAs = tags().find((tag) => slugify(tag) === slug)
 
     if (taggedAs) {
       // TODO: label
-      works = works::filter((w) =>
-        w.tags::map(slugify)::contains(slug)
+      works = works.filter((w) =>
+        w.tags.map(slugify).contains(slug)
       )
     }
 

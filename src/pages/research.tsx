@@ -1,25 +1,25 @@
-import React, {PureComponent} from 'react'
+import * as React from 'react'
 import { Route, Link, Switch } from 'react-router-dom'
 
-import { _404Page } from './404.jsx'
+import { _404Page } from './404'
 import { KitharaCalc } from '../research/kithara_components.js'
 import { Rechner as PartchFraction } from '../research/partch_bruch_rechner.js'
-import { FractionToCents, FrequencyToPitch } from '../research/converterComponents.jsx'
-import { SoundGen } from '../research/soundgen.jsx'
-import { DiffTone } from '../research/difftone.jsx'
-import { FractionWindowing } from '../research/fraction_windowing.jsx'
-import { PianoMultiphonicCalculatorII } from '../research/piano_multiphonic.jsx'
-import { HarmonicBeatingCalculator } from '../research/harmonic_beating.jsx'
-import { TonalityDiamond } from '../research/tonalitydiamond.jsx'
-import { ChordPlayer } from '../research/chordplayer.jsx'
-import { ChordPlayer2 } from '../research/chordplayer2.jsx'
-import { ArciorganoPlayer } from '../research/arciorganoplayer.jsx'
-import { SuperCembaloPlayer } from '../research/supercembaloplayer.jsx'
-import { FrettedInstrumentPlayer } from '../research/fretted_instrument_player.jsx'
-import { Limit5MatrixPlayer } from '../research/limit5matrix.jsx'
-// import { MeanToneCircle } from '../research/mean_tone_circle.jsx'
+import { FractionToCents, FrequencyToPitch } from '../research/converterComponents'
+import { SoundGen } from '../research/soundgen'
+import { DiffTone } from '../research/difftone'
+import { FractionWindowing } from '../research/fraction_windowing'
+import { PianoMultiphonicCalculatorII } from '../research/piano_multiphonic'
+import { HarmonicBeatingCalculator } from '../research/harmonic_beating'
+import { TonalityDiamond } from '../research/tonalitydiamond'
+import { ChordPlayer } from '../research/chordplayer'
+import { ChordPlayer2 } from '../research/chordplayer2'
+import { ArciorganoPlayer } from '../research/arciorganoplayer'
+import { SuperCembaloPlayer } from '../research/supercembaloplayer'
+import { FrettedInstrumentPlayer } from '../research/fretted_instrument_player'
+import { Limit5MatrixPlayer } from '../research/limit5matrix'
+// import { MeanToneCircle } from '../research/mean_tone_circle'
 
-export class Converters extends PureComponent {
+export class Converters extends React.PureComponent {
   render () {
     return (
       <div>
@@ -81,7 +81,7 @@ let partchFractionDescription = () => <p>
     Die Brüche der beiden unteren Reihen sind so oktaviert, dass sie zwischen 1 und 2 liegen.
   </p>
 
-let musicCalculators = [
+let musicCalculators: PageDef[] = [
   {
     id: 'kithara',
     title: 'Kithara I Calculator',
@@ -160,7 +160,7 @@ let musicCalculators = [
   }
 ]
 
-let additionalMathTools = [
+let additionalMathTools: PageDef[] = [
   {
     id: 'fraction_windowing',
     title: 'Fraction Windowing',
@@ -168,11 +168,18 @@ let additionalMathTools = [
   }
 ]
 
+interface PageDef {
+  id: string,
+  title: string,
+  component: React.Component,
+  description?: () => Element
+}
+
 export const subpages = [].concat(musicCalculators, additionalMathTools)
 
-export class ResearchPage extends PureComponent {
+export class ResearchPage extends React.PureComponent {
   render () {
-    let link = (id, title) => <li key={id}>
+    let link = (id: any, title: string) => <li key={id}>
         <Link to={'/research/' + id}>{title}</Link>
       </li>
     return (

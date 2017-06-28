@@ -1,14 +1,11 @@
-import React from 'react'
-import PropTypes from 'prop-types'
+import * as React from 'react'
 import { dependencies } from '../../package.json'
 import { Link, Redirect } from 'react-router-dom'
 
-export class _404Page extends React.PureComponent {
-  static propTypes = {
-    location: PropTypes.object
-  }
-
-  redirect (path) {
+export class _404Page extends React.PureComponent<{
+  location: { pathname: string }
+}, {}> {
+  redirect (path: string) {
     if (path === '/index') { return '/' }
     if (path.endsWith('.html')) {
       return path.slice(0, -5)
