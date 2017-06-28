@@ -1,17 +1,22 @@
 import { fraction, log, pow, mod, floor, abs, number, eval as mathEval } from 'mathjs'
-import { find } from 'underline'
+import { find } from 'lodash'
 
-export function processString (data, via) {
+export type Ratio = number
+export type Cents = number
+
+
+// TODO: refactor for typescript
+export function processString (data: any, via: string) {
   let handlers = {
-    string: (data) => data,
-    mathjs: (data) => {
+    string: (data: any) => data,
+    mathjs: (data: any) => {
       try {
         return { value: mathEval(data) }
       } catch (error) {
         return { error }
       }
     },
-    'mathjs-ignoreerror': (data) => {
+    'mathjs-ignoreerror': (data: any) => {
       try {
         return mathEval(data)
       } catch (error) {
@@ -19,18 +24,19 @@ export function processString (data, via) {
       }
     }
   }
-  return handlers[via || 'mathjs-ignoreerror'](data)
+  let handler = handlers[via || 'mathjs-ignoreerror']
+  return handler(data)
 }
 
-export function ratioToCents (ratio) {
-  return log(number(ratio), 2) * 1200
+export function ratioToCents (ratio: Ratio) {
+  return Math.log2(ratio) * 1200
 }
 
-export function centsToRatio (cents) {
+export function centsToRatio (cents: Cents) {
   return pow(2, cents / 1200)
 }
 
-export function centsToOctave (cents) {
+export function centsToOctave (cents: Cents) {
   let n = (cents + 50) / 1200
   let o = Math.trunc(n)
   if (n < 0) {
@@ -39,7 +45,7 @@ export function centsToOctave (cents) {
   return o
 }
 
-export function centsToNote (cents) {
+export function centsToNote (cents: Cents) {
   let notes = [
     'C', '#C',
     'D',
@@ -54,7 +60,7 @@ export function centsToNote (cents) {
   return notes[i]
 }
 
-export function centsToNoteDiff (cents) {
+export function centsToNoteDiff (cents: Cents) {
   cents = mod(cents, 1200)
   let noteCents = Math.trunc(cents / 100) * 100
   let diff = Math.abs(cents - noteCents)
@@ -65,12 +71,12 @@ export function centsToNoteDiff (cents) {
   }
 }
 
-export function concertPitchToC0 (reference) {
-  return reference / pow(2, (1 / 12) * 57)
+export function concertPitchToC0 (reference: number) {
+  return reference / Math.pow(2, (1 / 12) * 57)
 }
 
-export function centsToFrequency (cents, a4) {
-  return pow(2, (cents / 1200)) * concertPitchToC0(a4)
+export function centsToFrequency (cents: Cents, a4: number) {
+  return Math.pow(2, (cents / 1200)) * concertPitchToC0(a4)
 }
 
 export function intelligenterMediant (zahl, precision) {
@@ -87,13 +93,13 @@ export function intelligenterMediant (zahl, precision) {
     let reversed = [].concat(fractions).reverse()
 
     if (prev > zahl) {
-      let smaller = reversed::find((f) => f < zahl)
+      let smaller = find(reversed, (f) => f < zahl)
       if (!smaller) {
         return []
       }
       fractions.push(fraction(smaller.n + prev.n, smaller.d + prev.d))
     } else {
-      let bigger = reversed::find((f) => f > zahl)
+      let bigger = find(reversed, (f) => f > zahl)
       if (!bigger) {
         return []
       }
@@ -108,7 +114,7 @@ export function intelligenterMediant (zahl, precision) {
   return fractions
 }
 
-export function normalizeOctave (n) {
+export function normalizeOctave (n: number) {
   let p = Math.floor(Math.log2(n))
   return n / Math.pow(2, p)
 }

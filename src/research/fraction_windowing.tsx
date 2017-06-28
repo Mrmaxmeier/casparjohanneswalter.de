@@ -1,16 +1,29 @@
-import React, {PureComponent} from 'react'
+import * as React from 'react'
 import { fraction, abs, log } from 'mathjs'
 
-import { MathInput, PrecNumber } from './components.jsx'
+import { MathInput, PrecNumber } from './components'
 import { intelligenterMediant, ratioToCents } from './converters.js'
 
-export class FractionWindowing extends PureComponent {
-  constructor (props) {
+interface State extends React.ComponentState {
+  input?: number,
+  ma?: number,
+  mb?: number,
+  precision: number
+}
+
+type Classification = 'good' | 'normal' | 'best' | 'final'
+
+export class FractionWindowing extends React.PureComponent<{}, State> {
+  private input: MathInput;
+  private ma: MathInput;
+  private mb: MathInput;
+
+  constructor (props: {}) {
     super(props)
     this.state = {
-      input: null,
-      ma: null,
-      mb: null,
+      input: undefined,
+      ma: undefined,
+      mb: undefined,
       precision: 5
     }
   }
@@ -20,7 +33,7 @@ export class FractionWindowing extends PureComponent {
     let output = intelligenterMediant(input, this.state.precision)
     let smallestDiff = null
     let smaller = [false]
-    let classifications = []
+    let classifications: Classification[] = []
     for (let i = 0; i < output.length; i++) {
       let e = output[i]
       let currentDiff = abs(e - input)
@@ -50,7 +63,7 @@ export class FractionWindowing extends PureComponent {
     classifications[classifications.length - 1] = 'best'
     let checkMaMb = (ma, mb) => {
       if (ma && mb) {
-        let input = (log(ma / mb) / log(2))
+        let input = Math.log2(ma / mb)
         this.input.setValue(input, false)
         this.setState({ input })
       }

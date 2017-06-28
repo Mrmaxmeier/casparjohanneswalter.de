@@ -2,16 +2,16 @@ import React, {PureComponent} from 'react'
 import math from 'mathjs'
 import romanize from 'romanize'
 
-import { CompactFrequencyPlayer, FractionInput } from './components.jsx'
-import { AudioController, AudioControllerRow } from './audio.jsx'
+import { CompactFrequencyPlayer, FractionInput } from './components'
+import { AudioController, AudioControllerRow } from './audio'
 import {
   Settings,
   ConcertPitchSetting,
   Pitch11Setting,
   RatioCentsModeSetting,
   MutedSetting
-} from './settings.jsx'
-import { Presets } from './presets.jsx'
+} from './settings'
+import { Presets } from './presets'
 import { resizeArray } from './utils.js'
 import { clone } from 'underline'
 import { range } from 'underscore'

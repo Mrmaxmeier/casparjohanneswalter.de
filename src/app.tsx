@@ -1,17 +1,17 @@
-import React, { Component } from 'react'
-import moment from 'moment'
+import * as React from 'react'
+import * as moment from 'moment'
 import { Route, Switch } from 'react-router-dom'
 
-import { Menu } from './menu.jsx'
-import { ServiceWorkerController } from './serviceworker.jsx'
-import { IndexPage } from './pages/index.jsx'
-import { _404Page } from './pages/404.jsx'
-import { WorksPage } from './pages/works.jsx'
-import { BioPage } from './pages/bio.jsx'
-import { PressPage } from './pages/press.jsx'
-import { ResearchPage } from './pages/research.jsx'
+import { Menu } from './menu'
+import { ServiceWorkerController } from './serviceworker'
+import { IndexPage } from './pages/index'
+import { _404Page } from './pages/404'
+import { WorksPage } from './pages/works'
+import { BioPage } from './pages/bio'
+import { PressPage } from './pages/press'
+import { ResearchPage } from './pages/research'
 
-export class App extends Component {
+export class App extends React.Component {
   render () {
     return (
       <div>

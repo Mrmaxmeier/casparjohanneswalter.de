@@ -4,7 +4,7 @@ import { render } from 'react-dom'
 import ReactGA from 'react-ga'
 import Raven from 'raven-js'
 
-import { Routes } from './routes.jsx'
+import { Routes } from './routes'
 
 require('./static_files.js')
 

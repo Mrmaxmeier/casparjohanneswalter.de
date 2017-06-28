@@ -1,7 +1,7 @@
 import React, {PureComponent} from 'react'
 import { max, sqrt, log } from 'mathjs'
 
-import {MathInput, FreqPlayer, PrecNumber} from './components.jsx'
+import {MathInput, FreqPlayer, PrecNumber} from './components'
 
 export class SoundGen extends PureComponent {
   constructor (props) {

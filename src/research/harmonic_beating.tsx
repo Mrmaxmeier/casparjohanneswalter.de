@@ -1,7 +1,7 @@
 import React, {PureComponent} from 'react'
 
-import { MathInput, PrecNumber, NoteImage, CompactFrequencyPlayer } from './components.jsx'
-import { AudioController, AudioControllerRow } from './audio.jsx'
+import { MathInput, PrecNumber, NoteImage, CompactFrequencyPlayer } from './components'
+import { AudioController, AudioControllerRow } from './audio'
 import { ratioToCents, concertPitchToC0 } from './converters.js'
 
 export class HarmonicBeatingCalculator extends PureComponent {

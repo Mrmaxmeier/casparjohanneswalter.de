@@ -1,7 +1,8 @@
 import React, {PureComponent} from 'react'
 import { min, max, abs } from 'mathjs'
 
-import {MathInput, FreqPlayer, SpecificRangeSlider} from './components.jsx'
+import { MathInput, FreqPlayer, SpecificRangeSlider } from './components'
+import { AudioController, AudioControllerRow } from './audio'
 
 export class DiffTone extends PureComponent {
   constructor (props) {
@@ -28,8 +29,10 @@ export class DiffTone extends PureComponent {
     let val = this.state.inverted ? (v) => (1 / v) * freq1 * freq2 : (v) => v
     return (
       <div>
+        <AudioController />
         <table>
           <tbody>
+            <AudioControllerRow />
             <tr>
               <th>Freq 1</th>
               <th>

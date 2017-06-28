@@ -1,10 +1,10 @@
-import React, {PureComponent} from 'react'
+import * as React from 'react'
 import { abs } from 'mathjs'
 
-import { MathInput, NoteDisplay, NoteImage, CompactFrequencyPlayer } from './components.jsx'
-import { AudioController, AudioControllerRow } from './audio.jsx'
+import { MathInput, NoteDisplay, NoteImage, CompactFrequencyPlayer } from './components'
+import { AudioController, AudioControllerRow } from './audioComponents'
 import { concertPitchToC0, ratioToCents } from './converters.js'
-import { range } from 'underscore'
+import { range } from 'lodash'
 
 let diamond = [
                       [[11, 4]],
@@ -20,8 +20,13 @@ let diamond = [
                       [[4, 11]]
 ]
 
-export class TonalityDiamond extends PureComponent {
-  constructor (props) {
+interface State {
+  concertPitch: number,
+  pitch11: number
+}
+
+export class TonalityDiamond extends React.PureComponent<{}, State> {
+  constructor (props: {}) {
     super(props)
     this.state = {
       concertPitch: 440,

@@ -1,18 +1,17 @@
-import React from 'react'
-import PropTypes from 'prop-types'
+import * as React from 'react'
 import { BrowserRouter, HashRouter } from 'react-router-dom'
-import ReactGA from 'react-ga'
+import * as ReactGA from 'react-ga'
 import createHistory from 'history/createBrowserHistory'
 
 import { tags, slugify } from './tags.js'
-import { subpages as researchPages } from './pages/research.jsx'
-import { App } from './app.jsx'
+import { subpages as researchPages } from './pages/research'
+import { App } from './app'
 
-export class Routes extends React.PureComponent {
-  static propTypes = {
-    analytics: PropTypes.bool
-  }
+interface RoutesProps extends React.Props<any> {
+    analytics: boolean
+}
 
+export class Routes extends React.PureComponent<RoutesProps, {}> {
   componentDidMount () {
     if (this.props.analytics) {
       ReactGA.set({ page: window.location.pathname })
@@ -21,7 +20,7 @@ export class Routes extends React.PureComponent {
   }
 
   render () {
-    let history
+    let history = null
     if (this.props.analytics) {
       history = createHistory()
       history.listen((location, action) => {

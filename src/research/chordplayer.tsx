@@ -1,10 +1,10 @@
 import React, {PureComponent} from 'react'
 
-import { MathInput, NoteDisplay, NoteImage, CompactFrequencyPlayer, PlayAllButton } from './components.jsx'
-import { AudioController, AudioControllerRow } from './audio.jsx'
+import { MathInput, NoteDisplay, NoteImage, CompactFrequencyPlayer, PlayAllButton } from './components'
+import { AudioController, AudioControllerRow } from './audio'
 import { concertPitchToC0, ratioToCents } from './converters.js'
 import { resizeArray } from './utils.js'
-import { Presets } from './presets.jsx'
+import { Presets } from './presets'
 import { range } from 'underscore'
 import { clone } from 'underline'
 

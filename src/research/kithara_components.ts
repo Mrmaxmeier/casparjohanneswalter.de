@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 
 import { keys, map, clone, extend } from 'underline'
 
-import { CompactFrequencyPlayer } from './components.jsx'
+import { CompactFrequencyPlayer } from './components'
 
 import { presets } from './kithara_presets'
 

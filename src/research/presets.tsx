@@ -1,22 +1,29 @@
-import React, {PureComponent} from 'react'
-import PropTypes from 'prop-types'
+import * as React from 'react'
 
-import { keys, extend } from 'underline'
-import download from 'downloadjs'
+import { extend } from 'lodash'
+import * as download from 'downloadjs'
 
-export class Presets extends PureComponent {
-  static propTypes = {
-    name: PropTypes.string,
-    default: PropTypes.object,
-    onChange: PropTypes.func,
-    current: PropTypes.func,
-    presets: PropTypes.object,
-    label: PropTypes.string
-  }
-  constructor (props) {
+interface Props<T> {
+    name: string,
+    default: T,
+    onChange: (key: string, data: T) => void,
+    current: () => T,
+    presets: { [preset: string]: T }
+}
+
+interface State<T> {
+  presets: { [preset: string]: T | null }
+  preset: string,
+  localStorageError: boolean
+}
+
+export class Presets<T> extends React.PureComponent<Props<T>, State<T>> {
+  private filepicker: HTMLInputElement;
+
+  constructor (props: Props<T>) {
     super(props)
     this.state = {
-      presets: Object.assign({'-- New --': null}, this.props.presets || {}),
+      presets: {'-- New --': null, ...this.props.presets},
       preset: '-- New --',
       localStorageError: false
     }
@@ -29,9 +36,9 @@ export class Presets extends PureComponent {
 
   load () {
     let data = window.localStorage.getItem(this.props.name) || '{}'
-    let presets = Object.assign({
-      '-- New --': null
-    }, this.props.presets || {})::extend(JSON.parse(data))
+    let presets = {'-- New --': null, ...this.props.presets}
+    let parsed = JSON.parse(data)
+    presets = extend(presets, parsed)
     this.setState({ presets })
     return presets
   }
@@ -67,7 +74,7 @@ export class Presets extends PureComponent {
               }
             })
           }} value={this.state.preset}>
-            {this.state.presets::keys().map((key) => {
+            {Object.keys(this.state.presets).map((key) => {
               return <option key={key} value={key}>{key}</option>
             })}
           </select>
@@ -131,8 +138,8 @@ export class Presets extends PureComponent {
           <button onClick={() => {
             let presets = this.load()
             delete presets[this.state.preset]
-            let current = presets::keys()[0]
-            this.setState({presets, preset: current}, () => {
+            let current = Object.keys(presets)[0]
+            this.setState({ presets, preset: current }, () => {
               if (presets[current]) {
                 this.props.onChange(current, presets[current])
               }

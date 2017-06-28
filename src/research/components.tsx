@@ -1,21 +1,26 @@
-import React, { PureComponent } from 'react'
-import PropTypes from 'prop-types'
+import * as React from 'react'
 import { format } from 'mathjs'
 import { map } from 'underline'
 
 import { processString, centsToOctave, centsToNote, centsToNoteDiff } from './converters.js'
-import { AudioProvider, SoundGenProvider } from './audio.js'
-import { FrequencyNode } from './audio.jsx'
+import { IAudioProvider, AudioProvider, SoundGenProvider } from './audio.js'
+import { FrequencyNode } from './audio'
 
-export class MathInput extends PureComponent {
-  static propTypes = {
-    default: PropTypes.any,
-    onChange: PropTypes.func,
-    asKind: PropTypes.string,
-    wide: PropTypes.bool,
-    size: PropTypes.number
-  }
-  constructor (props) {
+interface MathInputProps extends React.Props<any> {
+  default: any,
+  onChange: () => {},
+  asKind: string,
+  wide: boolean,
+  size: number
+}
+
+interface MathInputState extends React.ComponentState {
+  value: number,
+  error: boolean
+}
+
+export class MathInput extends React.PureComponent<MathInputProps, MathInputState> {
+  constructor (props: MathInputProps) {
     super(props)
     this.state = {
       value: props.default,
@@ -32,10 +37,12 @@ export class MathInput extends PureComponent {
   render () {
     let style = this.props.wide ? {
       width: '7.5em',
-      height: '1.5em'
+      height: '1.5em',
+      color: ''
     } : {
       width: (this.props.size || 3.5) + 'em',
-      height: '1.5em'
+      height: '1.5em',
+      color: ''
     }
     if (this.state.error) {
       style['color'] = 'red'
@@ -66,22 +73,21 @@ export class MathInput extends PureComponent {
   }
 }
 
-export class FractionInput extends PureComponent {
-  static propTypes = {
-    onValue: PropTypes.func,
-    disabled: PropTypes.bool,
-    value: PropTypes.object
-  }
-  constructor (props) {
-    super(props)
-    this.state = {
-      numerator: null,
-      denominator: null
-    }
-  }
 
-  handleChange (n, d) {
-    if (n !== null && d !== null) {
+interface Fraction { numerator: number, denominator: number }
+interface FractionInputProps extends React.Props<any> {
+  onValue: (f: Fraction) => void,
+  disabled: boolean,
+  value: Fraction
+}
+
+interface FractionInputState extends React.ComponentState {
+  numerator?: number, denominator?: number
+}
+
+export class FractionInput extends React.PureComponent<FractionInputProps, FractionInputState> {
+  handleChange (n?: number, d?: number) {
+    if (n != null && d != null) {
       this.props.onValue({
         numerator: n,
         denominator: d
@@ -89,7 +95,7 @@ export class FractionInput extends PureComponent {
     }
   }
 
-  componentWillReceiveProps (nextProps) {
+  componentWillReceiveProps (nextProps: FractionInputProps) {
     if (nextProps.value) {
       this.setState(nextProps.value)
     }
@@ -116,11 +122,10 @@ export class FractionInput extends PureComponent {
             <td style={Object.assign({borderBottom: '2px black solid'}, tdStyle)}>
               <input type='text'
                 value={this.state.numerator || ''} onChange={(e) => {
-                  let numerator = parseFloat(e.target.value) || null
+                  let numerator = parseFloat(e.target.value) || undefined
                   this.handleChange(numerator, this.state.denominator)
                   this.setState({ numerator })
                 }}
-                ref={(e) => { this.input = e }}
                 style={style} disabled={this.props.disabled} />
             </td>
           </tr>
@@ -128,11 +133,10 @@ export class FractionInput extends PureComponent {
             <td style={tdStyle}>
               <input type='text'
                 value={this.state.denominator || ''} onChange={(e) => {
-                  let denominator = parseFloat(e.target.value) || null
+                  let denominator = parseFloat(e.target.value) || undefined
                   this.handleChange(this.state.numerator, denominator)
                   this.setState({ denominator })
                 }}
-                ref={(e) => { this.input = e }}
                 style={style} disabled={this.props.disabled} />
             </td>
           </tr>
@@ -142,20 +146,21 @@ export class FractionInput extends PureComponent {
   }
 }
 
-export class PrecNumber extends PureComponent {
-  static propTypes = {
-    value: PropTypes.number,
-    precision: PropTypes.number,
-    digits: PropTypes.number,
-    style: PropTypes.object
-  }
+interface PrecNumberProps extends React.Props<any> {
+  value: number,
+  precision?: number,
+  digits?: number,
+  style?: {}
+}
+
+export class PrecNumber extends React.PureComponent<PrecNumberProps, {}> {
   render () {
     let precision = this.props.precision || 2
     let s = format(this.props.value, {precision, notation: 'fixed'})
     let style = Object.assign({
       fontFamily: 'monospace'
     }, this.props.style || {})
-    if (this.props.digits) {
+    if (this.props.digits != null) {
       let pad = this.props.digits - (s.length) + precision + 1
       for (let i = 0; i < pad; i++) {
         s = ' ' + s
@@ -165,15 +170,25 @@ export class PrecNumber extends PureComponent {
   }
 }
 
-export class SpecificRangeSlider extends PureComponent {
-  static propTypes = {
-    defaultMin: PropTypes.number,
-    defaultMax: PropTypes.number,
-    step: PropTypes.number,
-    onChange: PropTypes.func
-  }
+interface SpecificRangeSliderProps extends React.Props<any> {
+  defaultMin: number,
+  defaultMax: number,
+  step: number,
+  onChange: (_: number) => void
+}
 
-  constructor (props) {
+interface SpecificRangeSliderState extends React.ComponentState {
+  value: number,
+  min: number,
+  max: number
+}
+
+export class SpecificRangeSlider extends React.PureComponent<SpecificRangeSliderProps, SpecificRangeSliderState> {
+  private min: MathInput;
+  private max: MathInput;
+  private slider: HTMLInputElement;
+
+  constructor (props: SpecificRangeSliderProps) {
     super(props)
     this.state = {
       value: (props.defaultMin + props.defaultMax) / 2,
@@ -228,17 +243,24 @@ export class SpecificRangeSlider extends PureComponent {
   }
 }
 
-export class FreqPlayer extends PureComponent {
-  static propTypes = {
-    freq: PropTypes.number,
-    custom: PropTypes.bool,
-    inTable: PropTypes.bool,
-    showTypePicker: PropTypes.bool,
-    defaultVolume: PropTypes.number,
-    text: PropTypes.string
-  }
+interface FreqPlayerProps extends React.Props<any> {
+  freq: number,
+  custom: boolean,
+  inTable: boolean,
+  showTypePicker: boolean,
+  defaultVolume: number,
+  text: string
+}
 
-  constructor (props) {
+interface FreqPlayerState extends React.ComponentState {
+  isPlaying: boolean,
+  volume: number,
+  provider: string
+}
+
+export class FreqPlayer extends React.PureComponent<FreqPlayerProps, FreqPlayerState> {
+  private provider: IAudioProvider;
+  constructor (props: FreqPlayerProps) {
     super(props)
     this.state = {
       isPlaying: false,
@@ -259,7 +281,7 @@ export class FreqPlayer extends PureComponent {
   }
 
   valInvalid () { return !this.props.freq }
-  setPlaying (isPlaying) {
+  setPlaying (isPlaying: boolean) {
     if (this.valInvalid()) { return }
     if (isPlaying) {
       this.provider.play()
@@ -273,7 +295,7 @@ export class FreqPlayer extends PureComponent {
     this.provider.unload()
   }
 
-  componentDidUpdate (prevProps, prevState) {
+  componentDidUpdate (prevProps: FreqPlayerProps, prevState: FreqPlayerState) {
     this.updateProvider()
   }
 
@@ -320,8 +342,6 @@ export class FreqPlayer extends PureComponent {
                 this.provider = new AudioProvider({}, provider)
               } else if (provider === 'soundgen') {
                 this.provider = new SoundGenProvider({})
-              } else {
-                this.provider = null
               }
               this.updateProvider()
               if (this.state.isPlaying) {
@@ -353,15 +373,17 @@ export class FreqPlayer extends PureComponent {
   }
 }
 
-export class CompactFrequencyPlayer extends PureComponent {
-  static propTypes = {
-    freq: PropTypes.number,
-    muted: PropTypes.bool,
-    buttonStyle: PropTypes.object,
-    text: PropTypes.string
-  }
 
-  constructor (props) {
+
+interface CompactFrequencyPlayerProps extends React.Props<any> {
+  freq: number,
+  muted: boolean,
+  buttonStyle?: {},
+  text?: string
+}
+
+export class CompactFrequencyPlayer extends React.PureComponent<CompactFrequencyPlayerProps, {isPlaying: boolean}> {
+  constructor (props: CompactFrequencyPlayerProps) {
     super(props)
     this.state = {
       isPlaying: false
@@ -369,7 +391,7 @@ export class CompactFrequencyPlayer extends PureComponent {
   }
 
   valInvalid () { return !this.props.freq }
-  setPlaying (isPlaying) {
+  setPlaying (isPlaying: boolean) {
     if (this.valInvalid()) { return }
     this.setState({ isPlaying })
   }
@@ -393,10 +415,7 @@ export class CompactFrequencyPlayer extends PureComponent {
   }
 }
 
-export class NoteImage extends PureComponent {
-  static propTypes = {
-    cents: PropTypes.number
-  }
+export class NoteImage extends React.PureComponent<{cents: number}, {}> {
   render () {
     let a = Math.floor((this.props.cents + 100 / 12) * 72 / 1200)
     let octave = centsToOctave(this.props.cents)
@@ -411,10 +430,7 @@ export class NoteImage extends PureComponent {
   }
 }
 
-export class NoteDisplay extends PureComponent {
-  static propTypes = {
-    cents: PropTypes.number
-  }
+export class NoteDisplay extends React.PureComponent<{cents: number}, {}> {
   render () {
     let cents = this.props.cents
     let octave = centsToOctave(cents)
@@ -431,16 +447,15 @@ export class NoteDisplay extends PureComponent {
   }
 }
 
-export class StringValueVisualisation extends PureComponent {
-  static propTypes = {
-    values: PropTypes.objectOf(PropTypes.number)
-  }
-
+export class StringValueVisualisation extends React.PureComponent<{
+  values: { [key: string]: number }
+}, {}> {
   render () {
     return (
       <div style={{position: 'relative'}}>
         <img src={require('../../assets/KlavierSaite.png')} />
-        {this.props.values::map((value, color) => {
+        {Object.keys(this.props.values).map((color) => {
+          let value = this.props.values[color]
           let offset = value * 196 + 0.9
           if (value === undefined || value === null) {
             return null
@@ -461,13 +476,13 @@ export class StringValueVisualisation extends PureComponent {
   }
 }
 
-export class PlayAllButton extends PureComponent {
-  static propTypes = {
-    playerRefs: PropTypes.array,
-    disabled: PropTypes.bool
-  }
+interface PlayAllButtonProps extends React.Props<any> {
+  playerRefs: IAudioProvider[],
+  disabled: boolean
+}
 
-  constructor (props) {
+export class PlayAllButton extends React.PureComponent<PlayAllButtonProps, { active: boolean}> {
+  constructor (props: PlayAllButtonProps) {
     super(props)
     this.state = {
       active: false

@@ -4,8 +4,8 @@ import { pow, gcd, max, min, abs, fraction } from 'mathjs'
 import {
   MathInput, PrecNumber, NoteImage, PlayAllButton,
   NoteDisplay, CompactFrequencyPlayer, StringValueVisualisation
-} from './components.jsx'
-import { AudioController, AudioControllerRow } from './audio.jsx'
+} from './components'
+import { AudioController, AudioControllerRow } from './audio'
 import { ratioToCents } from './converters.js'
 
 const magic = [

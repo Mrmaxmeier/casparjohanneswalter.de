@@ -1,23 +1,31 @@
-import { sortBy } from 'underline'
+import { sortBy } from 'lodash'
 
 function requireAll (context) {
   return context.keys().map(context)
 }
 
-export let works = requireAll(require.context('../works', false, /\.json$/))
+interface Work {
+  year?: number,
+  index?: number,
+  tags: string[]
+}
+
+export let works: Work[] = requireAll(require.context('../works', false, /\.json$/))
 
 export function sorted () {
-  return works::sortBy((work) => {
+  return sortBy(works, (work) => {
     let year = (work.year || 0) + (work.index || 0) / 10
     return -year
   })
 }
 
-export function rows (list) {
-  if (list.length === 0) {
+export function rows (list?: Work[]) {
+  if (list && list.length === 0) {
     return []
   }
-  let rows = [[]];
+
+  let rows: Work[][] = [[]];
+
   (list || sorted()).forEach((w) => {
     let current = rows[rows.length - 1]
     if (current.length === 2) {

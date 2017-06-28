@@ -2,8 +2,8 @@ import React, {PureComponent} from 'react'
 import { range, mapValues } from 'lodash'
 import PropTypes from 'prop-types'
 
-import { MathInput, PrecNumber } from './components.jsx'
-import { FrequencyNode, AudioController, AudioControllerRow } from './audio.jsx'
+import { MathInput, PrecNumber } from './components'
+import { FrequencyNode, AudioController, AudioControllerRow } from './audio'
 import { normalizeOctave, ratioToCents } from './converters.js'
 import { Presets } from './presets.jsx'
 

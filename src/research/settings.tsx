@@ -1,18 +1,20 @@
-import React, { PureComponent } from 'react'
-import PropTypes from 'prop-types'
+import * as React from 'react'
 
-import { clone } from 'underline'
+import { clone } from 'lodash'
 
-import { MathInput, NoteDisplay, NoteImage } from './components.jsx'
+import { MathInput, NoteDisplay, NoteImage } from './components'
 import { concertPitchToC0, ratioToCents } from './converters.js'
 
+interface Props {
+  updateState: () => void
+}
 
-export class Settings extends PureComponent {
-  static propTypes = {
-    updateState: PropTypes.func
-  }
+interface State {
+  value: number
+}
 
-  constructor (props) {
+export class Settings extends React.PureComponent<Props, State> {
+  constructor (props: Props) {
     super(props)
     this.state = {
       value: this.cls().default
@@ -63,7 +65,7 @@ export class Settings extends PureComponent {
   }
 
   static dumpPreset = (settings, current) => {
-    let state = current::clone()
+    let state = clone(current)
     for (let setting of settings) {
       if (setting.serialize) {
         setting.serialize(state)

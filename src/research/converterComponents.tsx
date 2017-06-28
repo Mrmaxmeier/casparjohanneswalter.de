@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react'
-import { MathInput, FreqPlayer, PrecNumber, NoteDisplay } from './components.jsx'
+import { MathInput, FreqPlayer, PrecNumber, NoteDisplay } from './components'
 import { ratioToCents, concertPitchToC0 } from './converters.js'
 
 export class FractionToCents extends PureComponent {

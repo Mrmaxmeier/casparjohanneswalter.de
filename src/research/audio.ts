@@ -1,7 +1,14 @@
 import Pizzicato from 'pizzicato'
 import { max, sqrt, log } from 'mathjs'
 
-export class AudioProvider {
+export interface IAudioProvider {
+  setOptions: (_: { volume: number, frequency: number }) => void,
+  unload: () => void,
+  play: () => void,
+  stop: () => void,
+}
+
+export class AudioProvider implements IAudioProvider {
   constructor (options, wavetype) {
     this.options = options
     this.wave = null
@@ -57,7 +64,7 @@ export class AudioProvider {
   }
 }
 
-export class SoundGenProvider extends AudioProvider {
+export class SoundGenProvider implements IAudioProvider {
   volume (index, f) {
     let refFreq = f || this.options.frequency
     refFreq = max(refFreq, 32)

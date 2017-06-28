@@ -1,9 +1,9 @@
 import React, {PureComponent} from 'react'
 import PropTypes from 'prop-types'
 
-import { MathInput, NoteDisplay, NoteImage, PlayAllButton } from './components.jsx'
+import { MathInput, NoteDisplay, NoteImage, PlayAllButton } from './components'
 import { concertPitchToC0, ratioToCents, processString } from './converters.js'
-import { Presets } from './presets.jsx'
+import { Presets } from './presets'
 import { resizeArray } from './utils.js'
 import { range } from 'underscore'
 import { clone } from 'underline'
