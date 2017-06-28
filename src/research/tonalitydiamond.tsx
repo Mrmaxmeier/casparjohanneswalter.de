@@ -47,7 +47,7 @@ export class TonalityDiamond extends React.PureComponent<{}, State> {
               <th>Concert Pitch a4</th>
               <th>
                 <MathInput
-                  wide asKind="mathjs-ignoreerror"
+                  wide
                   default={440}
                   onChange={(concertPitch) => {
                     this.setState({ concertPitch })
@@ -58,7 +58,7 @@ export class TonalityDiamond extends React.PureComponent<{}, State> {
               <th>Pitch 1 / 1</th>
               <th>
                 <MathInput
-                  wide asKind="mathjs-ignoreerror" default="440 / 9 * 8"
+                  wide default="440 / 9 * 8"
                   onChange={(pitch11) => {
                     this.setState({ pitch11 })
                   }} />

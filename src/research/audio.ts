@@ -6,11 +6,28 @@ export interface IAudioProvider {
   unload: () => void,
   play: () => void,
   stop: () => void,
+  setPlaying: (v: boolean) => void,
+}
+
+interface Options {
+  type: string,
+  frequency: number,
+  volume: number
 }
 
 export class AudioProvider implements IAudioProvider {
-  constructor (options, wavetype) {
-    this.options = options
+  private options: Options
+  private wavetype: string
+  private playing: boolean
+  private wave: Pizzicato.Wave
+
+  constructor (options: Partial<Options>, wavetype: string) {
+    this.options = {
+      type: 'sine',
+      frequency: 440,
+      volume: 1.0,
+      ...options
+    }
     this.wave = null
     this.playing = false
     this.wavetype = wavetype || 'sine'
@@ -37,12 +54,13 @@ export class AudioProvider implements IAudioProvider {
     }
     this.playing = false
   }
+  setPlaying(v: boolean) { v ? this.play() : this.stop() }
   unload () {
     if (typeof window === 'undefined') { return }
     this.stop()
     delete this.wave
   }
-  setOptions (options) {
+  setOptions (options: Options) {
     let oldOptions = this.options
     this.options = options
     if (this.wave) {
@@ -65,24 +83,35 @@ export class AudioProvider implements IAudioProvider {
 }
 
 export class SoundGenProvider implements IAudioProvider {
-  volume (index, f) {
+  private options: Options
+  private playing: boolean
+  private count: number
+  private _freq?: number
+  private _waves: Pizzicato.Sound[]
+
+  volume (index: number, f?: number) {
     let refFreq = f || this.options.frequency
     refFreq = max(refFreq, 32)
     let sC = 1 / sqrt(refFreq / 16)
     return (Math.pow(sC, index) * this.options.volume) || 0
   }
 
-  frequency (index, f) {
+  frequency (index: number, f?: number) {
     let octave = 2
     let freq = f || this.options.frequency
-    return Math.pow(octave, log(index + 1, 2)) * freq
+    return Math.pow(octave, Math.log2(index + 1)) * freq
   }
 
-  constructor (options) {
-    super(options)
+  constructor (options: Partial<Options>) {
+    this.options = {
+      type: 'sine',
+      frequency: 440,
+      volume: 1.0,
+      ...options
+    }
     this.count = 16
-    this._waves = Array(this.count).fill()
-    this._freq = null
+    this._waves = new Array(this.count)
+    this._freq = undefined
   }
 
   init () {
@@ -113,11 +142,13 @@ export class SoundGenProvider implements IAudioProvider {
     this.playing = false
   }
 
+  setPlaying(v: boolean) { v ? this.play() : this.stop() }
+
   unload () {
     this.stop()
   }
 
-  linearRampFrequency (fromFreq, toFreq, duration) {
+  linearRampFrequency (fromFreq: number, toFreq: number, duration: number) {
     if (typeof window === 'undefined') { return }
     this._freq = toFreq
     this._waves.forEach((wave, index) => {
@@ -131,7 +162,7 @@ export class SoundGenProvider implements IAudioProvider {
     })
   }
 
-  setVol (volume, duration) {
+  setVol (volume: number, duration: number) {
     this._waves.forEach((wave, index) => {
       if (wave && this._freq) {
         wave.volume = this.volume(index, this._freq) * volume
@@ -139,7 +170,7 @@ export class SoundGenProvider implements IAudioProvider {
     })
   }
 
-  setOptions (options) {
+  setOptions (options: Options) {
     this.options = options
     if (this._waves[0]) {
       if (options.frequency) {

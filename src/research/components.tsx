@@ -1,37 +1,46 @@
+import 'webpack-env'
 import * as React from 'react'
 import { format } from 'mathjs'
-import { map } from 'underline'
 
-import { processString, centsToOctave, centsToNote, centsToNoteDiff } from './converters.js'
+import { evalMath, MathError, centsToOctave, centsToNote, centsToNoteDiff } from './converters.js'
 import { IAudioProvider, AudioProvider, SoundGenProvider } from './audio.js'
-import { FrequencyNode } from './audio'
+import { FrequencyNode } from './audioComponents'
 
-interface MathInputProps extends React.Props<any> {
-  default: any,
-  onChange: () => {},
-  asKind: string,
-  wide: boolean,
-  size: number
+interface MathInputProps extends React.Props<MathInput> {
+  default?: any,
+  onChange?: (v: number) => void,
+  onError?: (e: MathError) => void,
+  wide?: boolean,
+  size?: number
 }
 
 interface MathInputState extends React.ComponentState {
   value: number,
-  error: boolean
+  error?: MathError
 }
 
 export class MathInput extends React.PureComponent<MathInputProps, MathInputState> {
+  private elem: HTMLInputElement
   constructor (props: MathInputProps) {
     super(props)
     this.state = {
       value: props.default,
-      error: false
+      error: undefined
     }
   }
-  setValue (value, callOnChange) {
-    this.elem.value = value
-    this.setState({ value })
-    if (callOnChange && this.props.onChange) {
-      this.props.onChange(processString(value, this.props.asKind))
+  public setValue (value: number | string, callOnChange?: boolean) {
+    this.elem.value = value.toString()
+    let parsed = evalMath(value.toString())
+    if (typeof parsed === 'number') {
+      this.setState({ value: parsed })
+      if (callOnChange && this.props.onChange) {
+        this.props.onChange(parsed)
+      }
+    } else {
+      this.setState({ error: parsed })
+      if (callOnChange && this.props.onError) {
+        this.props.onError(parsed)
+      }
     }
   }
   render () {
@@ -48,24 +57,25 @@ export class MathInput extends React.PureComponent<MathInputProps, MathInputStat
       style['color'] = 'red'
     }
     return (
-      <input type='text' ref={(e) => { this.elem = e }}
-        defaultValue={this.state.value}
+      <input type='text' ref={(e) => { if (e) this.elem = e }}
+        defaultValue={this.state.value.toString()}
         onChange={(d) => {
-          let value = this.elem.value
-          let result = processString(value, this.props.asKind)
-          let error = result === undefined || result.error
-          this.setState({ value, error })
-          if (this.props.onChange && result !== undefined) {
-            this.props.onChange(result)
+          let parsed = evalMath(d.target.value)
+          if (typeof parsed === 'number') {
+            this.setState({ value: parsed })
+            if (this.props.onChange) {
+              this.props.onChange(parsed)
+            }
+          } else {
+            this.setState({ error: parsed })
+            if (this.props.onError) {
+              this.props.onError(parsed)
+            }
           }
         }}
         style={style}
-        />
+      />
     )
-  }
-
-  calc (value) {
-    return processString(value, this.props.asKind)
   }
 
   text () {
@@ -170,10 +180,10 @@ export class PrecNumber extends React.PureComponent<PrecNumberProps, {}> {
   }
 }
 
-interface SpecificRangeSliderProps extends React.Props<any> {
+interface SpecificRangeSliderProps extends React.Props<SpecificRangeSlider> {
   defaultMin: number,
   defaultMax: number,
-  step: number,
+  step?: number,
   onChange: (_: number) => void
 }
 
@@ -197,7 +207,7 @@ export class SpecificRangeSlider extends React.PureComponent<SpecificRangeSlider
     }
   }
 
-  setValue (value, callOnChange) {
+  setValue (value: number, callOnChange?: boolean) {
     let max = this.state.max
     let min = this.state.min
     if (value > max) {
@@ -222,34 +232,31 @@ export class SpecificRangeSlider extends React.PureComponent<SpecificRangeSlider
     return (
       <span>
         <MathInput default={this.props.defaultMin}
-          asKind="mathjs-ignoreerror"
           onChange={(min) => {
-            this.setState({min})
-          }} ref={(e) => { this.min = e }} />
+            this.setState({ min })
+          }} ref={(e) => { if (e) this.min = e }} />
         <input type="range" style={{width: '20em', verticalAlign: 'middle'}}
           min={min} max={max} step={step} value={this.state.value}
           onChange={(event) => {
             let value = parseFloat(event.target.value)
             this.setState({ value })
             this.props.onChange(value)
-          }} ref={(e) => { this.slider = e }} />
+          }} ref={(e) => { if (e) this.slider = e }} />
         <MathInput default={this.props.defaultMax}
-          asKind="mathjs-ignoreerror"
           onChange={(max) => {
-            this.setState({max})
-          }} ref={(e) => { this.max = e }} />
+            this.setState({ max })
+          }} ref={(e) => { if (e) this.max = e }} />
       </span>
     )
   }
 }
 
-interface FreqPlayerProps extends React.Props<any> {
+interface FreqPlayerProps extends React.Props<FreqPlayer> {
   freq: number,
-  custom: boolean,
-  inTable: boolean,
-  showTypePicker: boolean,
-  defaultVolume: number,
-  text: string
+  inTable?: boolean,
+  showTypePicker?: boolean,
+  defaultVolume?: number,
+  text?: string
 }
 
 interface FreqPlayerState extends React.ComponentState {
@@ -269,7 +276,8 @@ export class FreqPlayer extends React.PureComponent<FreqPlayerProps, FreqPlayerS
     }
     this.provider = new AudioProvider({
       volume: this.state.volume * 0.2,
-      frequency: this.props.freq
+      frequency: this.props.freq,
+      type: 'sine'
     }, 'sine')
   }
 
@@ -375,9 +383,9 @@ export class FreqPlayer extends React.PureComponent<FreqPlayerProps, FreqPlayerS
 
 
 
-interface CompactFrequencyPlayerProps extends React.Props<any> {
+interface CompactFrequencyPlayerProps extends React.Props<CompactFrequencyPlayer> {
   freq: number,
-  muted: boolean,
+  muted?: boolean,
   buttonStyle?: {},
   text?: string
 }
@@ -420,7 +428,7 @@ export class NoteImage extends React.PureComponent<{cents: number}, {}> {
     let a = Math.floor((this.props.cents + 100 / 12) * 72 / 1200)
     let octave = centsToOctave(this.props.cents)
     // let x = this.props.octave + Math.floor(a / 72)
-    let mod = (a, b) => {
+    let mod = (a: number, b: number) => {
       return ((a % b) + b) % b
     }
     let y = mod(a, 72)
@@ -453,7 +461,7 @@ export class StringValueVisualisation extends React.PureComponent<{
   render () {
     return (
       <div style={{position: 'relative'}}>
-        <img src={require('../../assets/KlavierSaite.png')} />
+        <img src={require<string>('../../assets/KlavierSaite.png')} />
         {Object.keys(this.props.values).map((color) => {
           let value = this.props.values[color]
           let offset = value * 196 + 0.9
@@ -493,7 +501,7 @@ export class PlayAllButton extends React.PureComponent<PlayAllButtonProps, { act
   toggle () {
     this.setState({ active: !this.state.active })
     this.props.playerRefs.forEach((p, i) => {
-      if ((!p.valInvalid()) || this.state.active) {
+      if (this.state.active) {
         p.setPlaying(!this.state.active)
       }
     })

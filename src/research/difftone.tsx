@@ -1,32 +1,36 @@
-import React, {PureComponent} from 'react'
+import * as React from 'react'
 import { min, max, abs } from 'mathjs'
 
 import { MathInput, FreqPlayer, SpecificRangeSlider } from './components'
-import { AudioController, AudioControllerRow } from './audio'
+import { AudioController, AudioControllerRow } from './audioComponents'
 
-export class DiffTone extends PureComponent {
-  constructor (props) {
+interface State {
+  freq1: number,
+  freq2: number,
+  inverted: boolean
+}
+
+export class DiffTone extends React.PureComponent<{}, State> {
+  private input1: MathInput
+  private slider1: SpecificRangeSlider
+  private input2: MathInput
+  private slider2: SpecificRangeSlider
+
+  constructor (props: {}) {
     super(props)
     this.state = {
-      freq1: {
-        value: 440,
-        error: null
-      },
-      freq2: {
-        value: 550,
-        error: null
-      },
+      freq1: 440,
+      freq2: 550,
       inverted: false
     }
   }
 
   render () {
-    let freq1 = this.state.freq1.value || 440
-    let freq2 = this.state.freq2.value || 550
+    let freq1 = this.state.freq1
+    let freq2 = this.state.freq2
     let smaller = min(freq1, freq2)
     let bigger = max(freq1, freq2)
-    let error = this.state.freq1.error || this.state.freq2.error
-    let val = this.state.inverted ? (v) => (1 / v) * freq1 * freq2 : (v) => v
+    let val = this.state.inverted ? (v: number) => (1 / v) * freq1 * freq2 : (v: number) => v
     return (
       <div>
         <AudioController />
@@ -36,35 +40,34 @@ export class DiffTone extends PureComponent {
             <tr>
               <th>Freq 1</th>
               <th>
-                <MathInput default={440}
-                  wide asKind="mathjs"
+                <MathInput default={440} wide
                   onChange={(freq1) => {
-                    this.setState({freq1})
-                    this.slider1.setValue(freq1.value)
-                  }} ref={(e) => { this.input1 = e }} />
+                    this.setState({ freq1 })
+                    this.slider1.setValue(freq1)
+                  }} ref={(e) => { if (e) this.input1 = e }} />
               </th>
               <th>
                 <SpecificRangeSlider defaultMin={400} defaultMax={600} onChange={(value) => {
-                  this.setState({freq1: {value, error: null}})
+                  this.setState({ freq1: value })
                   this.input1.setValue(value)
-                }} ref={(e) => { this.slider1 = e }} />
+                }} ref={(e) => { if (e) this.slider1 = e }} />
               </th>
             </tr>
             <tr>
               <th>Freq 2</th>
               <th>
                 <MathInput default={550}
-                  wide asKind="mathjs"
+                  wide
                   onChange={(freq2) => {
-                    this.setState({freq2})
-                    this.slider2.setValue(freq2.value)
-                  }} ref={(e) => { this.input2 = e }} />
+                    this.setState({ freq2 })
+                    this.slider2.setValue(freq2)
+                  }} ref={(e) => { if (e) this.input2 = e }} />
               </th>
               <th>
                 <SpecificRangeSlider defaultMin={400} defaultMax={600} onChange={(value) => {
-                  this.setState({freq2: {value, error: null}})
+                  this.setState({ freq2: value })
                   this.input2.setValue(value)
-                }} ref={(e) => { this.slider2 = e }} />
+                }} ref={(e) => { if (e) this.slider2 = e }} />
               </th>
             </tr>
             <tr>
@@ -89,12 +92,6 @@ export class DiffTone extends PureComponent {
                 Utonality, intervallic inversion
               </th>
             </tr>
-            {error ? (
-              <tr style={{color: 'red'}}>
-                <th>Error</th>
-                <th>{error.toString()}</th>
-              </tr>
-            ) : null}
           </tbody>
         </table>
         <table>

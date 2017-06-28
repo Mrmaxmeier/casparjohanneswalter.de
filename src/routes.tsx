@@ -4,7 +4,7 @@ import * as ReactGA from 'react-ga'
 import { createBrowserHistory, createHashHistory } from 'history'
 
 import { tags, slugify } from './tags'
-import { subpages as researchPages } from './pages/research'
+import { subpages as researchPages, PageDef } from './pages/research'
 import { App } from './app'
 
 declare var __IN_BUILD__: boolean
@@ -47,4 +47,4 @@ export let routes = [
   '/research'
 ]
   .concat(tags().map((tag) => 'works/' + slugify(tag)))
-  .concat(researchPages.map((page) => 'research/' + page.id))
+  .concat(researchPages.map((page: PageDef) => 'research/' + page.id))

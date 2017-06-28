@@ -27,7 +27,7 @@ const defaultRelease = 0.04
 
 interface FNProps {
   freq: number,
-  volume: number,
+  volume?: number,
   playing: boolean
 }
 
@@ -99,8 +99,7 @@ export class FrequencyNode extends React.PureComponent<FNProps, {}> {
 
   init () {
     if (typeof window === 'undefined' || this._waves !== undefined) { return }
-    let _waves = Array(this.count).fill()
-    this._waves = _waves.map((_: any, index: number) => {
+    this._waves = new Array(this.count).map((_: any, index: number) => {
       let node = audio.context.createOscillator()
       node.type = 'sine'
       node.frequency.value = this.frequency(index)

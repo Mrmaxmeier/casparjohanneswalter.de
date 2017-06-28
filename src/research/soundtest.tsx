@@ -1,19 +1,25 @@
-import React, {PureComponent} from 'react'
+import * as React from 'react'
 
 import {MathInput, FreqPlayer, PrecNumber} from './components'
 
-export class SoundTest extends PureComponent {
-  constructor (props) {
+interface State {
+  freq: number,
+  octave: number,
+}
+
+export class SoundTest extends React.PureComponent<{}, State> {
+  private _nodes: FreqPlayer[]
+  constructor (props: {}) {
     super(props)
     this.state = {
-      freq: 440
+      freq: 440,
+      octave: 2
     }
   }
 
   render () {
-    let error = this.state.octave.error || this.state.freq.error
-    let refFreq = this.state.freq.value || 440
-    let octave = this.state.octave.value || 2
+    let refFreq = this.state.freq
+    let octave = this.state.octave || 2
     return (
       <div>
         <table>
@@ -21,11 +27,10 @@ export class SoundTest extends PureComponent {
             <tr>
               <th>Freq</th>
               <th>
-                <MathInput default={440}
-                  wide asKind="mathjs"
+                <MathInput default={440} wide
                   onChange={(freq) => {
-                    this._nodes.forEach((node, i) => {
-                      let volume = this.defaultVolume(i, freq.value)
+                    this._nodes.forEach((node, i: number) => {
+                      let volume = this.defaultVolume(i, freq)
                       node.setState({ volume })
                     })
                     this.setState({freq})
@@ -35,7 +40,7 @@ export class SoundTest extends PureComponent {
             <tr>
               <th>Sound color</th>
               <th>
-                <PrecNumber precision={3} value={1 / sqrt(refFreq / 16)} />
+                <PrecNumber precision={3} value={1 / Math.sqrt(refFreq / 16)} />
               </th>
             </tr>
             <tr>
@@ -50,22 +55,16 @@ export class SoundTest extends PureComponent {
                 }}>Stop All</button>
               </th>
             </tr>
-            {error ? (
-              <tr style={{color: 'red'}}>
-                <th>Error</th>
-                <th>{error.toString()}</th>
-              </tr>
-            ) : null}
           </tbody>
         </table>
         <table>
           <tbody>
-              {Array(32).fill().map((_, i) => {
-                let freq = Math.pow(octave, log(i + 1, 2)) * refFreq
+              {new Array(32).map((_: any, i: number) => {
+                let freq = Math.pow(octave, Math.log2(i + 1)) * refFreq
                 return <FreqPlayer showTypePicker={false}
                           inTable freq={freq} key={i}
                           defaultVolume={this.defaultVolume(i)}
-                          ref={(v) => { this._nodes[i] = v }} />
+                          ref={(v) => { if (v) this._nodes[i] = v }} />
               })}
           </tbody>
         </table>

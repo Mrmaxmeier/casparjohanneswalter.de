@@ -34,7 +34,7 @@ export class Presets<T> extends React.PureComponent<Props<T>, State<T>> {
     }
   }
 
-  load () {
+  load (): { [key: string]: T | null } {
     let data = window.localStorage.getItem(this.props.name) || '{}'
     let presets = {'-- New --': null, ...this.props.presets}
     let parsed = JSON.parse(data)
@@ -81,10 +81,9 @@ export class Presets<T> extends React.PureComponent<Props<T>, State<T>> {
         </th>
         <th>
           <button onClick={() => {
-            let name = window.prompt('Preset Name', this.state.preset)
-            if (name === null) {
-              return
-            }
+            let prompt = window.prompt('Preset Name', this.state.preset)
+            if (prompt === null) { return }
+            let name = prompt
             let data = this.props.current()
             let presets = this.load()
             presets[name] = data
@@ -110,16 +109,16 @@ export class Presets<T> extends React.PureComponent<Props<T>, State<T>> {
         </th>
         <th>
           <button onClick={() => {
-            let e = new window.MouseEvent('click')
+            let e = new MouseEvent('click')
             this.filepicker.dispatchEvent(e)
           }} disabled={this.state.localStorageError}>
             Import file
           </button>
-          <input ref={(e) => { this.filepicker = e }} type="file" style={{display: 'none'}}
+          <input ref={(e) => { if (e) this.filepicker = e }} type="file" style={{display: 'none'}}
             onChange={(event) => {
-              let file = event.target.files[0]
+              let file = (event.target.files || [])[0]
               let name = file.name.replace('.json', '')
-              let reader = new window.FileReader()
+              let reader = new FileReader()
               reader.readAsText(file)
               reader.onload = () => {
                 let data = JSON.parse(reader.result)
@@ -140,8 +139,9 @@ export class Presets<T> extends React.PureComponent<Props<T>, State<T>> {
             delete presets[this.state.preset]
             let current = Object.keys(presets)[0]
             this.setState({ presets, preset: current }, () => {
-              if (presets[current]) {
-                this.props.onChange(current, presets[current])
+              let pc = presets[current]
+              if (pc) {
+                this.props.onChange(current, pc)
               }
               this.save()
             })

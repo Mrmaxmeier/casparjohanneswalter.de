@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Route, Link, Switch } from 'react-router-dom'
+import { Route, Link, Switch, RouteComponentProps } from 'react-router-dom'
 
 import { _404Page } from './404'
 import { KitharaCalc } from '../research/kithara_components.js'
@@ -168,16 +168,16 @@ let additionalMathTools: PageDef[] = [
   }
 ]
 
-interface PageDef {
+export interface PageDef {
   id: string,
   title: string,
-  component: React.Component,
-  description?: () => Element
+  component: typeof React.Component,
+  description?: () => JSX.Element
 }
 
 export const subpages = [].concat(musicCalculators, additionalMathTools)
 
-export class ResearchPage extends React.PureComponent {
+export class ResearchPage extends React.PureComponent<RouteComponentProps<any>, {}> {
   render () {
     let link = (id: any, title: string) => <li key={id}>
         <Link to={'/research/' + id}>{title}</Link>
@@ -197,7 +197,7 @@ export class ResearchPage extends React.PureComponent {
               </ul>
             </div>
           </Route>
-          {subpages.map((page) =>
+          {subpages.map((page: PageDef) =>
             <Route key={page.id} path={'/research/' + page.id}>
               <div>
                 <h3>{page.title}</h3>

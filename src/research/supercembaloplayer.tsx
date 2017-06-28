@@ -2,7 +2,7 @@ import * as React from 'react'
 
 import { MathInput, NoteDisplay, NoteImage, CompactFrequencyPlayer } from './components'
 import { AudioController, AudioControllerRow } from './audioComponents'
-import { concertPitchToC0, ratioToCents } from './converters'
+import { concertPitchToC0, ratioToCents, evalMath } from './converters'
 import { Presets } from './presets'
 import { range, clone } from 'lodash'
 
@@ -62,20 +62,21 @@ interface State {
   pitch11: number,
   data: (number | null)[],
   mode: 'ratio' | 'cents',
+  rows: number,
   muted: boolean
 }
 
 interface Preset {
   octaves: number,
   mode: 'ratio' | 'cents',
-  concertPitch: number,
-  pitch11: number,
+  concertPitch: string,
+  pitch11: string,
   data: any[]
 }
 
 export class SuperCembaloPlayer extends React.PureComponent<{}, State> {
-  private players: any[]
-  private inputs: any[]
+  private players: (CompactFrequencyPlayer | null)[]
+  private inputs: (MathInput | null)[]
   private concertPitch: MathInput
   private pitch11: MathInput
 
@@ -88,7 +89,8 @@ export class SuperCembaloPlayer extends React.PureComponent<{}, State> {
       pitch11: 440 / 9 * 8,
       data: new Array(38).fill(null),
       mode: 'ratio',
-      muted: false
+      muted: false,
+      rows: 8
     }
     this.players = []
     this.inputs = []
@@ -98,9 +100,12 @@ export class SuperCembaloPlayer extends React.PureComponent<{}, State> {
     this.concertPitch.setValue(preset.concertPitch, true)
     this.pitch11.setValue(preset.pitch11, true)
     let data = this.inputs.map((input, i) => {
-      let result = input.calc(preset.data[i])
-      input.setValue(preset.data[i])
-      return result.value
+      let result = evalMath(preset.data[i])
+      if (input && typeof result === 'number') {
+        input.setValue(preset.data[i])
+        return result
+      }
+      return null
     })
     this.setState({
       mode: preset.mode,
@@ -115,22 +120,24 @@ export class SuperCembaloPlayer extends React.PureComponent<{}, State> {
       mode: this.state.mode,
       concertPitch: this.concertPitch.text(),
       pitch11: this.pitch11.text(),
-      data: this.inputs.map((i) => i.text())
+      data: this.inputs.map((i) => i ? i.text() : '')
     }
   }
 
-  renderElement (index: number, small) {
+  renderElement (index: number, small: boolean) {
+    let r = this.state.data[index]
+    if (r === null) { return }
     let freq = {
-      ratio: (pitch, r) => pitch * r,
-      cents: (pitch, r) => pitch * Math.pow(2, r / 1200)
-    }[this.state.mode](this.state.pitch11, this.state.data[index])
+      ratio: (pitch: number, r: number) => pitch * r,
+      cents: (pitch: number, r: number) => pitch * Math.pow(2, r / 1200)
+    }[this.state.mode](this.state.pitch11, r)
     let muted = this.state.muted
     return (
       <div>
-        <MathInput size={small ? 3.15 : 3.95} asKind="mathjs" default=''
+        <MathInput size={small ? 3.15 : 3.95} default=''
           onChange={(v) => {
-            let data = this.state.data::clone()
-            data[index] = v.value
+            let data = clone(this.state.data)
+            data[index] = v
             this.setState({ data })
           }} ref={(ref) => {
             this.inputs[index] = ref
@@ -147,8 +154,8 @@ export class SuperCembaloPlayer extends React.PureComponent<{}, State> {
     let c0 = concertPitchToC0(this.state.concertPitch)
     let cents = ratioToCents(this.state.pitch11 / c0)
 
-    this.players = range(this.state.rows).fill(null)
-    this.inputs = range(this.state.rows).fill(null)
+    this.players = new Array(this.state.rows).fill(null)
+    this.inputs = new Array(this.state.rows).fill(null)
     return (
       <div>
         <AudioController />
@@ -159,21 +166,21 @@ export class SuperCembaloPlayer extends React.PureComponent<{}, State> {
               <th>Concert Pitch a4</th>
               <th>
                 <MathInput
-                  wide asKind="mathjs-ignoreerror"
+                  wide
                   default={440}
                   onChange={(concertPitch) => {
                     this.setState({ concertPitch })
-                  }} ref={(e) => { this.concertPitch = e }}/>
+                  }} ref={(e) => { if (e) this.concertPitch = e }}/>
               </th>
             </tr>
             <tr>
               <th>Pitch 1 / 1</th>
               <th>
                 <MathInput
-                  wide asKind="mathjs-ignoreerror" default="440 / 9 * 8"
+                  wide default="440 / 9 * 8"
                   onChange={(pitch11) => {
                     this.setState({ pitch11 })
-                  }} ref={(e) => { this.pitch11 = e }} />
+                  }} ref={(e) => { if (e) this.pitch11 = e }} />
               </th>
               <th>
                 <NoteImage cents={cents} />
@@ -186,7 +193,9 @@ export class SuperCembaloPlayer extends React.PureComponent<{}, State> {
               <th>Mode</th>
               <th>
                 <select onChange={(e) => {
-                  this.setState({ mode: e.target.value })
+                  let mode = e.target.value
+                  if (mode === 'ratio' || mode === 'cents')
+                    this.setState({ mode })
                 }} value={this.state.mode}>
                   <option value="ratio">Ratio</option>
                   <option value="cents">Cents</option>
@@ -236,10 +245,16 @@ export class SuperCembaloPlayer extends React.PureComponent<{}, State> {
                       if (isThing) {
                         let small = (rowi !== 4) && (rowi !== 8)
                         let index = layoutIndex[rowi][i]
-                        let freq = {
-                          ratio: (pitch, r) => pitch * r * Math.pow(2, oc),
-                          cents: (pitch, r) => pitch * Math.pow(2, r / 1200 + oc)
-                        }[this.state.mode](this.state.pitch11, this.state.data[index])
+                        let r = this.state.data[index]
+                        if (r === null) { return }
+                        let freq: number
+                        if (this.state.mode === 'ratio') {
+                          freq = this.state.pitch11 * r * Math.pow(2, oc)
+                        } else if (this.state.mode === 'cents') {
+                          freq = this.state.pitch11 * Math.pow(2, r / 1200 + oc)
+                        } else {
+                          throw "invalid mode"
+                        }
                         return (
                           <td key={i} style={{padding: '0'}}>
                             <CompactFrequencyPlayer freq={freq}
