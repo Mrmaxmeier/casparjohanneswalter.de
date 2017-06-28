@@ -1,5 +1,4 @@
 import * as React from 'react'
-import * as moment from 'moment'
 import { Route, Switch } from 'react-router-dom'
 
 import { Menu } from './menu'
@@ -29,7 +28,7 @@ export class App extends React.Component {
         </Switch>
         <footer>
           <p>
-            © 2015 - {moment().format('YYYY')} Caspar Johannes Walter
+            © 2015 - {new Date().getFullYear()} Caspar Johannes Walter
             <br />
             All Rights Reserved
             <br />
