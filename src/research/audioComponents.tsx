@@ -1,37 +1,53 @@
-import React, { Component, PureComponent } from 'react'
-import PropTypes from 'prop-types'
-import Pizzicato from 'pizzicato'
+import * as React from 'react'
 import { max, sqrt, log } from 'mathjs'
 
-let audio = {}
+interface GlobalAudioContext {
+  context: AudioContext,
+  masterNode: GainNode,
+  activeNodes: number,
+  nodeCount: number
+}
+
+let audio: GlobalAudioContext
 if (typeof window !== 'undefined') {
   const AudioContext = window.AudioContext || window.webkitAudioContext
-  audio.context = new AudioContext()
-  audio.masterNode = audio.context.createGain()
-  audio.masterNode.gain.value = 0.25
-  audio.masterNode.connect(audio.context.destination)
-  audio.activeNodes = 0
-  audio.nodeCount = 0
-  window.audio = audio
+  let context = new AudioContext()
+  let masterNode = context.createGain()
+  masterNode.gain.value = 0.25
+  masterNode.connect(context.destination)
+  audio = {
+    context, masterNode,
+    activeNodes: 0,
+    nodeCount: 0
+  }
 }
 
 const defaultAttack = 0.04
 const defaultRelease = 0.04
 
-export class FrequencyNode extends PureComponent {
-  static propTypes = {
-    freq: PropTypes.number,
-    volume: PropTypes.number,
-    playing: PropTypes.bool
-  }
+interface FNProps {
+  freq: number,
+  volume: number,
+  playing: boolean
+}
 
-  constructor (props) {
+class Wave extends OscillatorNode {
+  gainNode: GainNode
+  fadeNode: GainNode
+}
+
+export class FrequencyNode extends React.PureComponent<FNProps, {}> {
+  private count: number
+  private _waves?: Wave[]
+  private active: number
+  private unloadTimeout: number
+
+  constructor (props: FNProps) {
     super(props)
 
     this.count = 16
-    this.initialized = false
-    this._waves = null
     this.active = 0
+    this._waves = undefined
 
     if (props.playing) {
       this.init()
@@ -42,18 +58,18 @@ export class FrequencyNode extends PureComponent {
   }
 
   componentWillUnmount () {
-    if (!this.initialized) { return }
+    if (this._waves === undefined) { return }
     this.stopWithRelease()
     clearTimeout(this.unloadTimeout)
     this.unloadTimeout = setTimeout(this.unload, 50)
   }
 
-  componentDidUpdate (prevProps, prevState) {
+  componentDidUpdate (prevProps: FNProps, prevState: {}) {
     let props = this.props
     if (prevProps.playing && !props.playing) {
       this.stopWithRelease()
     }
-    if (this.initialized && (prevProps.volume !== props.volume || prevProps.freq !== props.freq)) {
+    if (this._waves !== undefined && (prevProps.volume !== props.volume || prevProps.freq !== props.freq)) {
       this._waves.forEach((wave, index) => {
         if (wave && this.props.freq) {
           wave.gainNode.gain.value = this.volume(index)
@@ -69,45 +85,49 @@ export class FrequencyNode extends PureComponent {
 
   render () { return null }
 
-  volume (index) {
+  volume (index: number) {
     let refVol = this.props.volume !== undefined ? this.props.volume : 0.5
     let refFreq = max(this.props.freq, 32)
     let sC = 1 / sqrt(refFreq / 16)
     return (Math.pow(sC, index) * refVol) || 0
   }
 
-  frequency (index) {
+  frequency (index: number) {
     let octave = 2
-    return Math.pow(octave, log(index + 1, 2)) * this.props.freq
+    return Math.pow(octave, Math.log2(index + 1)) * this.props.freq
   }
 
   init () {
-    if (typeof window === 'undefined' || this.initialized) { return }
-    this._waves = Array(this.count).fill()
-    this._waves = this._waves.map((_, index) => {
+    if (typeof window === 'undefined' || this._waves !== undefined) { return }
+    let _waves = Array(this.count).fill()
+    this._waves = _waves.map((_: any, index: number) => {
       let node = audio.context.createOscillator()
       node.type = 'sine'
       node.frequency.value = this.frequency(index)
 
-      node.gainNode = audio.context.createGain()
-      node.gainNode.gain.value = this.volume(index)
+      let gainNode = audio.context.createGain()
+      gainNode.gain.value = this.volume(index)
 
-      node.fadeNode = audio.context.createGain()
-      node.fadeNode.gain.value = 0
+      let fadeNode = audio.context.createGain()
+      fadeNode.gain.value = 0
 
-      node.connect(node.gainNode)
-      node.gainNode.connect(node.fadeNode)
-      node.fadeNode.connect(audio.masterNode)
+      node.connect(gainNode)
+      gainNode.connect(fadeNode)
+      fadeNode.connect(audio.masterNode)
 
       node.start()
 
-      return node
+      let wave: Wave = {
+        gainNode, fadeNode, ...node
+      } 
+
+      return wave
     })
-    audio.nodeCount += this._waves.length
-    this.initialized = true
+    audio.nodeCount += this.count
   }
 
   applyAttack () {
+    if (this._waves === undefined) { return }
     clearTimeout(this.unloadTimeout)
     this._waves.forEach((wave, index) => {
       if (!wave) { return }
@@ -124,6 +144,7 @@ export class FrequencyNode extends PureComponent {
   }
 
   stopWithRelease () {
+    if (this._waves === undefined) { return }
     this._waves.forEach((wave, index) => {
       if (!wave) { return }
       let currentValue = wave.fadeNode.gain.value
@@ -131,10 +152,10 @@ export class FrequencyNode extends PureComponent {
       wave.fadeNode.gain.setValueAtTime(currentValue, audio.context.currentTime)
 
       let remainingReleaseTime = wave.fadeNode.gain.value * defaultRelease
-      wave.fadeNode.gain.setValueAtTime(wave.fadeNode.gain.value, Pizzicato.context.currentTime)
-      wave.fadeNode.gain.linearRampToValueAtTime(0.00001, Pizzicato.context.currentTime + remainingReleaseTime)
+      wave.fadeNode.gain.setValueAtTime(wave.fadeNode.gain.value, audio.context.currentTime)
+      wave.fadeNode.gain.linearRampToValueAtTime(0.00001, audio.context.currentTime + remainingReleaseTime)
 
-      // wave.stop(Pizzicato.context.currentTime + remainingReleaseTime)
+      // wave.stop(audio.context.currentTime + remainingReleaseTime)
     })
     audio.activeNodes -= this.active
     this.active = 0
@@ -143,8 +164,7 @@ export class FrequencyNode extends PureComponent {
   }
 
   unload () {
-    if (!this.initialized) { return }
-    this.initialized = false
+    if (this._waves === undefined) { return }
     this._waves.forEach((wave) => {
       wave.stop()
       wave.disconnect()
@@ -152,12 +172,12 @@ export class FrequencyNode extends PureComponent {
       wave.gainNode.disconnect()
     })
     audio.nodeCount -= this._waves.length
-    this._waves = null
+    this._waves = undefined
   }
 }
 
-export class AudioControllerRow extends Component {
-  constructor (props) {
+export class AudioControllerRow extends React.Component<{}, { volume: number }> {
+  constructor (props: {}) {
     super(props)
     this.state = {
       volume: 0.25
@@ -176,10 +196,9 @@ export class AudioControllerRow extends Component {
             step={0.001}
             value={this.state.volume}
             onChange={(e) => {
-              audio.masterNode.gain.value = e.target.value
-              this.setState({
-                volume: e.target.value
-              })
+              let volume = parseFloat(e.target.value)
+              audio.masterNode.gain.value = volume
+              this.setState({ volume })
             }}
           />
         </td>
@@ -189,14 +208,17 @@ export class AudioControllerRow extends Component {
   }
 }
 
-export class AudioController extends Component {
-  constructor (props) {
+export class AudioController extends React.Component<{}, { activeNodes: number, nodeCount: number, volume: number }> {
+  private processor: AudioMeter
+  private interval: number
+  constructor (props: {}) {
     super(props)
     this.state = {
-      activeNodes: 0
+      activeNodes: 0,
+      nodeCount: 0,
+      volume: 0
     }
     this.processor = createAudioMeter(audio.context)
-    window.processor = this.processor
   }
 
   componentDidMount () {
@@ -253,60 +275,72 @@ clipLag: how long you would like the "clipping" indicator to show
 Access the clipping through node.checkClipping(); use node.shutdown to get rid of it.
 */
 
-function createAudioMeter (audioContext, clipLevel, averaging, clipLag) {
-  let processor = audioContext.createScriptProcessor(512)
-  processor.onaudioprocess = volumeAudioProcess
-  processor.clipping = false
-  processor.lastClip = 0
-  processor.volume = 0
-  processor.clipLevel = clipLevel || 0.98
-  processor.averaging = averaging || 0.95
-  processor.clipLag = clipLag || 750
+class AudioMeter extends ScriptProcessorNode {
+  clipping: boolean
+  lastClip: number
+  volume: number
+  clipLag: number
+  clipLevel: number
+  averaging: number
+  checkClipping: () => boolean
+  shutdown: () => void
+
+  volumeAudioProcess (event: AudioProcessingEvent) {
+    let buf = event.inputBuffer.getChannelData(0)
+    let sum = 0
+    let x
+
+    // Do a root-mean-square on the samples: sum up the squares...
+    for (let i = 0; i < buf.length; i++) {
+      x = buf[i]
+      if (Math.abs(x) >= this.clipLevel) {
+        this.clipping = true
+        this.lastClip = window.performance.now()
+      }
+      sum += x * x
+    }
+
+    // ... then take the square root of the sum.
+    var rms = Math.sqrt(sum / buf.length)
+
+    // Now smooth this out with the averaging factor applied
+    // to the previous sample - take the max here because we
+    // want "fast attack, slow release."
+    this.volume = Math.max(rms, this.volume * this.averaging)
+  }
+
+}
+
+function createAudioMeter (audioContext: AudioContext, clipLevel?: number, averaging?: number, clipLag?: number) {
+  let node = audioContext.createScriptProcessor(1024)
+  let processor: AudioMeter = {
+    clipping: false,
+    lastClip: 0,
+    volume: 0,
+    clipLevel: clipLevel || 0.98,
+    averaging: averaging || 0.95,
+    clipLag: clipLag || 750,
+    checkClipping: () => {
+      if (!processor.clipping) { return false }
+
+      if ((processor.lastClip + processor.clipLag) < window.performance.now()) {
+        processor.clipping = false
+      }
+      return processor.clipping
+    },
+    shutdown: () => {
+      processor.disconnect()
+      processor.onaudioprocess = (_: AudioProcessingEvent) => {}
+    },
+    volumeAudioProcess: new AudioMeter().volumeAudioProcess, // TODO: binding issues
+    ...node
+  }
+  processor.onaudioprocess = processor.volumeAudioProcess.bind(processor)
 
   // this will have no effect, since we don't copy the input to the output,
   // but works around a current Chrome bug.
   processor.connect(audioContext.destination)
   audio.masterNode.connect(processor)
 
-  processor.checkClipping = () => {
-    if (!processor.clipping) { return false }
-
-    if ((processor.lastClip + processor.clipLag) < window.performance.now()) {
-      processor.clipping = false
-    }
-    return processor.clipping
-  }
-
-  processor.shutdown = () => {
-    processor.disconnect()
-    processor.onaudioprocess = null
-  }
-
   return processor
-}
-
-function volumeAudioProcess (event) {
-  let buf = event.inputBuffer.getChannelData(0)
-  let sum = 0
-  let x
-
-  window.buf = buf
-
-  // Do a root-mean-square on the samples: sum up the squares...
-  for (let i = 0; i < buf.length; i++) {
-    x = buf[i]
-    if (Math.abs(x) >= this.clipLevel) {
-      this.clipping = true
-      this.lastClip = window.performance.now()
-    }
-    sum += x * x
-  }
-
-  // ... then take the square root of the sum.
-  var rms = Math.sqrt(sum / buf.length)
-
-  // Now smooth this out with the averaging factor applied
-  // to the previous sample - take the max here because we
-  // want "fast attack, slow release."
-  this.volume = Math.max(rms, this.volume * this.averaging)
 }
