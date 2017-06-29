@@ -1,33 +1,34 @@
-import React, {PureComponent} from 'react'
+import * as React from 'react'
 import { max, sqrt, log } from 'mathjs'
 
 import {MathInput, FreqPlayer, PrecNumber} from './components'
 
-export class SoundGen extends PureComponent {
-  constructor (props) {
+interface State {
+  octave: number,
+  freq: number,
+}
+
+export class SoundGen extends React.PureComponent<{}, State> {
+  private _nodes: FreqPlayer[]
+  constructor (props: {}) {
     super(props)
     this.state = {
-      octave: {
-        value: 2,
-        error: null
-      },
-      freq: {
-        value: 440,
-        error: null
-      }
+      octave: 2,
+      freq: 440,
     }
-    this._nodes = Array(32).fill()
+    this._nodes = new Array(32)
   }
-  defaultVolume (index, freq) {
-    let refFreq = freq || this.state.freq.value || 440
+
+  defaultVolume (index: number, freq?: number) {
+    let refFreq = freq || this.state.freq
     refFreq = max(refFreq, 32)
     let sC = 1 / sqrt(refFreq / 16)
     return Math.pow(sC, index)
   }
+
   render () {
-    let error = this.state.octave.error || this.state.freq.error
-    let refFreq = this.state.freq.value || 440
-    let octave = this.state.octave.value || 2
+    let refFreq = this.state.freq
+    let octave = this.state.octave
     return (
       <div>
         <table>
@@ -35,22 +36,20 @@ export class SoundGen extends PureComponent {
             <tr>
               <th>Octave</th>
               <th>
-                <MathInput default={2}
-                  wide asKind="mathjs"
-                  onChange={(octave) => { this.setState({octave}) }} />
+                <MathInput default={2} wide
+                  onChange={(octave) => { this.setState({ octave }) }} />
               </th>
             </tr>
             <tr>
               <th>Freq</th>
               <th>
-                <MathInput default={440}
-                  wide asKind="mathjs"
+                <MathInput default={440} wide
                   onChange={(freq) => {
                     this._nodes.forEach((node, i) => {
-                      let volume = this.defaultVolume(i, freq.value)
+                      let volume = this.defaultVolume(i, freq)
                       node.setState({ volume })
                     })
-                    this.setState({freq})
+                    this.setState({ freq })
                   }} />
               </th>
             </tr>
@@ -72,22 +71,16 @@ export class SoundGen extends PureComponent {
                 }}>Stop All</button>
               </th>
             </tr>
-            {error ? (
-              <tr style={{color: 'red'}}>
-                <th>Error</th>
-                <th>{error.toString()}</th>
-              </tr>
-            ) : null}
           </tbody>
         </table>
         <table>
           <tbody>
-              {Array(32).fill().map((_, i) => {
-                let freq = Math.pow(octave, log(i + 1, 2)) * refFreq
+              {new Array(32).fill(null).map((_, i) => {
+                let freq = Math.pow(octave, Math.log(i + 1)) * refFreq
                 return <FreqPlayer showTypePicker={false}
                           inTable freq={freq} key={i}
                           defaultVolume={this.defaultVolume(i)}
-                          ref={(v) => { this._nodes[i] = v }} />
+                          ref={(v) => { if (v) this._nodes[i] = v }} />
               })}
           </tbody>
         </table>

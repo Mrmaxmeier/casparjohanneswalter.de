@@ -18,13 +18,20 @@ export interface IAudioProvider {
   setPlaying: (v: boolean) => void,
 }
 
+
+export interface IPlayable {
+  play: () => void,
+  stop: () => void,
+  setPlaying: (v: boolean) => void,
+}
+
 interface Options {
   type: string,
   frequency: number,
   volume: number
 }
 
-export class AudioProvider implements IAudioProvider {
+export class AudioProvider implements IAudioProvider, IPlayable {
   private options: Options
   private wavetype: string
   private playing: boolean

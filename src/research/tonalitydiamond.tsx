@@ -3,7 +3,7 @@ import { abs } from 'mathjs'
 
 import { MathInput, NoteDisplay, NoteImage, CompactFrequencyPlayer } from './components'
 import { AudioController, AudioControllerRow } from './audioComponents'
-import { concertPitchToC0, ratioToCents } from './converters.js'
+import { concertPitchToC0, ratioToCents } from './converters'
 import { range } from 'lodash'
 
 let diamond = [

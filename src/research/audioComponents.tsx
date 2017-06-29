@@ -35,7 +35,8 @@ interface FNProps {
   playing: boolean
 }
 
-class Wave extends OscillatorNode {
+class Wave {
+  node: OscillatorNode
   gainNode: GainNode
   fadeNode: GainNode
 }
@@ -77,7 +78,7 @@ export class FrequencyNode extends React.PureComponent<FNProps, {}> {
       this._waves.forEach((wave, index) => {
         if (wave && this.props.freq) {
           wave.gainNode.gain.value = this.volume(index)
-          wave.frequency.value = this.frequency(index)
+          wave.node.frequency.value = this.frequency(index)
         }
       })
     }
@@ -103,7 +104,7 @@ export class FrequencyNode extends React.PureComponent<FNProps, {}> {
 
   init () {
     if (typeof window === 'undefined' || this._waves !== undefined) { return }
-    this._waves = new Array(this.count).map((_: any, index: number) => {
+    this._waves = new Array(this.count).fill(null).map((_: any, index: number) => {
       let node = audio.context.createOscillator()
       node.type = 'sine'
       node.frequency.value = this.frequency(index)
@@ -120,11 +121,9 @@ export class FrequencyNode extends React.PureComponent<FNProps, {}> {
 
       node.start()
 
-      let wave: Wave = {
-        gainNode, fadeNode, ...node
+      return {
+        gainNode, fadeNode, node
       } 
-
-      return wave
     })
     audio.nodeCount += this.count
   }
@@ -169,8 +168,8 @@ export class FrequencyNode extends React.PureComponent<FNProps, {}> {
   unload () {
     if (this._waves === undefined) { return }
     this._waves.forEach((wave) => {
-      wave.stop()
-      wave.disconnect()
+      wave.node.stop()
+      wave.node.disconnect()
       wave.fadeNode.disconnect()
       wave.gainNode.disconnect()
     })
@@ -278,7 +277,7 @@ clipLag: how long you would like the "clipping" indicator to show
 Access the clipping through node.checkClipping(); use node.shutdown to get rid of it.
 */
 
-class AudioMeter extends ScriptProcessorNode {
+interface AudioMeter {
   clipping: boolean
   lastClip: number
   volume: number
@@ -287,31 +286,7 @@ class AudioMeter extends ScriptProcessorNode {
   averaging: number
   checkClipping: () => boolean
   shutdown: () => void
-
-  volumeAudioProcess (event: AudioProcessingEvent) {
-    let buf = event.inputBuffer.getChannelData(0)
-    let sum = 0
-    let x
-
-    // Do a root-mean-square on the samples: sum up the squares...
-    for (let i = 0; i < buf.length; i++) {
-      x = buf[i]
-      if (Math.abs(x) >= this.clipLevel) {
-        this.clipping = true
-        this.lastClip = window.performance.now()
-      }
-      sum += x * x
-    }
-
-    // ... then take the square root of the sum.
-    var rms = Math.sqrt(sum / buf.length)
-
-    // Now smooth this out with the averaging factor applied
-    // to the previous sample - take the max here because we
-    // want "fast attack, slow release."
-    this.volume = Math.max(rms, this.volume * this.averaging)
-  }
-
+  node: ScriptProcessorNode
 }
 
 function createAudioMeter (audioContext: AudioContext, clipLevel?: number, averaging?: number, clipLag?: number) {
@@ -332,18 +307,42 @@ function createAudioMeter (audioContext: AudioContext, clipLevel?: number, avera
       return processor.clipping
     },
     shutdown: () => {
-      processor.disconnect()
-      processor.onaudioprocess = (_: AudioProcessingEvent) => {}
+      processor.node.disconnect()
+      processor.node.onaudioprocess = (_: AudioProcessingEvent) => {}
     },
-    volumeAudioProcess: new AudioMeter().volumeAudioProcess, // TODO: binding issues
-    ...node
+    node: node
   }
-  processor.onaudioprocess = processor.volumeAudioProcess.bind(processor)
+  processor.node.onaudioprocess = (event: AudioProcessingEvent) => volumeAudioProcess(processor, event)
 
   // this will have no effect, since we don't copy the input to the output,
   // but works around a current Chrome bug.
-  processor.connect(audioContext.destination)
-  audio.masterNode.connect(processor)
+  processor.node.connect(audioContext.destination)
+  audio.masterNode.connect(processor.node)
 
   return processor
+}
+
+
+function volumeAudioProcess (meter: AudioMeter, event: AudioProcessingEvent) {
+  let buf = event.inputBuffer.getChannelData(0)
+  let sum = 0
+  let x
+
+  // Do a root-mean-square on the samples: sum up the squares...
+  for (let i = 0; i < buf.length; i++) {
+    x = buf[i]
+    if (Math.abs(x) >= meter.clipLevel) {
+      meter.clipping = true
+      meter.lastClip = window.performance.now()
+    }
+    sum += x * x
+  }
+
+  // ... then take the square root of the sum.
+  var rms = Math.sqrt(sum / buf.length)
+
+  // Now smooth this out with the averaging factor applied
+  // to the previous sample - take the max here because we
+  // want "fast attack, slow release."
+  meter.volume = Math.max(rms, meter.volume * meter.averaging)
 }

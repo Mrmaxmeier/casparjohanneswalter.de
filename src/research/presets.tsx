@@ -81,9 +81,8 @@ export class Presets<T> extends React.PureComponent<Props<T>, State<T>> {
         </th>
         <th>
           <button onClick={() => {
-            let prompt = window.prompt('Preset Name', this.state.preset)
-            if (prompt === null) { return }
-            let name = prompt
+            const name = window.prompt('Preset Name', this.state.preset)
+            if (name === null) { return }
             let data = this.props.current()
             let presets = this.load()
             presets[name] = data

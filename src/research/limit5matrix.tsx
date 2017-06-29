@@ -120,13 +120,13 @@ interface State {
   centralC: number,
   preset: 'ji' | 'schismatic' | 'schismatic_optimized7' | 'edo53',
   playing: boolean[],
-  save: any[],
+  save: (SaveState | null)[],
   large: boolean
 }
 
 interface SaveState {
-  octave: { [key: number]: number },
-  playing: { [key: number]: boolean },
+  octave: { [key: number]: number[] | null },
+  playing: { [key: number]: boolean[] | null }
 }
 
 export class Limit5MatrixPlayer extends React.PureComponent<{}, State> {
@@ -158,17 +158,20 @@ export class Limit5MatrixPlayer extends React.PureComponent<{}, State> {
   }
 
   load (index: number) {
-    let save = this.state.save[index]
+    const save = this.state.save[index]
+    if (save === null) { return }
     Object.keys(save.octave).map((s) => {
       let key = parseInt(s)
-      if (this.rows[key] && save.octave[key] !== null) {
-        this.rows[key].setState({ octave: save.octave[key] })
+      let octave = save.octave[key]
+      if (this.rows[key] && octave !== null) {
+        this.rows[key].setState({ octave })
       }
     })
     Object.keys(save.playing).map((s) => {
       let key = parseInt(s)
-      if (this.rows[key] && save.playing[key] !== null) {
-        this.rows[key].setState({ playing: save.playing[key] })
+      let playing = save.playing[key]
+      if (this.rows[key] && playing !== null) {
+        this.rows[key].setState({ playing })
       }
     })
   }

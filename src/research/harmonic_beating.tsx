@@ -1,23 +1,33 @@
-import React, {PureComponent} from 'react'
+import * as React from 'react'
 
 import { MathInput, PrecNumber, NoteImage, CompactFrequencyPlayer } from './components'
-import { AudioController, AudioControllerRow } from './audio'
-import { ratioToCents, concertPitchToC0 } from './converters.js'
+import { AudioController, AudioControllerRow } from './audioComponents'
+import { ratioToCents, concertPitchToC0 } from './converters'
+import { clone } from 'lodash'
 
-export class HarmonicBeatingCalculator extends PureComponent {
-  constructor (props) {
+interface State {
+  concertPitch: number,
+  commonTone?: number,
+  partialLeft?: number,
+  partialRight?: number,
+  valsLeft: number[],
+  valsRight: number[]
+}
+
+export class HarmonicBeatingCalculator extends React.PureComponent<{}, State> {
+  constructor (props: {}) {
     super(props)
     this.state = {
       concertPitch: 442,
-      commonTone: null,
-      partialLeft: null,
-      partialRight: null,
+      commonTone: undefined,
+      partialLeft: undefined,
+      partialRight: undefined,
       valsLeft: new Array(9).fill(null),
       valsRight: new Array(9).fill(null)
     }
   }
 
-  row (index) {
+  row (index: number) {
     let partialLeft = this.state.partialLeft
     let partialRight = this.state.partialRight
     let inLeft = this.state.valsLeft[index]
@@ -27,7 +37,7 @@ export class HarmonicBeatingCalculator extends PureComponent {
     let freqRight = null
     let centsLeft = null
     let centsRight = null
-    if (partialLeft && partialRight && inLeft && inRight) {
+    if (partialLeft && partialRight && inLeft && inRight && this.state.commonTone !== undefined) {
       res = (inLeft * partialRight) - (inRight * partialLeft)
       let c0 = concertPitchToC0(this.state.concertPitch)
       freqLeft = this.state.commonTone / partialLeft * inLeft
@@ -45,9 +55,8 @@ export class HarmonicBeatingCalculator extends PureComponent {
         ) : <th />}
         <th>
           <MathInput
-            asKind="mathjs-ignoreerror"
             onChange={(val) => {
-              let valsLeft = [].concat(this.state.valsLeft)
+              let valsLeft = clone(this.state.valsLeft)
               valsLeft[index] = val
               this.setState({ valsLeft })
             }} />
@@ -55,9 +64,8 @@ export class HarmonicBeatingCalculator extends PureComponent {
         <th></th>
         <th>
           <MathInput
-            asKind="mathjs-ignoreerror"
             onChange={(val) => {
-              let valsRight = [].concat(this.state.valsRight)
+              let valsRight = clone(this.state.valsRight)
               valsRight[index] = val
               this.setState({ valsRight })
             }} />
@@ -76,7 +84,11 @@ export class HarmonicBeatingCalculator extends PureComponent {
   }
 
   render () {
-    let beating = 1 / (this.state.partialLeft * this.state.partialRight) * this.state.commonTone
+    let beating = this.state.partialLeft !== undefined &&
+                  this.state.partialRight !== undefined &&
+                  this.state.commonTone !== undefined
+                  ? 1 / (this.state.partialLeft * this.state.partialRight) * this.state.commonTone
+                  : undefined
     let c0 = concertPitchToC0(this.state.concertPitch)
     return (
       <div>
@@ -88,7 +100,7 @@ export class HarmonicBeatingCalculator extends PureComponent {
               <th>Concert Pitch a4</th>
               <th>
                 <MathInput
-                  wide asKind="mathjs-ignoreerror" default={442}
+                  wide default={442}
                   onChange={(concertPitch) => {
                     this.setState({ concertPitch })
                   }} />
@@ -97,9 +109,9 @@ export class HarmonicBeatingCalculator extends PureComponent {
             <tr>
               <th>Fundamental Beating</th>
               <th>
-                {(!isNaN(beating)) && beating !== Infinity ? (
+                {(beating && !isNaN(beating)) && beating !== Infinity ? (
                   <span>
-                    1 / {this.state.partialLeft * this.state.partialRight} * {this.state.commonTone} = <PrecNumber value={beating} />
+                    1 / {(this.state.partialLeft || 0) * (this.state.partialRight || 0)} * {this.state.commonTone} = <PrecNumber value={beating} />
                     hz
                   </span>
                 ) : null}
@@ -129,21 +141,18 @@ export class HarmonicBeatingCalculator extends PureComponent {
               ) : <th />}
               <th>
                 <MathInput
-                  asKind="mathjs-ignoreerror"
                   onChange={(partialLeft) => {
                     this.setState({ partialLeft })
                   }} />
               </th>
               <th>
                 <MathInput
-                  asKind="mathjs-ignoreerror"
                   onChange={(commonTone) => {
                     this.setState({ commonTone })
                   }} /> hz
               </th>
               <th>
                 <MathInput
-                  asKind="mathjs-ignoreerror"
                   onChange={(partialRight) => {
                     this.setState({ partialRight })
                   }} />

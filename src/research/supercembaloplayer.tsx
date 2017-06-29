@@ -71,7 +71,7 @@ interface Preset {
   mode: 'ratio' | 'cents',
   concertPitch: string,
   pitch11: string,
-  data: any[]
+  data: string[]
 }
 
 export class SuperCembaloPlayer extends React.PureComponent<{}, State> {

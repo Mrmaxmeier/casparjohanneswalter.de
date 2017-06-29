@@ -1,31 +1,27 @@
-import { fraction, log, pow, mod, floor, abs, number, eval as mathEval } from 'mathjs'
-import { find } from 'lodash'
+import { number, eval as mathEval } from 'mathjs'
+import { find, clone } from 'lodash'
 
 export type Ratio = number
 export type Cents = number
+export type Frac = { n: number, d: number }
 
+export function fraction(n: number, d: number): Frac { return { n, d } }
+export function fracVal(f: Frac): number { return f.n / f.d }
 
-// TODO: refactor for typescript
-export function processString (data: any, via: string) {
-  let handlers = {
-    string: (data: any) => data,
-    mathjs: (data: any) => {
-      try {
-        return { value: mathEval(data) }
-      } catch (error) {
-        return { error }
-      }
-    },
-    'mathjs-ignoreerror': (data: any) => {
-      try {
-        return mathEval(data)
-      } catch (error) {
-        return undefined
-      }
-    }
+export function mod(n: number, m: number) {
+  return ((n % m) + m) % m
+}
+
+export interface MathError {
+  error: string
+}
+
+export function evalMath(data: string): number | MathError {
+  try {
+    return mathEval(data)
+  } catch (error) {
+    return { error: error.toString() }
   }
-  let handler = handlers[via || 'mathjs-ignoreerror']
-  return handler(data)
 }
 
 export function ratioToCents (ratio: Ratio) {
@@ -33,7 +29,7 @@ export function ratioToCents (ratio: Ratio) {
 }
 
 export function centsToRatio (cents: Cents) {
-  return pow(2, cents / 1200)
+  return Math.pow(2, cents / 1200)
 }
 
 export function centsToOctave (cents: Cents) {
@@ -79,9 +75,9 @@ export function centsToFrequency (cents: Cents, a4: number) {
   return Math.pow(2, (cents / 1200)) * concertPitchToC0(a4)
 }
 
-export function intelligenterMediant (zahl, precision) {
+export function intelligenterMediant (in_: Frac, precision?: number) {
   precision = precision || 2
-  let a = floor(zahl.n / zahl.d)
+  let a = Math.floor(fracVal(in_))
   let b = a + 1
   let fractions = [
     fraction(a, 1),
@@ -90,16 +86,16 @@ export function intelligenterMediant (zahl, precision) {
   ]
   while (true) {
     let prev = fractions[fractions.length - 1]
-    let reversed = [].concat(fractions).reverse()
+    let reversed = clone(fractions).reverse()
 
-    if (prev > zahl) {
-      let smaller = find(reversed, (f) => f < zahl)
+    if (fracVal(prev) > fracVal(in_)) {
+      let smaller = find(reversed, (f) => fracVal(f) < fracVal(in_))
       if (!smaller) {
         return []
       }
       fractions.push(fraction(smaller.n + prev.n, smaller.d + prev.d))
     } else {
-      let bigger = find(reversed, (f) => f > zahl)
+      let bigger = find(reversed, (f) => fracVal(f) > fracVal(in_))
       if (!bigger) {
         return []
       }
@@ -107,7 +103,7 @@ export function intelligenterMediant (zahl, precision) {
     }
 
     let current = fractions[fractions.length - 1]
-    if (abs(current - zahl) < 1 / Math.pow(10, precision)) {
+    if (Math.abs(fracVal(current) - fracVal(in_)) < 1 / Math.pow(10, precision)) {
       break
     }
   }

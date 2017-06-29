@@ -1,13 +1,12 @@
-import 'webpack-env'
 import * as React from 'react'
 import { format } from 'mathjs'
 
-import { evalMath, MathError, centsToOctave, centsToNote, centsToNoteDiff } from './converters.js'
-import { IAudioProvider, AudioProvider, SoundGenProvider } from './audio.js'
+import { evalMath, MathError, centsToOctave, centsToNote, centsToNoteDiff } from './converters'
+import { IAudioProvider, IPlayable, AudioProvider, SoundGenProvider } from './audio'
 import { FrequencyNode } from './audioComponents'
 
 interface MathInputProps extends React.Props<MathInput> {
-  default?: any,
+  default?: (number | string),
   onChange?: (v: number) => void,
   onError?: (e: MathError) => void,
   wide?: boolean,
@@ -15,7 +14,7 @@ interface MathInputProps extends React.Props<MathInput> {
 }
 
 interface MathInputState extends React.ComponentState {
-  value: number,
+  value?: number,
   error?: MathError
 }
 
@@ -23,11 +22,19 @@ export class MathInput extends React.PureComponent<MathInputProps, MathInputStat
   private elem: HTMLInputElement
   constructor (props: MathInputProps) {
     super(props)
+    let value: number | undefined
+    if (typeof props.default === 'string') {
+      let res = evalMath(props.default)
+      if (typeof res === 'number') {
+        value = res
+      }
+    }
     this.state = {
-      value: props.default,
+      value,
       error: undefined
     }
   }
+
   public setValue (value: number | string, callOnChange?: boolean) {
     this.elem.value = value.toString()
     let parsed = evalMath(value.toString())
@@ -43,6 +50,7 @@ export class MathInput extends React.PureComponent<MathInputProps, MathInputStat
       }
     }
   }
+
   render () {
     let style = this.props.wide ? {
       width: '7.5em',
@@ -56,9 +64,15 @@ export class MathInput extends React.PureComponent<MathInputProps, MathInputStat
     if (this.state.error) {
       style['color'] = 'red'
     }
+    let default_: string | undefined
+    if (typeof this.props.default === 'number') {
+      default_ = this.props.default.toString()
+    } else {
+      default_ = this.props.default
+    }
     return (
       <input type='text' ref={(e) => { if (e) this.elem = e }}
-        defaultValue={this.state.value.toString()}
+        defaultValue={default_}
         onChange={(d) => {
           let parsed = evalMath(d.target.value)
           if (typeof parsed === 'number') {
@@ -384,7 +398,7 @@ export class FreqPlayer extends React.PureComponent<FreqPlayerProps, FreqPlayerS
 
 
 interface CompactFrequencyPlayerProps extends React.Props<CompactFrequencyPlayer> {
-  freq: number,
+  freq?: number,
   muted?: boolean,
   buttonStyle?: {},
   text?: string
@@ -404,6 +418,13 @@ export class CompactFrequencyPlayer extends React.PureComponent<CompactFrequency
     this.setState({ isPlaying })
   }
 
+  play () {
+    if (this.valInvalid()) { return }
+    this.setState({ isPlaying: true })
+  }
+
+  stop () { this.setState({ isPlaying: false })}
+
   render () {
     let isPlaying = this.state.isPlaying
     let style = Object.assign({background: isPlaying ? '#f15f55' : '#2196f3'}, this.props.buttonStyle || {})
@@ -413,11 +434,13 @@ export class CompactFrequencyPlayer extends React.PureComponent<CompactFrequency
         <button style={style} onClick={() => {
           this.setPlaying(!isPlaying)
         }} disabled={!this.props.freq || this.props.muted}>{text}</button>
-        <FrequencyNode
-          volume={this.props.muted ? 0 : 0.5}
-          freq={this.props.freq}
-          playing={this.state.isPlaying}
-        />
+        {this.props.freq !== undefined ? (
+          <FrequencyNode
+            volume={this.props.muted ? 0 : 0.5}
+            freq={this.props.freq}
+            playing={this.state.isPlaying}
+          />
+        ) : null}
       </div>
     )
   }
@@ -485,11 +508,11 @@ export class StringValueVisualisation extends React.PureComponent<{
 }
 
 interface PlayAllButtonProps extends React.Props<any> {
-  playerRefs: IAudioProvider[],
+  playerRefs: IPlayable[],
   disabled: boolean
 }
 
-export class PlayAllButton extends React.PureComponent<PlayAllButtonProps, { active: boolean}> {
+export class PlayAllButton extends React.PureComponent<PlayAllButtonProps, { active: boolean }> {
   constructor (props: PlayAllButtonProps) {
     super(props)
     this.state = {

@@ -153,11 +153,13 @@ export class ArciorganoPlayer extends React.PureComponent<{}, State> {
 
   renderElement (index: number, small: boolean, disabled: boolean) {
     let data = this.state.data[index]
-    if (data === null) { return }
-    let freq = {
-      ratio: (pitch: number, r: number) => pitch * r,
-      cents: (pitch: number, r: number) => pitch * Math.pow(2, r / 1200)
-    }[this.state.mode](this.state.pitch11, data)
+    let freq: number | undefined
+    if (data !== null) {
+      freq = {
+        ratio: (pitch: number, r: number) => pitch * r,
+        cents: (pitch: number, r: number) => pitch * Math.pow(2, r / 1200)
+      }[this.state.mode](this.state.pitch11, data)
+    }
     let muted = this.state.muted || disabled
     return (
       <div>

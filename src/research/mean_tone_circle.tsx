@@ -1,9 +1,15 @@
-import React, {PureComponent} from 'react'
-import {range} from 'underscore'
+import * as React from 'react'
+import { range } from 'lodash'
 import { SpecificRangeSlider } from './components'
 
-export class MeanToneCircle extends PureComponent {
-  constructor (props) {
+interface State {
+  from: number,
+  to: number
+}
+
+export class MeanToneCircle extends React.PureComponent<{}, State> {
+  private canvas: HTMLCanvasElement
+  constructor (props: {}) {
     super(props)
     this.state = {
       from: 0,
@@ -12,6 +18,7 @@ export class MeanToneCircle extends PureComponent {
     this.componentDidUpdate = this.paint.bind(this)
     this.componentDidMount = this.paint.bind(this)
   }
+
   paint () {
     let canvas = this.canvas
     let from = this.state.from * (Math.PI / 180)
@@ -25,9 +32,9 @@ export class MeanToneCircle extends PureComponent {
       return false
     }
     if (canvas) {
-      let ctx = canvas.getContext('2d')
-      window.ctx = ctx
-      ctx.resetTransform()
+      const ctx = canvas.getContext('2d')
+      if (ctx == null) { return }
+      ctx.setTransform(1, 0, 0, 1, 0, 0); // TODO: future: ctx.resetTransform()
       ctx.clearRect(0, 0, canvas.width, canvas.height)
 
       ctx.scale(canvas.width, canvas.height)
@@ -56,7 +63,7 @@ export class MeanToneCircle extends PureComponent {
       ctx.font = (1 / 5) / scaleFactor + 'px serif'
       ctx.textAlign = 'center'
       ctx.textBaseline = 'middle'
-      let debug = (x, y, color) => {
+      let debug = (x: number, y: number, color?: string) => {
         ctx.fillStyle = color || 'blue'
         ctx.beginPath()
         ctx.moveTo(x, y)
@@ -100,7 +107,7 @@ export class MeanToneCircle extends PureComponent {
     let size = '750px'
     return (
       <div>
-        <canvas style={{height: size, width: size}} width={size} height={size} ref={(e) => { this.canvas = e }} />
+        <canvas style={{height: size, width: size}} width={size} height={size} ref={(e) => { if(e) this.canvas = e }} />
         <div>
           <SpecificRangeSlider defaultMin={0} defaultMax={360} onChange={(val) => {
             this.setState({from: val})

@@ -1,12 +1,19 @@
-import React, {PureComponent} from 'react'
-import { pow, gcd, max, min, abs, fraction } from 'mathjs'
+import * as React from 'react'
+import { pow, gcd, max, min, abs } from 'mathjs'
 
 import {
   MathInput, PrecNumber, NoteImage, PlayAllButton,
   NoteDisplay, CompactFrequencyPlayer, StringValueVisualisation
 } from './components'
-import { AudioController, AudioControllerRow } from './audio'
-import { ratioToCents } from './converters.js'
+import { AudioController, AudioControllerRow } from './audioComponents'
+import { IAudioProvider } from './audio'
+import { ratioToCents } from './converters'
+
+type Frac = { n: number, d: number }
+function fraction (n: number, d: number): Frac {
+  return { n, d }
+}
+
 
 const magic = [
   'c', 'c#',
@@ -18,46 +25,54 @@ const magic = [
   'b♭', 'b'
 ]
 
-export class PianoMultiphonicCalculatorII extends PureComponent {
-  constructor (props) {
+interface Data { octave: number, tone: number, p1?: number, p2?: number }
+
+interface State {
+  concertPitch: number,
+  data1: Data,
+  data2: Data,
+}
+
+export class PianoMultiphonicCalculatorII extends React.PureComponent<{}, State> {
+  constructor (props: {}) {
     super(props)
     this.state = {
       concertPitch: 442,
       data1: {
         octave: 1,
         tone: 0,
-        p1: null,
-        p2: null
+        p1: undefined,
+        p2: undefined
       },
       data2: {
         octave: 1,
         tone: 0,
-        p1: null,
-        p2: null
+        p1: undefined,
+        p2: undefined
       }
     }
   }
 
-  compute (concertPitch, data) {
-    let a = (concertPitch / pow(2, 3 / 4)) / 16
-    let b = a * pow(2, data.tone / 12)
-    let freq = b * pow(2, data.octave)
+  compute (concertPitch: number, data: Data) {
+    let a = (concertPitch / Math.pow(2, 3 / 4)) / 16
+    let b = a * Math.pow(2, data.tone / 12)
+    let freq = b * Math.pow(2, data.octave)
     let p1 = data.p1
     let p2 = data.p2
     let error = null
     let result = null
-    let fractions = []
+    let fractions: Frac[] = []
     if (p1 && p2) {
       if (gcd(p1, p2) !== 1) {
         error = 'Greatest common divisor: ' + gcd(p1, p2)
       } else {
         let l = [
-          max(p1, p2),
-          min(p1, p2)
+          Math.max(p1, p2),
+          Math.min(p1, p2)
         ]
         while (true) {
           let diff = l[l.length - 2] - l[l.length - 1]
-          let absdiff = abs(diff)
+          let absdiff = Math.abs(diff)
           if (absdiff === 0) {
             l.pop()
             break
@@ -66,7 +81,7 @@ export class PianoMultiphonicCalculatorII extends PureComponent {
         }
         l.reverse()
         let min_ = 0
-        let newl = []
+        let newl: number[] = []
         l.forEach((e) => {
           if (e > min_) {
             min_ = e
@@ -85,14 +100,15 @@ export class PianoMultiphonicCalculatorII extends PureComponent {
           let f2 = fractions[i - 1]
           fractions.push(fraction(f1.n + f2.n, newl[i]))
         }
-        result = fractions[fractions.length - 1].valueOf()
+        let resF = fractions[fractions.length - 1]
+        result = resF.n / resF.d
       }
     }
 
     return { freq, error, result, fractions }
   }
 
-  setData (row, values) {
+  setData (row: number, values: Partial<Data>) {
     let old = row < 1 ? this.state.data1 : this.state.data2
     let copy = Object.assign({}, old)
     Object.assign(copy, values)
@@ -103,10 +119,8 @@ export class PianoMultiphonicCalculatorII extends PureComponent {
     }
   }
 
-  renderData (data) {
-    let fractions = data.fractions
-    let freq = data.freq
-    let players = []
+  renderData (freq: number, fractions: Frac[]) {
+    let players: CompactFrequencyPlayer[] = []
     return (
       <table>
         <tbody>
@@ -120,7 +134,7 @@ export class PianoMultiphonicCalculatorII extends PureComponent {
             </th>
           </tr>
           {fractions.map((f, i) => {
-            let freqC0 = this.state.concertPitch / pow(2, (1 / 12) * 57)
+            let freqC0 = this.state.concertPitch / Math.pow(2, (1 / 12) * 57)
             let cents = ratioToCents((freq * f.d) / freqC0)
             return (
               <tr key={i}>
@@ -137,7 +151,7 @@ export class PianoMultiphonicCalculatorII extends PureComponent {
                   <NoteImage cents={cents} />
                 </th>
                 <th>
-                  <CompactFrequencyPlayer freq={freq * f.d} ref={(el) => { players.push(el) }} />
+                  <CompactFrequencyPlayer freq={freq * f.d} ref={(el) => { if (el) players.push(el) }} />
                 </th>
               </tr>
             )
@@ -151,6 +165,10 @@ export class PianoMultiphonicCalculatorII extends PureComponent {
     let a = this.compute(this.state.concertPitch, this.state.data1)
     let b = this.compute(this.state.concertPitch, this.state.data2)
     let toneOptions = magic.map((v, i) => <option key={i} value={i}>{v}</option>)
+    let visOptions = {
+      ...( a.result ? { red: a.result } : {} ),
+      ...( b.result ? { blue: b.result } : {} )
+    }
     return (
       <div>
         <AudioController />
@@ -160,8 +178,7 @@ export class PianoMultiphonicCalculatorII extends PureComponent {
             <tr>
               <th>Concert Pitch</th>
               <th>
-                <MathInput
-                  asKind="mathjs-ignoreerror" default={442}
+                <MathInput default={442}
                   onChange={(concertPitch) => this.setState({ concertPitch })} />
               </th>
               <th />
@@ -174,12 +191,12 @@ export class PianoMultiphonicCalculatorII extends PureComponent {
             <tr>
               <th>String</th>
               <th>
-                <select onChange={(event) => this.setData(0, { tone: event.target.value })}>
+                <select onChange={(event) => this.setData(0, { tone: parseInt(event.target.value) })}>
                   {toneOptions}
                 </select>
               </th>
               <th>
-                <select onChange={(event) => this.setData(1, { tone: event.target.value })}>
+                <select onChange={(event) => this.setData(1, { tone: parseInt(event.target.value) })}>
                   {toneOptions}
                 </select>
               </th>
@@ -212,12 +229,10 @@ export class PianoMultiphonicCalculatorII extends PureComponent {
               <th>Partial 1</th>
               <th>
                 <MathInput
-                  asKind="mathjs-ignoreerror"
                   onChange={(p1) => this.setData(0, { p1 })} />
               </th>
               <th>
                 <MathInput
-                  asKind="mathjs-ignoreerror"
                   onChange={(p1) => this.setData(1, { p1 })} />
               </th>
             </tr>
@@ -225,12 +240,10 @@ export class PianoMultiphonicCalculatorII extends PureComponent {
               <th>Partial 2</th>
               <th>
                 <MathInput
-                  asKind="mathjs-ignoreerror"
                   onChange={(p2) => this.setData(0, { p2 })} />
               </th>
               <th>
                 <MathInput
-                  asKind="mathjs-ignoreerror"
                   onChange={(p2) => this.setData(1, { p2 })} />
               </th>
             </tr>
@@ -244,11 +257,11 @@ export class PianoMultiphonicCalculatorII extends PureComponent {
           </tbody>
         </table>
         <div style={{display: 'flex', justifyContent: 'space-between'}}>
-          {this.renderData(a)}
-          {this.renderData(b)}
+          {this.renderData(a.freq, a.fractions)}
+          {this.renderData(b.freq, b.fractions)}
         </div>
         {a.result || b.result ? (
-          <StringValueVisualisation values={{ 'red': a.result, 'blue': b.result }} />
+          <StringValueVisualisation values={visOptions} />
         ) : null}
       </div>
     )

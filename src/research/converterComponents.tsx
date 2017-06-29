@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { MathInput, FreqPlayer, PrecNumber, NoteDisplay } from './components'
-import { ratioToCents, concertPitchToC0 } from './converters.js'
+import { ratioToCents, concertPitchToC0 } from './converters'
 
 interface FractionToCentsState {
   input: number,
@@ -23,6 +23,7 @@ export class FractionToCents extends React.PureComponent<{}, FractionToCentsStat
       this.state.reference,
       this.state.reference * this.state.input
     ]
+    if (this.state.input === 1) { playerFrequencies.pop() }
     return (
       <div>
         <h4>Fraction to cents</h4>
