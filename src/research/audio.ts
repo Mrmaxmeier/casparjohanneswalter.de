@@ -1,4 +1,13 @@
-import Pizzicato from 'pizzicato'
+// import Pizzicato from 'pizzicato'
+// TODO: remove pizzicato dep
+const Pizzicato = require<{
+  Sound: any,
+  context: any,
+}>('pizzicato')
+namespace Pizzicato {
+  export type Wave = any
+  export type Sound = any
+}
 import { max, sqrt, log } from 'mathjs'
 
 export interface IAudioProvider {

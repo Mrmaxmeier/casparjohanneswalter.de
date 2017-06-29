@@ -1,6 +1,10 @@
 import * as React from 'react'
 import { max, sqrt, log } from 'mathjs'
 
+declare var webkitAudioContext: {
+    new (): AudioContext;
+}
+
 interface GlobalAudioContext {
   context: AudioContext,
   masterNode: GainNode,
@@ -10,8 +14,8 @@ interface GlobalAudioContext {
 
 let audio: GlobalAudioContext
 if (typeof window !== 'undefined') {
-  const AudioContext = window.AudioContext || window.webkitAudioContext
-  let context = new AudioContext()
+  const theAudioContext = AudioContext || webkitAudioContext
+  let context = new theAudioContext()
   let masterNode = context.createGain()
   masterNode.gain.value = 0.25
   masterNode.connect(context.destination)
