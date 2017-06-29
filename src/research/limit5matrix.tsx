@@ -1,9 +1,8 @@
-import React, {PureComponent} from 'react'
-import { range, mapValues } from 'lodash'
-import PropTypes from 'prop-types'
+import * as React from 'react'
+import { range, mapValues, clone } from 'lodash'
 
 import { MathInput, PrecNumber } from './components'
-import { FrequencyNode, AudioController, AudioControllerRow } from './audio'
+import { FrequencyNode, AudioController, AudioControllerRow } from './audioComponents'
 import { normalizeOctave, ratioToCents } from './converters.js'
 import { Presets } from './presets.jsx'
 
@@ -38,14 +37,19 @@ const labels = [
 const WIDTH = 9
 const HEIGHT = 25
 
-class Row extends PureComponent {
-  static propTypes = {
-    preset: PropTypes.string,
-    y: PropTypes.number,
-    centralC: PropTypes.number
-  }
+interface RowProps {
+  preset: 'ji' | 'schismatic' | 'schismatic_optimized7' | 'edo53',
+  y: number,
+  centralC: number
+}
 
-  constructor (props) {
+interface RowState {
+  octave: number[],
+  playing: boolean[]
+}
+
+class Row extends React.PureComponent<RowProps, RowState> {
+  constructor (props: RowProps) {
     super(props)
     this.state = {
       octave: new Array(WIDTH).fill(0),
@@ -53,7 +57,7 @@ class Row extends PureComponent {
     }
   }
 
-  data (x, y) {
+  data (x: number, y: number) {
     return {
       ji: 3 ** y * 5 ** x,
       schismatic: 3 ** (y - x * 8),
@@ -76,14 +80,14 @@ class Row extends PureComponent {
           return (
             <td key={x} style={{padding: '4px'}}>
               <FrequencyNode freq={freq} playing={this.state.playing[index]} />
-              <center>
+              <div style={{ textAlign: 'center' }}>
                 <PrecNumber value={cents} precision={1} />
-              </center>
+              </div>
               {/* <pre>{valueS}</pre> */}
-              <center>
+              <div style={{ textAlign: 'center' }}>
                 <button
                   onClick={() => {
-                    let playing = [].concat(this.state.playing)
+                    let playing = clone(this.state.playing)
                     playing[index] = !playing[index]
                     this.setState({ playing })
                   }}
@@ -98,12 +102,12 @@ class Row extends PureComponent {
                   value={this.state.octave[index] + 4}
                   style={{ width: '3em' }}
                   onChange={(e) => {
-                    let octave = [].concat(this.state.octave)
-                    octave[index] = e.target.value - 4
+                    let octave = clone(this.state.octave)
+                    octave[index] = parseInt(e.target.value) - 4
                     this.setState({ octave })
                   }}
                 />
-              </center>
+              </div>
             </td>
           )
         })}
@@ -112,8 +116,24 @@ class Row extends PureComponent {
   }
 }
 
-export class Limit5MatrixPlayer extends PureComponent {
-  constructor (props) {
+interface State {
+  centralC: number,
+  preset: 'ji' | 'schismatic' | 'schismatic_optimized7' | 'edo53',
+  playing: boolean[],
+  save: any[],
+  large: boolean
+}
+
+interface SaveState {
+  octave: { [key: number]: number },
+  playing: { [key: number]: boolean },
+}
+
+export class Limit5MatrixPlayer extends React.PureComponent<{}, State> {
+  private rows: { [key: number]: Row }
+  private centralC: MathInput
+
+  constructor (props: {}) {
     super(props)
     this.state = {
       centralC: 440 / Math.pow(2, 9 / 12),
@@ -125,11 +145,11 @@ export class Limit5MatrixPlayer extends PureComponent {
     this.rows = {}
   }
 
-  save (index) {
-    let save = [].concat(this.state.save)
+  save (index: number) {
+    let save = clone(this.state.save)
     save[index] = {
-      octave: mapValues(this.rows, (o) => o ? o.state.octave : null),
-      playing: mapValues(this.rows, (o) => o ? o.state.playing : null)
+      octave: mapValues(this.rows, (o: Row) => o ? o.state.octave : null),
+      playing: mapValues(this.rows, (o: Row) => o ? o.state.playing : null)
     }
     if (index == save.length - 1) {
       save.push(null)
@@ -137,14 +157,16 @@ export class Limit5MatrixPlayer extends PureComponent {
     this.setState({ save })
   }
 
-  load (index) {
+  load (index: number) {
     let save = this.state.save[index]
-    Object.keys(save.octave).map((key) => {
+    Object.keys(save.octave).map((s) => {
+      let key = parseInt(s)
       if (this.rows[key] && save.octave[key] !== null) {
         this.rows[key].setState({ octave: save.octave[key] })
       }
     })
-    Object.keys(save.playing).map((key) => {
+    Object.keys(save.playing).map((s) => {
+      let key = parseInt(s)
       if (this.rows[key] && save.playing[key] !== null) {
         this.rows[key].setState({ playing: save.playing[key] })
       }
@@ -182,10 +204,10 @@ export class Limit5MatrixPlayer extends PureComponent {
               <th>Pitch Central C</th>
               <td>
                 <MathInput
-                  wide asKind="mathjs-ignoreerror" default="440 / 2^(9/12)"
+                  wide default="440 / 2^(9/12)"
                   onChange={(centralC) => {
                     this.setState({ centralC })
-                  }} ref={(e) => { this.centralC = e }} />
+                  }} ref={(e) => { if (e) this.centralC = e }} />
               </td>
             </tr>
             <tr>
@@ -193,7 +215,10 @@ export class Limit5MatrixPlayer extends PureComponent {
               <td>
                 <select onChange={(e) => {
                   let preset = e.target.value
-                  this.setState({preset})
+                  if (preset === 'ji' || preset === 'schismatic' ||
+                      preset === 'schismatic_optimized7' || preset === 'edo53') {
+                    this.setState({ preset })
+                  }
                 }} value={this.state.preset}>
                   <option value="ji">JI</option>
                   <option value="schismatic">Schismatic-Limit5</option>
@@ -239,7 +264,7 @@ export class Limit5MatrixPlayer extends PureComponent {
         <table>
           <tbody>
             <tr>
-              {this.state.save.map((_, i) => (
+              {this.state.save.map((_: any, i: number) => (
                 <th key={i} style={{padding: '8px'}}>
                   <button
                     onClick={() => this.save(i)}
@@ -249,7 +274,7 @@ export class Limit5MatrixPlayer extends PureComponent {
               ))}
             </tr>
             <tr>
-              {this.state.save.map((data, i) => (
+              {this.state.save.map((data: SaveState, i: number) => (
                 <th key={i} style={{padding: '8px'}}>
                   <button
                     disabled={!data}
@@ -275,9 +300,9 @@ export class Limit5MatrixPlayer extends PureComponent {
                 preset={this.state.preset}
                 centralC={this.state.centralC}
                 ref={(e) => {
-                  this.rows[y] = e
+                  if (e) this.rows[y] = e
                 }}
-                playing={this.state.playing.slice(y * WIDTH, (y + 1) * WIDTH)}
+                // playing={this.state.playing.slice(y * WIDTH, (y + 1) * WIDTH)} TODO?
               />
             ))}
             <tr>
