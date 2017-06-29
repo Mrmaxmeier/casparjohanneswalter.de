@@ -1,4 +1,6 @@
-export let presets = {
+export let presets: {
+  [key: string]: { [key: string]: (number | string)[][]}
+} = {
   'Kithara I': {
     'Hexad 1, green': [[8, 7, 'o'], [12, 7, 3], [1, 1, 3], [9, 7, 3], [10, 7, 4], [12, 7, 4], [8, 7, 4]],
     'Hexad 6, middle-green': [[7, 4, 'u'], [7, 6, 2], [7, 6, 3], [7, 5, 4], [7, 4, 4], [7, 4, 4], [7, 6, 4]],
