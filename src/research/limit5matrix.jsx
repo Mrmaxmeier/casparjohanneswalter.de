@@ -5,6 +5,7 @@ import PropTypes from 'prop-types'
 import { MathInput, PrecNumber } from './components.jsx'
 import { FrequencyNode, AudioController, AudioControllerRow } from './audio.jsx'
 import { normalizeOctave, ratioToCents } from './converters.js'
+import { Presets } from './presets.jsx'
 
 const labels = [
   ['A♭', 'C', 'E', 'G♯', 'B♯', 'D♯♯', 'F♯♯♯', 'A♯♯♯', 'C♯♯♯♯'],
@@ -130,6 +131,9 @@ export class Limit5MatrixPlayer extends PureComponent {
       octave: mapValues(this.rows, (o) => o ? o.state.octave : null),
       playing: mapValues(this.rows, (o) => o ? o.state.playing : null)
     }
+    if (index == save.length - 1) {
+      save.push(null)
+    }
     this.setState({ save })
   }
 
@@ -145,6 +149,24 @@ export class Limit5MatrixPlayer extends PureComponent {
         this.rows[key].setState({ playing: save.playing[key] })
       }
     })
+  }
+
+  onPreset (name, preset) {
+    this.centralC.setValue(preset.centralC, true)
+    this.setState({
+      preset: preset.preset,
+      large: preset.large,
+      save: preset.save
+    })
+  }
+
+  dumpPreset () {
+    return {
+      preset: this.state.preset,
+      centralC: this.centralC.text(),
+      large: this.state.large,
+      save: this.state.save,
+    }
   }
 
   render () {
@@ -203,6 +225,15 @@ export class Limit5MatrixPlayer extends PureComponent {
                 </fieldset>
               </td>
             </tr>
+            <Presets name='limit5Presets' default={{
+              pitch11: '440 / 2^(9/12)',
+              large: true,
+              preset: 'edo53',
+              save: [null, null, null, null]
+            }}
+              label="Saves"
+              onChange={this.onPreset.bind(this)}
+              current={this.dumpPreset.bind(this)} />
           </tbody>
         </table>
         <table>

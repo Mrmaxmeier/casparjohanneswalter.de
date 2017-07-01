@@ -10,7 +10,8 @@ export class Presets extends PureComponent {
     default: PropTypes.object,
     onChange: PropTypes.func,
     current: PropTypes.func,
-    presets: PropTypes.object
+    presets: PropTypes.object,
+    label: PropTypes.string
   }
   constructor (props) {
     super(props)
@@ -49,7 +50,7 @@ export class Presets extends PureComponent {
     return (
       <tr>
         <th>
-          Preset
+          {this.props.label || 'Preset'}
         </th>
         {this.state.localStorageError ? (
           <th style={{ color: 'red' }}>
