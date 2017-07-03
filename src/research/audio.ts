@@ -178,7 +178,8 @@ export class SoundGenProvider implements IAudioProvider {
     })
   }
 
-  setVol (volume: number, duration: number) {
+  setVol (volume: number, duration?: number) {
+    // TODO: duration unused?
     this._waves.forEach((wave, index) => {
       if (wave && this._freq) {
         wave.volume = this.volume(index, this._freq) * volume

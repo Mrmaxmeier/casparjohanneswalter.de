@@ -4,6 +4,7 @@ import { format } from 'mathjs'
 import { evalMath, MathError, centsToOctave, centsToNote, centsToNoteDiff } from './converters'
 import { IAudioProvider, IPlayable, AudioProvider, SoundGenProvider } from './audio'
 import { FrequencyNode } from './audioComponents'
+import { Fraction } from './math'
 
 interface MathInputProps extends React.Props<MathInput> {
   default?: (number | string),
@@ -98,10 +99,9 @@ export class MathInput extends React.PureComponent<MathInputProps, MathInputStat
 }
 
 
-interface Fraction { numerator: number, denominator: number }
 interface FractionInputProps extends React.Props<any> {
   onValue: (f: Fraction) => void,
-  disabled: boolean,
+  disabled?: boolean,
   value: Fraction
 }
 
@@ -112,10 +112,7 @@ interface FractionInputState extends React.ComponentState {
 export class FractionInput extends React.PureComponent<FractionInputProps, FractionInputState> {
   handleChange (n?: number, d?: number) {
     if (n != null && d != null) {
-      this.props.onValue({
-        numerator: n,
-        denominator: d
-      })
+      this.props.onValue(new Fraction(n, d))
     }
   }
 
@@ -509,7 +506,7 @@ export class StringValueVisualisation extends React.PureComponent<{
 
 interface PlayAllButtonProps extends React.Props<any> {
   playerRefs: IPlayable[],
-  disabled: boolean
+  disabled?: boolean
 }
 
 export class PlayAllButton extends React.PureComponent<PlayAllButtonProps, { active: boolean }> {

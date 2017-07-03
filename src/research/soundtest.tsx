@@ -17,6 +17,10 @@ export class SoundTest extends React.PureComponent<{}, State> {
     }
   }
 
+  defaultVolume(i: number, freq?: number) {
+    return 0.5
+  }
+
   render () {
     let refFreq = this.state.freq
     let octave = this.state.octave || 2
@@ -59,7 +63,7 @@ export class SoundTest extends React.PureComponent<{}, State> {
         </table>
         <table>
           <tbody>
-              {new Array(32).map((_: any, i: number) => {
+              {new Array(32).fill(null).map((_: any, i: number) => {
                 let freq = Math.pow(octave, Math.log2(i + 1)) * refFreq
                 return <FreqPlayer showTypePicker={false}
                           inTable freq={freq} key={i}

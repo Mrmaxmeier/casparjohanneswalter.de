@@ -5,10 +5,10 @@ import * as download from 'downloadjs'
 
 interface Props<T> {
     name: string,
-    default: T,
+    default?: T, // TODO: unused?
     onChange: (key: string, data: T) => void,
     current: () => T,
-    presets: { [preset: string]: T }
+    presets?: { [preset: string]: T }
 }
 
 interface State<T> {
@@ -22,8 +22,9 @@ export class Presets<T> extends React.PureComponent<Props<T>, State<T>> {
 
   constructor (props: Props<T>) {
     super(props)
+    let defaultPresets: { [key: string]: T | null } = { '-- New --': null }
     this.state = {
-      presets: {'-- New --': null, ...this.props.presets},
+      presets: {...defaultPresets, ...this.props.presets} as { [preset: string]: T | null },
       preset: '-- New --',
       localStorageError: false
     }
@@ -36,9 +37,11 @@ export class Presets<T> extends React.PureComponent<Props<T>, State<T>> {
 
   load (): { [key: string]: T | null } {
     let data = window.localStorage.getItem(this.props.name) || '{}'
-    let presets = {'-- New --': null, ...this.props.presets}
-    let parsed = JSON.parse(data)
-    presets = extend(presets, parsed)
+    let presets = {
+      '-- New --': null,
+      ...this.props.presets,
+      ...JSON.parse(data)
+    }
     this.setState({ presets })
     return presets
   }

@@ -171,15 +171,15 @@ let additionalMathTools: PageDef[] = [
 export interface PageDef {
   id: string,
   title: string,
-  component: typeof React.Component,
+  component: any, // TODO: typeof React.Component,
   description?: () => JSX.Element
 }
 
-export const subpages = [].concat(musicCalculators, additionalMathTools)
+export const subpages = ([] as PageDef[]).concat(musicCalculators, additionalMathTools)
 
 export class ResearchPage extends React.PureComponent<RouteComponentProps<any>, {}> {
   render () {
-    let link = (id: any, title: string) => <li key={id}>
+    let link = (id: string, title: string) => <li key={id}>
         <Link to={'/research/' + id}>{title}</Link>
       </li>
     return (

@@ -2,7 +2,7 @@ import * as React from 'react'
 
 import { MathInput, NoteDisplay, NoteImage, CompactFrequencyPlayer } from './components'
 import { AudioController, AudioControllerRow } from './audioComponents'
-import { concertPitchToC0, ratioToCents, evalMath } from './converters'
+import { concertPitchToC0, ratioToCents, evalMathN } from './converters'
 import { Presets } from './presets'
 import { range, clone } from 'lodash'
 
@@ -100,12 +100,10 @@ export class SuperCembaloPlayer extends React.PureComponent<{}, State> {
     this.concertPitch.setValue(preset.concertPitch, true)
     this.pitch11.setValue(preset.pitch11, true)
     let data = this.inputs.map((input, i) => {
-      let result = evalMath(preset.data[i])
-      if (input && typeof result === 'number') {
+      if (input) {
         input.setValue(preset.data[i])
-        return result
       }
-      return null
+      return evalMathN(preset.data[i])
     })
     this.setState({
       mode: preset.mode,
