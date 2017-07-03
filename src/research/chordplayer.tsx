@@ -1,15 +1,37 @@
-import React, {PureComponent} from 'react'
+import * as React from 'react'
 
 import { MathInput, NoteDisplay, NoteImage, CompactFrequencyPlayer, PlayAllButton } from './components'
-import { AudioController, AudioControllerRow } from './audio'
-import { concertPitchToC0, ratioToCents } from './converters.js'
-import { resizeArray } from './utils.js'
+import { AudioController, AudioControllerRow } from './audioComponents'
+import { concertPitchToC0, ratioToCents } from './converters'
+import { resizeArray } from './utils'
 import { Presets } from './presets'
-import { range } from 'underscore'
-import { clone } from 'underline'
+import { range, clone } from 'lodash'
 
-export class ChordPlayer extends PureComponent {
-  constructor (props) {
+interface State {
+  rows: number,
+  concertPitch: number,
+  pitch11: number,
+  mode: 'ratio' | 'cents',
+  playingAll: boolean[],
+  data: (number | null)[][]
+}
+
+interface Preset {
+  rows: number,
+  mode: 'ratio' | 'cents',
+  concertPitch: string,
+  pitch11: string,
+  data: string[][]
+}
+
+export class ChordPlayer extends React.PureComponent<{}, State> {
+  private players: CompactFrequencyPlayer[][]
+  private inputs: MathInput[][]
+  private rows: HTMLInputElement
+  private concertPitch: MathInput
+  private pitch11: MathInput
+
+  constructor (props: {}) {
     super(props)
     let rows = 8
     this.state = {
@@ -26,7 +48,7 @@ export class ChordPlayer extends PureComponent {
     this.inputs = []
   }
 
-  setRows (rows, cb) {
+  setRows (rows: number, cb?: () => void) {
     if (rows < this.state.rows) {
       this.players.filter((_, i) => i >= rows)
         .forEach((row) => {
@@ -38,7 +60,7 @@ export class ChordPlayer extends PureComponent {
     this.setState({ rows, playingAll, data }, cb)
   }
 
-  onPreset (name, preset) {
+  onPreset (name: string, preset: Preset) {
     this.setRows(preset.rows, () => {
       this.concertPitch.setValue(preset.concertPitch, true)
       this.pitch11.setValue(preset.pitch11, true)
@@ -51,7 +73,7 @@ export class ChordPlayer extends PureComponent {
     })
   }
 
-  dumpPreset () {
+  dumpPreset (): Preset {
     return {
       rows: this.state.rows,
       mode: this.state.mode,
@@ -79,21 +101,21 @@ export class ChordPlayer extends PureComponent {
               <th>Concert Pitch a4</th>
               <th>
                 <MathInput
-                  wide asKind="mathjs-ignoreerror"
+                  wide
                   default={440}
                   onChange={(concertPitch) => {
                     this.setState({ concertPitch })
-                  }} ref={(e) => { this.concertPitch = e }}/>
+                  }} ref={(e) => { if (e) this.concertPitch = e }}/>
               </th>
             </tr>
             <tr>
               <th>Pitch 1 / 1</th>
               <th>
                 <MathInput
-                  wide asKind="mathjs-ignoreerror" default="440 / 9 * 8"
+                  wide default="440 / 9 * 8"
                   onChange={(pitch11) => {
                     this.setState({ pitch11 })
-                  }} ref={(e) => { this.pitch11 = e }} />
+                  }} ref={(e) => { if (e) this.pitch11 = e }} />
               </th>
               <th>
                 <NoteImage cents={cents} />
@@ -106,7 +128,9 @@ export class ChordPlayer extends PureComponent {
               <th>Mode</th>
               <th>
                 <select onChange={(e) => {
-                  this.setState({ mode: e.target.value })
+                  let mode = e.target.value
+                  if (mode === 'ratio' || mode === 'cents')
+                    this.setState({ mode })
                 }} value={this.state.mode}>
                   <option value="ratio">Ratio</option>
                   <option value="cents">Cents</option>
@@ -118,7 +142,7 @@ export class ChordPlayer extends PureComponent {
               <th>
                 <input type="number" name="rows"
                   min="1" value={this.state.rows}
-                  style={{width: '3em'}} ref={(e) => { this.rows = e }}
+                  style={{width: '3em'}} ref={(e) => { if (e) this.rows = e }}
                   onChange={(event) => {
                     let rows = parseInt(event.target.value)
                     this.setRows(rows)
@@ -142,25 +166,26 @@ export class ChordPlayer extends PureComponent {
                 <tr key={rowi}>
                   <th>{rowi + 1}</th>
                   {row.map((e, i) => {
+                    if (e === null) { return }
                     let freq = {
-                      ratio: (pitch, r) => pitch * r,
-                      cents: (pitch, r) => typeof r === 'number' ? pitch * Math.pow(2, r / 1200) : null
+                      ratio: (pitch: number, r: number) => pitch * r,
+                      cents: (pitch: number, r: number) => pitch * Math.pow(2, r / 1200)
                     }[this.state.mode](this.state.pitch11, e)
                     return (
                       <th key={i} style={{padding: '4px'}}>
-                        <MathInput size={7} asKind="mathjs" default={i === 0 ? '1 / 1' : ''}
+                        <MathInput size={7} default={i === 0 ? '1 / 1' : ''}
                           onChange={(v) => {
-                            let data = this.state.data::clone()
-                            data[rowi][i] = v.value
+                            let data = clone(this.state.data)
+                            data[rowi][i] = v
                             this.setState({ data })
                           }} ref={(ref) => {
-                            if (this.inputs[rowi]) {
+                            if (this.inputs[rowi] && ref) {
                               this.inputs[rowi][i] = ref
                             }
                           }} />
                         <CompactFrequencyPlayer freq={freq}
                           ref={(ref) => {
-                            if (this.players[rowi]) {
+                            if (this.players[rowi] && ref) {
                               this.players[rowi][i] = ref
                             }
                           }} />

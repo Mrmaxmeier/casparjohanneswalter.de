@@ -1,16 +1,14 @@
-import React, {PureComponent} from 'react'
-import PropTypes from 'prop-types'
+import * as React from 'react'
 
 import { MathInput, NoteDisplay, NoteImage, PlayAllButton } from './components'
-import { concertPitchToC0, ratioToCents, processString } from './converters.js'
+import { concertPitchToC0, ratioToCents, evalMathN } from './converters'
 import { Presets } from './presets'
-import { resizeArray } from './utils.js'
-import { range } from 'underscore'
-import { clone } from 'underline'
-import { SoundGenProvider } from './audio.js'
+import { resizeArray } from './utils'
+import { range, clone } from 'lodash'
+import { SoundGenProvider } from './audio'
 
 // '1200 -- 400'
-let parseInput = (str) => {
+let parseInput = (str: string) => {
   let lerpID = str.split(': ')
   if (lerpID.length > 1) {
     str = lerpID[1]
@@ -18,36 +16,42 @@ let parseInput = (str) => {
 
   let frequencies = str.split('--')
     .map((s) => s.trim())
-    .map((freq) => processString(freq, 'mathjs-ignoreerror'))
+    .map((freq) => evalMathN(freq))
+    .filter((freq) => freq !== null) as number[]
 
-  let lerpFunc = {
+  let lerpFuncs: { [key: string]: LerpFunc} = {
     a: lerpFunctions.linear,
     b: lerpFunctions.inverse_linear,
     c: lerpFunctions.exponential
-  }[lerpID[0]]
+  }
+  let lerpFunc = lerpFuncs[lerpID[0]]
   return { frequencies, lerpFunc }
 }
 
+type LerpFunc = (t: number, from: number, to: number) => number
 let lerpFunctions = {
-  linear: (t, from, to) => from + (to - from) * t,
-  exponential: (t, from, to) => from * Math.pow(to / from, t), // from = 0 => NaN
-  inverse_linear: (t, from, to) => (to * from) / ((1 - t) * to + from * t),
-  chunky: (t, from, to) => lerpFunctions.inverse_linear(Math.round(t * 2) / 2, from, to),
-  sin: (t, from, to) => from + (to - from) * Math.sin(t * Math.PI * 2)
+  linear:         (t: number, from: number, to: number) => from + (to - from) * t,
+  exponential:    (t: number, from: number, to: number) => from * Math.pow(to / from, t), // from = 0 => NaN
+  inverse_linear: (t: number, from: number, to: number) => (to * from) / ((1 - t) * to + from * t),
+  chunky:         (t: number, from: number, to: number) => lerpFunctions.inverse_linear(Math.round(t * 2) / 2, from, to),
+  sin:            (t: number, from: number, to: number) => from + (to - from) * Math.sin(t * Math.PI * 2)
 }
 
-class Player extends PureComponent {
-  static propTypes = {
-    duration: PropTypes.number,
-    startFreq: PropTypes.number,
-    endFreq: PropTypes.number,
-    startVol: PropTypes.number,
-    endVol: PropTypes.number,
-    freqLerp: PropTypes.func,
-    volLerp: PropTypes.func
-  }
+interface PlayerProps {
+  duration: number,
+  startFreq: number,
+  endFreq: number,
+  startVol: number,
+  endVol: number,
+  freqLerp: (time: number, from: number, to_: number) => number,
+  volLerp: (time: number, from: number, to_: number) => number,
+}
 
-  constructor (props) {
+class Player extends React.PureComponent<PlayerProps, { playing: boolean }> {
+  private provider: SoundGenProvider
+  private interval: number
+  private startTime: number
+  constructor (props: PlayerProps) {
     super(props)
     this.state = {
       playing: false
@@ -56,11 +60,9 @@ class Player extends PureComponent {
       frequency: props.startFreq,
       volume: 0.2
     })
-    this.interval = null
-    this.startTime = null
   }
 
-  doLerp (duration, changes) {
+  doLerp (duration: number, changes: { volume: number[], freq: number[] }) {
     this.startTime = window.performance.now()
     let lerpWindow = 5 // 5
     this.interval = setInterval(() => {
@@ -104,7 +106,7 @@ class Player extends PureComponent {
   }
 
   valInvalid () { return (!this.props.startFreq || !this.props.endFreq) }
-  setPlaying (isPlaying) {
+  setPlaying (isPlaying: boolean) {
     if (this.valInvalid()) { return }
     if (isPlaying) {
       this.play()
@@ -128,8 +130,31 @@ class Player extends PureComponent {
   }
 }
 
-export class ChordPlayer2 extends PureComponent {
-  constructor (props) {
+interface ChordPlayer2State {
+  rows: number,
+  concertPitch: number,
+  pitch11: number,
+  data: string[][],
+  volume: string[][],
+  duration: number[],
+  mode: 'ratio' | 'cents'
+}
+
+interface Preset {
+  rows: number,
+  concertPitch: string,
+  pitch11: string,
+  mode: 'ratio' | 'cents',
+  data: string[][],
+  duration: number[]
+}
+
+export class ChordPlayer2 extends React.PureComponent<{}, ChordPlayer2State> {
+  private players: Player[][]
+  private concertPitch: MathInput
+  private pitch11: MathInput
+  private rows: HTMLInputElement
+  constructor (props: {}) {
     super(props)
     let rows = 8
     this.state = {
@@ -148,7 +173,7 @@ export class ChordPlayer2 extends PureComponent {
     this.players = []
   }
 
-  setRows (rows, cb) {
+  setRows (rows: number, cb?: () => void) {
     if (rows < this.state.rows) {
       this.players.filter((_, i) => i >= rows)
         .forEach((row) => {
@@ -159,7 +184,7 @@ export class ChordPlayer2 extends PureComponent {
     this.setState({ rows, data }, cb)
   }
 
-  onPreset (name, preset) {
+  onPreset (name: string, preset: Preset) {
     this.setRows(preset.rows, () => {
       this.concertPitch.setValue(preset.concertPitch, true)
       this.pitch11.setValue(preset.pitch11, true)
@@ -182,7 +207,7 @@ export class ChordPlayer2 extends PureComponent {
     }
   }
 
-  rowTable (row, rowi) {
+  rowTable (row: string[], rowi: number) {
     return (
       <table>
         <tbody>
@@ -192,7 +217,7 @@ export class ChordPlayer2 extends PureComponent {
             <th>Duration (ms)</th>
             <th>
               <input type="number" value={this.state.duration[rowi]} onChange={(e) => {
-                let duration = this.state.duration::clone()
+                let duration = clone(this.state.duration)
                 duration[rowi] = parseInt(e.target.value)
                 this.setState({ duration })
               }} style={{width: '5em'}} />
@@ -205,7 +230,7 @@ export class ChordPlayer2 extends PureComponent {
             {row.map((_, i) =>
               <th key={i}>
                 <input type="text" value={this.state.volume[rowi][i]} onChange={(e) => {
-                  let volume = this.state.volume::clone()
+                  let volume = clone(this.state.volume)
                   volume[rowi][i] = e.target.value
                   this.setState({ volume })
                 }} style={{width: '8em'}} />
@@ -219,7 +244,7 @@ export class ChordPlayer2 extends PureComponent {
             {row.map((_, i) =>
               <th key={i}>
                 <input type="text" value={this.state.data[rowi][i]} onChange={(e) => {
-                  let data = this.state.data::clone()
+                  let data = clone(this.state.data)
                   data[rowi][i] = e.target.value
                   this.setState({ data })
                 }} style={{width: '8em'}} />
@@ -233,15 +258,15 @@ export class ChordPlayer2 extends PureComponent {
             {row.map((_, i) => {
               let freqText = this.state.data[rowi][i]
               let freqFunc = {
-                ratio: (pitch, r) => pitch * r,
-                cents: (pitch, r) => pitch * Math.pow(2, r / 1200)
+                ratio: (pitch: number, r: number) => pitch * r,
+                cents: (pitch: number, r: number) => pitch * Math.pow(2, r / 1200)
               }[this.state.mode]
               let input = parseInput(freqText)
               let frequencies = input.frequencies
               let freqStart = freqFunc(this.state.pitch11, frequencies[0])
               let freqEnd = freqFunc(this.state.pitch11, frequencies[1] || frequencies[0])
               let vol = parseInput(this.state.volume[rowi][i])
-              let volumes = vol.frequencies.map((v) => v / 100)
+              let volumes = vol.frequencies.map((v) => v && v / 100)
 
               return (
                 <td key={i}>
@@ -251,7 +276,7 @@ export class ChordPlayer2 extends PureComponent {
                       volLerp={vol.lerpFunc || lerpFunctions.linear}
                       duration={this.state.duration[rowi]}
                       ref={(ref) => {
-                        if (this.players[rowi]) {
+                        if (this.players[rowi] && ref) {
                           this.players[rowi][i] = ref
                         }
                       }} />
@@ -277,21 +302,21 @@ export class ChordPlayer2 extends PureComponent {
               <th>Concert Pitch a4</th>
               <th>
                 <MathInput
-                  wide asKind="mathjs-ignoreerror"
+                  wide
                   default={440}
                   onChange={(concertPitch) => {
                     this.setState({ concertPitch })
-                  }} ref={(e) => { this.concertPitch = e }} />
+                  }} ref={(e) => { if(e) this.concertPitch = e }} />
               </th>
             </tr>
             <tr>
               <th>Pitch 1 / 1</th>
               <th>
                 <MathInput
-                  wide asKind="mathjs-ignoreerror" default="440 / 9 * 8"
+                  wide default="440 / 9 * 8"
                   onChange={(pitch11) => {
                     this.setState({ pitch11 })
-                  }} ref={(e) => { this.pitch11 = e }} />
+                  }} ref={(e) => { if (e) this.pitch11 = e }} />
               </th>
               <th>
                 <NoteImage cents={cents} />
@@ -304,7 +329,9 @@ export class ChordPlayer2 extends PureComponent {
               <th>Mode</th>
               <th>
                 <select onChange={(e) => {
-                  this.setState({ mode: e.target.value })
+                  let mode = e.target.value
+                  if (mode === 'ratio' || mode === 'cents')
+                    this.setState({ mode })
                 }} value={this.state.mode}>
                   <option value="ratio">Ratio</option>
                   <option value="cents">Cents</option>
@@ -316,7 +343,7 @@ export class ChordPlayer2 extends PureComponent {
               <th>
                 <input type="number" name="rows"
                   min="1" value={this.state.rows}
-                  style={{width: '3em'}} ref={(e) => { this.rows = e }}
+                  style={{width: '3em'}} ref={(e) => { if (e) this.rows = e }}
                   onChange={(event) => {
                     let rows = parseInt(event.target.value)
                     this.setRows(rows)
