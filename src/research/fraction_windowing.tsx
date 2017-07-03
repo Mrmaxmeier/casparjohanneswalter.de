@@ -1,8 +1,8 @@
 import * as React from 'react'
-import { fraction, abs, log } from 'mathjs'
 
 import { MathInput, PrecNumber } from './components'
-import { intelligenterMediant, ratioToCents } from './converters.js'
+import { intelligenterMediant, ratioToCents } from './converters'
+import { Fraction } from './math'
 
 interface State extends React.ComponentState {
   input?: number,
@@ -11,7 +11,14 @@ interface State extends React.ComponentState {
   precision: number
 }
 
-type Classification = 'good' | 'normal' | 'best' | 'final'
+interface ClassColors { normal: string, good: string, best: string, final: string }
+type Classification = keyof ClassColors
+const classColors: ClassColors = {
+  normal: 'white',
+  good: '#b1f7b1',
+  best: 'orange',
+  final: 'orange'
+}
 
 export class FractionWindowing extends React.PureComponent<{}, State> {
   private input: MathInput;
@@ -28,15 +35,16 @@ export class FractionWindowing extends React.PureComponent<{}, State> {
     }
   }
 
-  render () {
-    let input = fraction(this.state.input)
+  calcData () {
+    if (this.state.input === undefined) { return null }
+    let input = Fraction.into(this.state.input)
     let output = intelligenterMediant(input, this.state.precision)
     let smallestDiff = null
     let smaller = [false]
     let classifications: Classification[] = []
     for (let i = 0; i < output.length; i++) {
       let e = output[i]
-      let currentDiff = abs(e - input)
+      let currentDiff = Math.abs(e.value - input.value)
       if (smallestDiff === null || currentDiff < smallestDiff) {
         smallestDiff = currentDiff
         classifications.push('good')
@@ -52,7 +60,7 @@ export class FractionWindowing extends React.PureComponent<{}, State> {
       if (c !== s && i > 1) {
         let a = output[i - 1]
         let b = output[i - 2]
-        if (abs(a - input) < abs(b - input)) {
+        if (Math.abs(a.value - input.value) < Math.abs(b.value - input.value)) {
           classifications[i - 1] = 'best'
         } else {
           classifications[i - 2] = 'best'
@@ -61,14 +69,19 @@ export class FractionWindowing extends React.PureComponent<{}, State> {
       c = s
     })
     classifications[classifications.length - 1] = 'best'
-    let checkMaMb = (ma, mb) => {
+    return { input, classifications, output }
+  }
+
+  render () {
+    let modeFraction = !(this.state.ma && this.state.mb)
+    let checkMaMb = (ma?: number, mb?: number) => {
       if (ma && mb) {
         let input = Math.log2(ma / mb)
         this.input.setValue(input, false)
         this.setState({ input })
       }
     }
-    let modeFraction = !(this.state.ma && this.state.mb)
+    const data = this.calcData()
     return (
       <div>
         <table>
@@ -77,7 +90,7 @@ export class FractionWindowing extends React.PureComponent<{}, State> {
               <th>Number or Fraction</th>
               <th>
                 <MathInput
-                  wide asKind="mathjs-ignoreerror" ref={(e) => { this.input = e }}
+                  wide ref={(e) => { if(e) this.input = e }}
                   onChange={(input) => {
                     this.setState({ input })
                     this.ma.setValue('', true)
@@ -85,31 +98,33 @@ export class FractionWindowing extends React.PureComponent<{}, State> {
                   }} />
               </th>
               <th>
-                <PrecNumber value={input.n / input.d} precision={this.state.precision} />
+                {data ? (
+                  <PrecNumber value={data.input.numerator / data.input.denominator} precision={this.state.precision} />
+                ) : null}
               </th>
-              {modeFraction && this.state.input ? (
+              {modeFraction && this.state.input && data ? (
               <th>
-                Cents: <PrecNumber value={ratioToCents(input)} />
+                Cents: <PrecNumber value={ratioToCents(data.input.value)} />
               </th>
               ) : null}
             </tr>
             <tr>
               <th>Alt (log(a / b) / log(2))</th>
               <th>
-                <MathInput wide asKind="mathjs-ignoreerror" onChange={(v) => {
+                <MathInput wide onChange={(v) => {
                   this.setState({ ma: v })
                   checkMaMb(v, this.state.mb)
-                }} ref={(e) => { this.ma = e }} />
+                }} ref={(e) => { if (e) this.ma = e }} />
               </th>
               <th>
-                <MathInput wide asKind="mathjs-ignoreerror" onChange={(v) => {
+                <MathInput wide onChange={(v) => {
                   this.setState({ mb: v })
                   checkMaMb(this.state.ma, v)
-                }} ref={(e) => { this.mb = e }} />
+                }} ref={(e) => { if (e) this.mb = e }} />
               </th>
-              {!modeFraction ? (
+              {!modeFraction && this.state.ma && this.state.mb ? (
               <th>
-                Cents: <PrecNumber value={ratioToCents(fraction(this.state.ma, this.state.mb))} />
+                Cents: <PrecNumber value={ratioToCents(this.state.ma / this.state.mb)} />
               </th>
               ) : null}
             </tr>
@@ -143,27 +158,30 @@ export class FractionWindowing extends React.PureComponent<{}, State> {
               <th>Cents</th>
               <th>Cent Diff</th>
             </tr>
-            {output.map((f, i) => {
-              let diff = (f - input) / input
-              let color = {
-                normal: 'white',
-                good: '#b1f7b1',
-                best: 'orange',
-                final: 'orange'
-              }[classifications[i]]
-              let cents = modeFraction ? ratioToCents(f) : f * 1200
-              let inputCents = modeFraction ? ratioToCents(input) : ratioToCents(fraction(this.state.ma, this.state.mb))
-              return (
-                <tr key={i} style={{ background: color }}>
-                  <th>#{i + 1}</th>
-                  <th>{f.n} / {f.d}</th>
-                  <th><PrecNumber value={f.n / f.d} precision={this.state.precision} /></th>
-                  <th><PrecNumber value={diff * 100} precision={this.state.precision} />%</th>
-                  <th><PrecNumber value={cents} precision={this.state.precision} /></th>
-                  <th><PrecNumber value={inputCents - cents} precision={this.state.precision} /></th>
-                </tr>
-              )
-            })}
+            {data ? (
+              data.output.map((f, i) => {
+                let diff = (f.value - data.input.value) / data.input.value
+                let color = classColors[data.classifications[i]]
+                let cents = modeFraction ? ratioToCents(f.value) : f.value * 1200
+                let inputCents
+                if (modeFraction) {
+                  inputCents = ratioToCents(data.input.value)
+                } else if (this.state.ma && this.state.mb) {
+                  inputCents = ratioToCents(this.state.ma / this.state.mb)
+                } else { return null }
+                return (
+                  <tr key={i} style={{ background: color }}>
+                    <th>#{i + 1}</th>
+                    <th>{f.numerator} / {f.denominator}</th>
+                    <th><PrecNumber value={f.value} precision={this.state.precision} /></th>
+                    <th><PrecNumber value={diff * 100} precision={this.state.precision} />%</th>
+                    <th><PrecNumber value={cents} precision={this.state.precision} /></th>
+                    <th><PrecNumber value={inputCents - cents} precision={this.state.precision} /></th>
+                  </tr>
+                )
+              })
+            ) : null
+            }
           </tbody>
         </table>
       </div>

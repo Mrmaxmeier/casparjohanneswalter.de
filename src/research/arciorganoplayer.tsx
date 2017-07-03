@@ -2,7 +2,7 @@ import * as React from 'react'
 
 import { MathInput, NoteDisplay, NoteImage, CompactFrequencyPlayer } from './components'
 import { AudioController, AudioControllerRow } from './audioComponents'
-import { concertPitchToC0, ratioToCents, evalMath } from './converters'
+import { concertPitchToC0, ratioToCents, evalMathN } from './converters'
 import { Presets } from './presets'
 import { range, clone } from 'lodash'
 
@@ -125,12 +125,8 @@ export class ArciorganoPlayer extends React.PureComponent<{}, State> {
       preset.data = preset.data.concat(other)
     }
     let data = this.inputs.map((input, i) => {
-      let result = evalMath(preset.data[i])
-      if (typeof result === 'number') {
-        input.setValue(preset.data[i])
-        return result
-      }
-      return null
+      input.setValue(preset.data[i])
+      return evalMathN(preset.data[i])
     })
     this.setState({
       mode: preset.mode,

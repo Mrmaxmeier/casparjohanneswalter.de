@@ -1,12 +1,9 @@
 import { number, eval as mathEval } from 'mathjs'
 import { find, clone } from 'lodash'
+import { Fraction } from './math'
 
 export type Ratio = number
 export type Cents = number
-export type Frac = { n: number, d: number }
-
-export function fraction(n: number, d: number): Frac { return { n, d } }
-export function fracVal(f: Frac): number { return f.n / f.d }
 
 export function mod(n: number, m: number) {
   return ((n % m) + m) % m
@@ -21,6 +18,14 @@ export function evalMath(data: string): number | MathError {
     return mathEval(data)
   } catch (error) {
     return { error: error.toString() }
+  }
+}
+
+export function evalMathN(data: string): number | null {
+  try {
+    return mathEval(data)
+  } catch (error) {
+    return null
   }
 }
 
@@ -75,35 +80,35 @@ export function centsToFrequency (cents: Cents, a4: number) {
   return Math.pow(2, (cents / 1200)) * concertPitchToC0(a4)
 }
 
-export function intelligenterMediant (in_: Frac, precision?: number) {
+export function intelligenterMediant (in_: Fraction, precision?: number) {
   precision = precision || 2
-  let a = Math.floor(fracVal(in_))
+  let a = Math.floor(in_.value)
   let b = a + 1
   let fractions = [
-    fraction(a, 1),
-    fraction(b, 1),
-    fraction(a * 2 + 1, 2)
+    new Fraction(a, 1),
+    new Fraction(b, 1),
+    new Fraction(a * 2 + 1, 2)
   ]
   while (true) {
     let prev = fractions[fractions.length - 1]
     let reversed = clone(fractions).reverse()
 
-    if (fracVal(prev) > fracVal(in_)) {
-      let smaller = find(reversed, (f) => fracVal(f) < fracVal(in_))
+    if (prev.value > in_.value) {
+      let smaller = find(reversed, (f) => f.value < in_.value)
       if (!smaller) {
         return []
       }
-      fractions.push(fraction(smaller.n + prev.n, smaller.d + prev.d))
+      fractions.push(new Fraction(smaller.numerator + prev.numerator, smaller.denominator + prev.denominator))
     } else {
-      let bigger = find(reversed, (f) => fracVal(f) > fracVal(in_))
+      let bigger = find(reversed, (f) => f.value > in_.value)
       if (!bigger) {
         return []
       }
-      fractions.push(fraction(bigger.n + prev.n, bigger.d + prev.d))
+      fractions.push(new Fraction(bigger.numerator + prev.numerator, bigger.denominator + prev.denominator))
     }
 
     let current = fractions[fractions.length - 1]
-    if (Math.abs(fracVal(current) - fracVal(in_)) < 1 / Math.pow(10, precision)) {
+    if (Math.abs(current.value - in_.value) < 1 / Math.pow(10, precision)) {
       break
     }
   }

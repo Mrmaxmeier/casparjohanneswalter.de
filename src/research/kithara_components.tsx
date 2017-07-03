@@ -3,6 +3,7 @@ import * as React from 'react'
 import { clone } from 'lodash'
 import { CompactFrequencyPlayer } from './components'
 import { presets } from './kithara_presets'
+import { Fraction } from './math'
 
 import {
   calcState,
@@ -57,7 +58,7 @@ export class RatioInput extends React.Component<RatioInputProps, {}> {
 
 interface LowerInputProps {
     isUpper: boolean,
-    frac: number[],
+    frac: Fraction,
     octave: number,
     index: number,
     tabIndex: number,
@@ -108,7 +109,7 @@ class LowerInput extends React.Component<LowerInputProps, {}> {
     let g0 = (440 / Math.pow(2, 50 / 12))
     // ♮c - ♯f => octave - 1
     let octave = (cents / 100) % 12 >= 5 ? this.props.octave - 1 : this.props.octave
-    return g0 * Math.pow(2, octave) * (this.props.frac[0] / this.props.frac[1])
+    return g0 * Math.pow(2, octave) * this.props.frac.value
   }
 
   render () {
@@ -162,10 +163,10 @@ class LowerInput extends React.Component<LowerInputProps, {}> {
 }
 
 interface RowProps {
-  data: { ratio: number[], octave?: number }[],
+  data: { ratio: Fraction, octave?: number }[],
   overtone?: number,
   isUpper: boolean,
-  setCB: (index: number, ratio: number[]) => void,
+  setCB: (index: number, ratio: Fraction) => void,
   setOvertone?: (o: number) => void,
   setOctave: (index: number, octave: number) => void,
   applyCB: (index: number) => void
@@ -181,13 +182,13 @@ class Row extends React.Component<RowProps, {}> {
     let thirdRow: JSX.Element[] = []
 
     data.map((d, index) => {
-      let firstCB = (val: number) => { this.props.setCB(index, [val, d.ratio[1]]) }
-      let secondCB = (val: number) => { this.props.setCB(index, [d.ratio[0], val]) }
+      let firstCB = (val: number) => { this.props.setCB(index, new Fraction(val, d.ratio.denominator)) }
+      let secondCB = (val: number) => { this.props.setCB(index, new Fraction(d.ratio.numerator, val)) }
       let spacer = <td style={{padding: '0.7em', visibility: 'hidden', maxWidth: '5em', width: '5em'}} key={`spacer_${index}`} />
       let tabIndexBase = index * 3 + (isUpper ? 1 : 999)
-      firstRow.push(<RatioInput tabIndex={tabIndexBase} data={d.ratio[0]} key={`input_${index}`} changeCB={firstCB} isUpper />)
+      firstRow.push(<RatioInput tabIndex={tabIndexBase} data={d.ratio.numerator} key={`input_${index}`} changeCB={firstCB} isUpper />)
       firstRow.push(spacer)
-      secondRow.push(<RatioInput tabIndex={tabIndexBase + 1} data={d.ratio[1]} key={`input_${index}`} changeCB={secondCB} />)
+      secondRow.push(<RatioInput tabIndex={tabIndexBase + 1} data={d.ratio.denominator} key={`input_${index}`} changeCB={secondCB} />)
       secondRow.push(spacer)
       thirdRow.push(
         <LowerInput isUpper={isUpper} frac={d.ratio} octave={d.octave || NaN}
@@ -211,8 +212,8 @@ class Row extends React.Component<RowProps, {}> {
 }
 
 export interface KitharaCalcState {
-  lowerRow: {ratio: number[], octave?: number, overtone?: number}[],
-  upperRow: {ratio: number[], octave?: number, overtone?: number}[],
+  lowerRow: {ratio: Fraction, octave?: number, overtone?: number}[],
+  upperRow: {ratio: Fraction, octave?: number, overtone?: number}[],
   instrument: string
 }
 
@@ -226,17 +227,17 @@ export class KitharaCalc extends React.Component<{}, KitharaCalcState> {
     let p = presets[instrument][preset]
     let row = p.map((a: number[], index: number) => {
       if (index === 0) {
-        return { ratio: [a[0], a[1]] }
+        return { ratio: new Fraction(a[0], a[1]) }
       }
       return {
-        ratio: [a[0], a[1]],
+        ratio: new Fraction(a[0], a[1]),
         octave: a[2]
       }
     })
     let state = {
       upperRow: row,
       lowerRow: calcState(row, {
-        ratio: [3, 2],
+        ratio: new Fraction(3, 2),
         octave: 3,
         index: 2
       }),
@@ -249,7 +250,7 @@ export class KitharaCalc extends React.Component<{}, KitharaCalcState> {
     return state
   }
 
-  setRatioCB (isUpper: boolean, index: number, ratio: number[]) {
+  setRatioCB (isUpper: boolean, index: number, ratio: Fraction) {
     let state = clone(this.state)
     if (isUpper) {
       state.upperRow[index].ratio = ratio

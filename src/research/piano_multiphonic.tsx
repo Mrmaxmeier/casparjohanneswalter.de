@@ -8,11 +8,7 @@ import {
 import { AudioController, AudioControllerRow } from './audioComponents'
 import { IAudioProvider } from './audio'
 import { ratioToCents } from './converters'
-
-type Frac = { n: number, d: number }
-function fraction (n: number, d: number): Frac {
-  return { n, d }
-}
+import { Fraction } from './math'
 
 
 const magic = [
@@ -61,7 +57,7 @@ export class PianoMultiphonicCalculatorII extends React.PureComponent<{}, State>
     let p2 = data.p2
     let error = null
     let result = null
-    let fractions: Frac[] = []
+    let fractions: Fraction[] = []
     if (p1 && p2) {
       if (gcd(p1, p2) !== 1) {
         error = 'Greatest common divisor: ' + gcd(p1, p2)
@@ -89,19 +85,18 @@ export class PianoMultiphonicCalculatorII extends React.PureComponent<{}, State>
           }
         })
         fractions = [
-          fraction(0, 1),
-          fraction(1, 2),
-          fraction(1, 3)
+          new Fraction(0, 1),
+          new Fraction(1, 2),
+          new Fraction(1, 3)
         ]
         for (let i = 3; i < newl.length; i++) {
           let nennerId = newl[i] - newl[i - 1]
           let nennerIndex = newl.indexOf(nennerId)
           let f1 = fractions[nennerIndex]
           let f2 = fractions[i - 1]
-          fractions.push(fraction(f1.n + f2.n, newl[i]))
+          fractions.push(new Fraction(f1.numerator + f2.numerator, newl[i]))
         }
-        let resF = fractions[fractions.length - 1]
-        result = resF.n / resF.d
+        result = fractions[fractions.length - 1].value
       }
     }
 
@@ -119,7 +114,7 @@ export class PianoMultiphonicCalculatorII extends React.PureComponent<{}, State>
     }
   }
 
-  renderData (freq: number, fractions: Frac[]) {
+  renderData (freq: number, fractions: Fraction[]) {
     let players: CompactFrequencyPlayer[] = []
     return (
       <table>
@@ -135,14 +130,14 @@ export class PianoMultiphonicCalculatorII extends React.PureComponent<{}, State>
           </tr>
           {fractions.map((f, i) => {
             let freqC0 = this.state.concertPitch / Math.pow(2, (1 / 12) * 57)
-            let cents = ratioToCents((freq * f.d) / freqC0)
+            let cents = ratioToCents((freq * f.denominator) / freqC0)
             return (
               <tr key={i}>
                 <th>
-                  {f.n} / {f.d}
+                  {f.numerator} / {f.denominator}
                 </th>
                 <th>
-                  <PrecNumber value={freq * f.d} />
+                  <PrecNumber value={freq * f.denominator} />
                 </th>
                 <th>
                   <NoteDisplay cents={cents} />
@@ -151,7 +146,7 @@ export class PianoMultiphonicCalculatorII extends React.PureComponent<{}, State>
                   <NoteImage cents={cents} />
                 </th>
                 <th>
-                  <CompactFrequencyPlayer freq={freq * f.d} ref={(el) => { if (el) players.push(el) }} />
+                  <CompactFrequencyPlayer freq={freq * f.denominator} ref={(el) => { if (el) players.push(el) }} />
                 </th>
               </tr>
             )
