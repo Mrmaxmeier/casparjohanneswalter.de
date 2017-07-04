@@ -63,7 +63,7 @@ export class SoundTest extends React.PureComponent<{}, State> {
         </table>
         <table>
           <tbody>
-              {new Array(32).fill(null).map((_: any, i: number) => {
+              {new Array(32).fill(null).map((_: null, i: number) => {
                 let freq = Math.pow(octave, Math.log2(i + 1)) * refFreq
                 return <FreqPlayer showTypePicker={false}
                           inTable freq={freq} key={i}

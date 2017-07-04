@@ -267,7 +267,7 @@ export class Limit5MatrixPlayer extends React.PureComponent<{}, State> {
         <table>
           <tbody>
             <tr>
-              {this.state.save.map((_: any, i: number) => (
+              {this.state.save.map((_: SaveState, i: number) => (
                 <th key={i} style={{padding: '8px'}}>
                   <button
                     onClick={() => this.save(i)}

@@ -104,7 +104,7 @@ export class FrequencyNode extends React.PureComponent<FNProps, {}> {
 
   init () {
     if (typeof window === 'undefined' || this._waves !== undefined) { return }
-    this._waves = new Array(this.count).fill(null).map((_: any, index: number) => {
+    this._waves = new Array(this.count).fill(null).map((_: null, index: number) => {
       let node = audio.context.createOscillator()
       node.type = 'sine'
       node.frequency.value = this.frequency(index)
