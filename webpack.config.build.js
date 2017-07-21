@@ -7,8 +7,8 @@ let config = require('./webpack.config.js')
 
 module.exports = Object.assign(config, {
   entry: {
-    index: './src/index.jsx',
-    routes: './src/routes.jsx'
+    index: './src/index.tsx',
+    routes: './src/routes.tsx'
   },
   plugins: [
     new webpack.optimize.UglifyJsPlugin({
