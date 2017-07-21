@@ -45,7 +45,7 @@ let kitharaDescription = () => <div>
       </li>
       <li>
         Tragen Sie in die untere Reihe eine Information ein, die als Grundlage der Neuberechnung der Tonhöhen aller sechs Saiten dient.
-        <ol type="a">
+        <ol {...{type: "a"} /* TODO type attr is missing in react type def */}>
           <li>
             Eine Zieltonhöhe einer beliebigen Saite (als „ratio“ mit Angabe der Oktavlage).
             Durch das Drücken des „apply“-Knopfes darunter wird berechnet, wie alle Saiten klingen würden, wenn der Glissandostab (Pyrex Rod) auf diese Stelle geschoben worden wäre.
