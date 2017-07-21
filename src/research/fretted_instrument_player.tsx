@@ -7,38 +7,42 @@ import { CompactFrequencyPlayer, FractionInput } from './components'
 import { AudioController, AudioControllerRow } from './audioComponents'
 import {
   Settings,
-  ConcertPitchSetting,
-  Pitch11Setting,
-  RatioCentsModeSetting,
-  MutedSetting
+  ConcertPitchSetting, TConcertPitch,
+  Pitch11Setting, TPitch11Setting,
+  RatioCentsModeSetting, TModeSetting,
+  MutedSetting, TMutedSetting
 } from './settings'
 import { Presets } from './presets'
 import { resizeArray } from './utils'
 import { clone, range } from 'lodash'
 
-class RowsColumnsSetting extends Settings<{ rows: number, columns: number }, { size: { rows: number, columns: number } }> {
-  static field = 'size';
-  static default = {rows: 9, columns: 7};
-  cls () { return RowsColumnsSetting }
+interface TRowColumnsSetting { rows: number, columns: number }
+class RowsColumnsSetting<S extends TRowColumnsSetting> extends Settings<TRowColumnsSetting, S> {
+  static default() { return { rows: 9, columns: 7 } }
+  dump () {
+    return this.props.value || { rows: 9, columns: 7 }
+  }
+
   render () {
+    let state = this.dump()
     return (
       <tr>
         <th>
           No. of Frets
         </th>
         <th>
-          <input type="number" min="1" max="19" value={this.state.rows} onChange={(e) => {
+          <input type="number" min="1" max="19" value={state.rows} onChange={(e) => {
             let rows = parseInt(e.target.value)
-            this.onValue({ rows, columns: this.state.columns })
+            this.onValue({ rows, columns: state.columns })
           }} />
         </th>
         <th>
           No. of Strings
         </th>
         <th>
-          <input type="number" min="1" max="15" value={this.state.columns} onChange={(e) => {
+          <input type="number" min="1" max="15" value={state.columns} onChange={(e) => {
             let columns = parseInt(e.target.value)
-            this.onValue({ rows: this.state.rows, columns })
+            this.onValue({ rows: state.rows, columns })
           }} />
         </th>
       </tr>
@@ -46,87 +50,81 @@ class RowsColumnsSetting extends Settings<{ rows: number, columns: number }, { s
   }
 }
 
-interface State {
-  columnData: Fraction[],
-  rowData: Fraction[],
-  additional: Fraction[],
-  concertPitch: number,
-  pitch11: number,
-  mode: 'ratio' | 'cents',
-  muted: boolean,
-  size: { rows: number, columns: number },
-  columns: number
+interface State extends TRowColumnsSetting, TConcertPitch, TPitch11Setting, TModeSetting, TMutedSetting {
+  columnData: (Fraction | null)[],
+  rowData: (Fraction | null)[],
+  additional: (Fraction | null)[],
+  // concertPitch: number,
+  // pitch11: number,
+  // mode: 'ratio' | 'cents',
+  // muted: boolean,
+  // size: { rows: number, columns: number },
+  // columns: number
 }
 
 interface Preset {
-  size: { rows: number, columns: number },
-  concertPitch: number,
-  pitch11: number,
+  rows: number, columns: number,
+  concertPitch: string,
+  pitch11: string,
+  columnData: (Fraction | null)[],
+  rowData: (Fraction | null)[],
+  additional: (Fraction | null)[]
 }
 
 export class FrettedInstrumentPlayer extends React.PureComponent<{}, State> {
-  private size: RowsColumnsSetting
-  private concertPitch: ConcertPitchSetting
-  private pitch11: Pitch11Setting
+  private concertPitch: ConcertPitchSetting<State>
+  private pitch11: Pitch11Setting<State>
   constructor (props: {}) {
     super(props)
-    this.state = Settings.state<Preset>(
-      ConcertPitchSetting,
-      Pitch11Setting,
-      RatioCentsModeSetting,
-      MutedSetting,
-      RowsColumnsSetting
-    )
     this.state = {
       columnData: new Array(7).fill(null),
       rowData: new Array(9).fill(null),
       additional: new Array(9).fill(null),
-      ...this.state
+      ...ConcertPitchSetting.default(),
+      ...Pitch11Setting.default(),
+      ...RatioCentsModeSetting.default(),
+      ...MutedSetting.default(),
+      ...RowsColumnsSetting.default(),
     }
   }
 
-  onPreset (_: any, preset: Preset) {
-    this.setState(preset)
-    Settings.onPreset<Preset>([
-      this.size,
-      this.concertPitch,
-      this.pitch11
-    ], preset)
+  onPreset (_: string, preset: Preset) {
+    const { concertPitch, pitch11, rows, columns, rowData, columnData, additional } = preset
+    this.setState({ rows, columns, rowData, columnData, additional }, () => {
+      this.concertPitch.setText(concertPitch)
+      this.pitch11.setText(pitch11)
+    })
   }
 
   render () {
     let rowData = this.state.rowData
     let columnData = this.state.columnData
 
-    let updateState = Settings.updateState(this)
+    const setState = (data: any, callback: any) => {
+      this.setState(data, callback)
+    }
+    const { concertPitch, pitch11, muted } = this.state
     return (
       <div>
         <AudioController />
         <table>
           <tbody>
             <AudioControllerRow />
-            <ConcertPitchSetting updateState={updateState} ref={(e) => { if(e) this.concertPitch = e }} />
-            <Pitch11Setting concertPitch={this.state.concertPitch} updateState={updateState} ref={(e) => { if (e) this.pitch11 = e }} />
-            <RowsColumnsSetting updateState={(size) => {
+            <ConcertPitchSetting setState={setState} value={{ concertPitch }} ref={(e) => { if (e) this.concertPitch = e }} />
+            <Pitch11Setting concertPitch={this.state.concertPitch} setState={setState} value={{ pitch11 }} ref={(e) => { if (e) this.pitch11 = e }} />
+            <RowsColumnsSetting setState={(size, callback) => {
               let rowData = resizeArray(this.state.rowData, size.rows, () => null)
               let columnData = resizeArray(this.state.columnData, size.columns, () => null)
-              this.setState({ rowData, columnData, size })
-            }} ref={(e) => { if(e) this.size = e }} />
-            <MutedSetting updateState={updateState} />
-            {
-              /*
-                <RatioCentsModeSetting updateState={updateState} />
-                TODO
-              */
-            }
+              this.setState({ rowData, columnData, rows: size.rows, columns: size.columns }, callback)
+            }} value={{ rows: this.state.rows, columns: this.state.columns }} />
+            <MutedSetting setState={setState} value={{ muted }} />
             <Presets name='fretted'
               onChange={this.onPreset.bind(this)}
-              current={() => {
-                return Settings.dumpPreset([
-                  this.size,
-                  this.concertPitch,
-                  this.pitch11
-                ], this.state)
+              current={(): Preset => {
+                const { rows, columns, rowData, columnData, additional } = this.state
+                let concertPitch = this.concertPitch.value()
+                let pitch11 = this.pitch11.value()
+                return { rows, columns, rowData, columnData, concertPitch, pitch11, additional }
               }} />
           </tbody>
         </table>
