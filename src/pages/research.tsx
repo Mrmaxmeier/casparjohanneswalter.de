@@ -17,6 +17,7 @@ import { ArciorganoPlayer } from '../research/arciorganoplayer'
 import { SuperCembaloPlayer } from '../research/supercembaloplayer'
 import { FrettedInstrumentPlayer } from '../research/fretted_instrument_player'
 import { Limit5MatrixPlayer } from '../research/limit5matrix'
+import { MovableFretsGuitarPlayer } from '../research/movable_frets_guitar'
 // import { MeanToneCircle } from '../research/mean_tone_circle'
 
 export class Converters extends React.PureComponent {
@@ -157,6 +158,11 @@ let musicCalculators: PageDef[] = [
     id: 'limit5matrix',
     title: 'Limit-5 Matrix Player',
     component: Limit5MatrixPlayer
+  },
+  {
+    id: 'movable_frets_guitar',
+    title: 'Movable-Frets Guitar Player',
+    component: MovableFretsGuitarPlayer
   }
 ]
 
