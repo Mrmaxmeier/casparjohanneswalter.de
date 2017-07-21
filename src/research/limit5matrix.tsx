@@ -3,8 +3,8 @@ import { range, mapValues, clone } from 'lodash'
 
 import { MathInput, PrecNumber } from './components'
 import { FrequencyNode, AudioController, AudioControllerRow } from './audioComponents'
-import { normalizeOctave, ratioToCents } from './converters.js'
-import { Presets } from './presets.jsx'
+import { normalizeOctave, ratioToCents } from './converters'
+import { Presets } from './presets'
 
 const labels = [
   ['A♭', 'C', 'E', 'G♯', 'B♯', 'D♯♯', 'F♯♯♯', 'A♯♯♯', 'C♯♯♯♯'],
@@ -129,6 +129,13 @@ interface SaveState {
   playing: { [key: number]: boolean[] | null }
 }
 
+interface Preset {
+  centralC: string,
+  preset: 'ji' | 'schismatic' | 'schismatic_optimized7' | 'edo53',
+  large: boolean,
+  save: (SaveState | null)[]
+}
+
 export class Limit5MatrixPlayer extends React.PureComponent<{}, State> {
   private rows: { [key: number]: Row }
   private centralC: MathInput
@@ -176,7 +183,7 @@ export class Limit5MatrixPlayer extends React.PureComponent<{}, State> {
     })
   }
 
-  onPreset (name, preset) {
+  onPreset (name: string, preset: Preset) {
     this.centralC.setValue(preset.centralC, true)
     this.setState({
       preset: preset.preset,

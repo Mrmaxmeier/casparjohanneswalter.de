@@ -8,7 +8,8 @@ interface Props<T> {
     default?: T, // TODO: unused?
     onChange: (key: string, data: T) => void,
     current: () => T,
-    presets?: { [preset: string]: T }
+    presets?: { [preset: string]: T },
+    label?: string
 }
 
 interface State<T> {
