@@ -40,7 +40,7 @@ export class MathInput extends React.PureComponent<MathInputProps, MathInputStat
     this.elem.value = value.toString()
     let parsed = evalMath(value.toString())
     if (typeof parsed === 'number') {
-      this.setState({ value: parsed })
+      this.setState({ value: parsed, error: undefined })
       if (callOnChange && this.props.onChange) {
         this.props.onChange(parsed)
       }
@@ -102,23 +102,32 @@ export class MathInput extends React.PureComponent<MathInputProps, MathInputStat
 interface FractionInputProps extends React.Props<any> {
   onValue: (f: Fraction) => void,
   disabled?: boolean,
-  value: Fraction
+  value: Fraction | null
 }
 
 interface FractionInputState extends React.ComponentState {
-  numerator?: number, denominator?: number
+  numerator: string, denominator: string
 }
 
 export class FractionInput extends React.PureComponent<FractionInputProps, FractionInputState> {
-  handleChange (n?: number, d?: number) {
-    if (n != null && d != null) {
-      this.props.onValue(new Fraction(n, d))
+  constructor(props: FractionInputProps) {
+    super(props)
+    let numerator = props.value && props.value.numerator.toString() || ''
+    let denominator = props.value && props.value.denominator.toString() || ''
+    this.state = { numerator, denominator }
+  }
+
+  handleChange (n: string, d: string) {
+    if (parseFloat(n) && parseFloat(d)) {
+      this.props.onValue(new Fraction(parseFloat(n), parseFloat(d)))
     }
   }
 
   componentWillReceiveProps (nextProps: FractionInputProps) {
-    if (nextProps.value) {
-      this.setState(nextProps.value)
+    if (nextProps.value !== null) {
+      let numerator = nextProps.value && nextProps.value.numerator.toString() || ''
+      let denominator = nextProps.value && nextProps.value.denominator.toString() || ''
+      this.setState({ numerator, denominator })
     }
   }
 
@@ -142,8 +151,8 @@ export class FractionInput extends React.PureComponent<FractionInputProps, Fract
           <tr>
             <td style={Object.assign({borderBottom: '2px black solid'}, tdStyle)}>
               <input type='text'
-                value={this.state.numerator || ''} onChange={(e) => {
-                  let numerator = parseFloat(e.target.value) || undefined
+                value={this.state.numerator} onChange={(e) => {
+                  let numerator = e.target.value // parseFloat(e.target.value) || undefined
                   this.handleChange(numerator, this.state.denominator)
                   this.setState({ numerator })
                 }}
@@ -153,8 +162,8 @@ export class FractionInput extends React.PureComponent<FractionInputProps, Fract
           <tr>
             <td style={tdStyle}>
               <input type='text'
-                value={this.state.denominator || ''} onChange={(e) => {
-                  let denominator = parseFloat(e.target.value) || undefined
+                value={this.state.denominator} onChange={(e) => {
+                  let denominator = e.target.value // parseFloat(e.target.value) || undefined
                   this.handleChange(this.state.numerator, denominator)
                   this.setState({ denominator })
                 }}
@@ -176,7 +185,10 @@ interface PrecNumberProps extends React.Props<any> {
 
 export class PrecNumber extends React.PureComponent<PrecNumberProps, {}> {
   render () {
-    let precision = this.props.precision || 2
+    let precision = this.props.precision
+    if (precision == undefined) {
+      precision = 2
+    }
     let s = format(this.props.value, {precision, notation: 'fixed'})
     let style = Object.assign({
       fontFamily: 'monospace'

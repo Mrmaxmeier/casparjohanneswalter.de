@@ -1,13 +1,9 @@
 import { number, eval as mathEval } from 'mathjs'
 import { find, clone } from 'lodash'
-import { Fraction } from './math'
+import { Fraction, mod } from './math'
 
 export type Ratio = number
 export type Cents = number
-
-export function mod(n: number, m: number) {
-  return ((n % m) + m) % m
-}
 
 export interface MathError {
   error: string

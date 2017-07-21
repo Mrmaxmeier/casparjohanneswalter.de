@@ -52,3 +52,7 @@ export function gcd (a: number, b: number, depth = 0): number {
   }
   return (b === 0) ? a : gcd(b, a % b, depth + 1)
 }
+
+export function mod(n: number, m: number) {
+  return ((n % m) + m) % m
+}
