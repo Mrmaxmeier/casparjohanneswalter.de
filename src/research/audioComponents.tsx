@@ -1,10 +1,6 @@
 import * as React from 'react'
 import { max, sqrt, log } from 'mathjs'
 
-declare var webkitAudioContext: {
-    new (): AudioContext;
-}
-
 interface GlobalAudioContext {
   context: AudioContext,
   masterNode: GainNode,
@@ -14,8 +10,10 @@ interface GlobalAudioContext {
 
 let audio: GlobalAudioContext
 if (typeof window !== 'undefined') {
-  const theAudioContext = AudioContext || webkitAudioContext
-  let context = new theAudioContext()
+  const theAudioContext = (
+    (window as any).AudioContext || (window as any).webkitAudioContext
+  )
+  let context = new theAudioContext() as AudioContext
   let masterNode = context.createGain()
   masterNode.gain.value = 0.25
   masterNode.connect(context.destination)
@@ -211,7 +209,7 @@ export class AudioControllerRow extends React.Component<{}, { volume: number }> 
 }
 
 export class AudioController extends React.Component<{}, { activeNodes: number, nodeCount: number, volume: number }> {
-  private processor: AudioMeter
+  private processor?: AudioMeter
   private interval: number
   constructor (props: {}) {
     super(props)
@@ -220,15 +218,18 @@ export class AudioController extends React.Component<{}, { activeNodes: number, 
       nodeCount: 0,
       volume: 0
     }
+    if (typeof window === 'undefined') { return }
     this.processor = createAudioMeter(audio.context)
   }
 
   componentDidMount () {
+    if (this.processor === undefined) { return }
+    const processor = this.processor
     this.interval = setInterval(() => {
       this.setState({
         activeNodes: audio.activeNodes,
         nodeCount: audio.nodeCount,
-        volume: Math.round(this.processor.volume * 100) * 3
+        volume: Math.round(processor.volume * 100) * 3
       })
     }, 100)
   }
@@ -236,6 +237,7 @@ export class AudioController extends React.Component<{}, { activeNodes: number, 
   componentWillUnmount () { clearInterval(this.interval) }
 
   render () {
+    if (this.processor === undefined) { return null }
     return (
       <div style={{
         position: 'fixed',

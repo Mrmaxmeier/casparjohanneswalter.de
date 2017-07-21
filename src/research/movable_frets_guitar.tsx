@@ -172,7 +172,7 @@ export class MovableFretsGuitarPlayer extends React.PureComponent<{}, State> {
   constructor (props: {}) {
     super(props)
     this.state = {
-      centralC: 440 / Math.pow(2, 9 / 12),
+      centralC: 440 / Math.pow(2, 21 / 12),
       playing: new Array(WIDTH * HEIGHT).fill(false),
       save: new Array(8).fill(null),
     }
@@ -220,7 +220,7 @@ export class MovableFretsGuitarPlayer extends React.PureComponent<{}, State> {
               <th>Pitch Central C</th>
               <td>
                 <MathInput
-                  wide default="440 / 2^(9/12)"
+                  wide default="440 / 2^(21/12)"
                   onChange={(centralC) => {
                     this.setState({ centralC })
                   }} ref={(e) => { if (e) this.centralC = e }} />

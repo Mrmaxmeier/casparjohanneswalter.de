@@ -17,7 +17,7 @@ module.exports = function (options) {
     const rendered = ReactDOMServer.renderToString(
       React.createElement(
         StaticRouter,
-        { location: route, context },
+        { location: '/' + route, context },
         routes.node
       )
     )
