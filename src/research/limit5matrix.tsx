@@ -37,6 +37,60 @@ const labels = [
 const WIDTH = 9
 const HEIGHT = 25
 
+
+interface QuickSavesProps<Save> {
+  saveData: (i: number) => Save,
+  load: (save: Save) => void,
+}
+interface QuickSaveState<Save> {
+  saves: (Save | null)[]
+}
+export class QuickSaves<Save> extends React.PureComponent<QuickSavesProps<Save>, QuickSaveState<Save>> {
+  constructor (props: QuickSavesProps<Save>) {
+    super(props)
+    this.state = {
+      saves: new Array(8).fill(null)
+    }
+  }
+  render () {
+    return (
+        <table>
+          <tbody>
+            <tr>
+              {this.state.saves.map((_: Save, i: number) => (
+                <th key={i} style={{padding: '8px'}}>
+                  <button
+                    onClick={() => {
+                      let save = this.props.saveData(i)
+                      let saves = [...this.state.saves];
+                      saves[i] = save
+                      if (i == saves.length - 1) {
+                        saves.push(null);
+                      }
+                      this.setState({ saves })
+                    }}
+                    style={{padding: '8px'}}
+                  >Save {i + 1}</button>
+                </th>
+              ))}
+            </tr>
+            <tr>
+              {this.state.saves.map((data: Save, i: number) => (
+                <th key={i} style={{padding: '8px'}}>
+                  <button
+                    disabled={!data}
+                    onClick={() => this.props.load(data)}
+                    style={{padding: '8px'}}
+                  >Load {i + 1}</button>
+                </th>
+              ))}
+            </tr>
+          </tbody>
+        </table>
+    )
+  }
+}
+
 interface RowProps {
   preset: 'ji' | 'schismatic' | 'schismatic_optimized7' | 'edo53',
   y: number,
@@ -120,7 +174,6 @@ interface State {
   centralC: number,
   preset: 'ji' | 'schismatic' | 'schismatic_optimized7' | 'edo53',
   playing: boolean[],
-  save: (SaveState | null)[],
   large: boolean
 }
 
@@ -139,6 +192,7 @@ interface Preset {
 export class Limit5MatrixPlayer extends React.PureComponent<{}, State> {
   private rows: { [key: number]: Row }
   private centralC: MathInput
+  private quicksaves: QuickSaves<SaveState>
 
   constructor (props: {}) {
     super(props)
@@ -146,41 +200,9 @@ export class Limit5MatrixPlayer extends React.PureComponent<{}, State> {
       centralC: 440 / Math.pow(2, 9 / 12),
       preset: 'edo53',
       playing: new Array(WIDTH * HEIGHT).fill(false),
-      save: new Array(8).fill(null),
       large: true
     }
     this.rows = {}
-  }
-
-  save (index: number) {
-    let save = clone(this.state.save)
-    save[index] = {
-      octave: mapValues(this.rows, (o: Row) => o ? o.state.octave : null),
-      playing: mapValues(this.rows, (o: Row) => o ? o.state.playing : null)
-    }
-    if (index == save.length - 1) {
-      save.push(null)
-    }
-    this.setState({ save })
-  }
-
-  load (index: number) {
-    const save = this.state.save[index]
-    if (save === null) { return }
-    Object.keys(save.octave).map((s) => {
-      let key = parseInt(s)
-      let octave = save.octave[key]
-      if (this.rows[key] && octave !== null) {
-        this.rows[key].setState({ octave })
-      }
-    })
-    Object.keys(save.playing).map((s) => {
-      let key = parseInt(s)
-      let playing = save.playing[key]
-      if (this.rows[key] && playing !== null) {
-        this.rows[key].setState({ playing })
-      }
-    })
   }
 
   onPreset (name: string, preset: Preset) {
@@ -188,7 +210,8 @@ export class Limit5MatrixPlayer extends React.PureComponent<{}, State> {
     this.setState({
       preset: preset.preset,
       large: preset.large,
-      save: preset.save
+    }, () => {
+      this.quicksaves.setState({ saves: preset.save })
     })
   }
 
@@ -197,7 +220,7 @@ export class Limit5MatrixPlayer extends React.PureComponent<{}, State> {
       preset: this.state.preset,
       centralC: this.centralC.text(),
       large: this.state.large,
-      save: this.state.save,
+      save: this.quicksaves.state.saves,
     }
   }
 
@@ -271,31 +294,31 @@ export class Limit5MatrixPlayer extends React.PureComponent<{}, State> {
               current={this.dumpPreset.bind(this)} />
           </tbody>
         </table>
-        <table>
-          <tbody>
-            <tr>
-              {this.state.save.map((_: SaveState, i: number) => (
-                <th key={i} style={{padding: '8px'}}>
-                  <button
-                    onClick={() => this.save(i)}
-                    style={{padding: '8px'}}
-                  >Save {i + 1}</button>
-                </th>
-              ))}
-            </tr>
-            <tr>
-              {this.state.save.map((data: SaveState, i: number) => (
-                <th key={i} style={{padding: '8px'}}>
-                  <button
-                    disabled={!data}
-                    onClick={() => this.load(i)}
-                    style={{padding: '8px'}}
-                  >Load {i + 1}</button>
-                </th>
-              ))}
-            </tr>
-          </tbody>
-        </table>
+        <QuickSaves
+          load={(save: SaveState) => {
+            Object.keys(save.octave).map((s) => {
+              let key = parseInt(s)
+              let octave = save.octave[key]
+              if (this.rows[key] && octave !== null) {
+                this.rows[key].setState({ octave })
+              }
+            })
+            Object.keys(save.playing).map((s) => {
+              let key = parseInt(s)
+              let playing = save.playing[key]
+              if (this.rows[key] && playing !== null) {
+                this.rows[key].setState({ playing })
+              }
+            })
+          }}
+          saveData={() => {
+            return {
+              octave: mapValues(this.rows, (o: Row) => o ? o.state.octave : null),
+              playing: mapValues(this.rows, (o: Row) => o ? o.state.playing : null)
+            }
+          }}
+          ref={(e: QuickSaves<SaveState>) => { if (e) this.quicksaves = e }}
+        />
         <table>
           <tbody>
             <tr>

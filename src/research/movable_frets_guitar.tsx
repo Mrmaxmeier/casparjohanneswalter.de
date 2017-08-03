@@ -4,6 +4,7 @@ import { range, mapValues, clone } from 'lodash'
 import { MathInput, PrecNumber } from './components'
 import { FrequencyNode, AudioController, AudioControllerRow } from './audioComponents'
 import { ratioToCents, centsToRatio } from './converters'
+import { QuickSaves } from './limit5matrix'
 const romanize = require<(num: number) => string>('romanize')
 
 const labels = [
@@ -157,7 +158,6 @@ class Matrix extends React.PureComponent<MatrixProps, {}> {
 interface State {
   centralC: number,
   playing: boolean[],
-  save: (SaveState[] | null)[],
 }
 
 interface SaveState {
@@ -168,45 +168,15 @@ interface SaveState {
 export class MovableFretsGuitarPlayer extends React.PureComponent<{}, State> {
   private matrices: Matrix[]
   private centralC: MathInput
+  private quicksaves: QuickSaves<SaveState[]>
 
   constructor (props: {}) {
     super(props)
     this.state = {
       centralC: 440 / Math.pow(2, 21 / 12),
       playing: new Array(WIDTH * HEIGHT).fill(false),
-      save: new Array(8).fill(null),
     }
     this.matrices = new Array(3).fill(null)
-  }
-
-  save (index: number) {
-    let save = clone(this.state.save)
-    save[index] = this.matrices.map(matrix => { return {
-      cents: matrix.rows.map((o: Row) => o ? o.state.cents : new Array(WIDTH).fill(0)),
-      playing: matrix.rows.map((o: Row) => o ? o.state.playing : new Array(WIDTH).fill(false))
-    }})
-    this.setState({ save })
-  }
-
-  load (index: number) {
-    const save = this.state.save[index]
-    if (save === null) { return }
-    save.map((matrix, i) => {
-      Object.keys(matrix.cents).map((s) => {
-        let key = parseInt(s)
-        let cents = matrix.cents[key]
-        if (this.matrices[i].rows[key] && cents !== null) {
-          this.matrices[i].rows[key].setState({ cents })
-        }
-      })
-      Object.keys(matrix.playing).map((s) => {
-        let key = parseInt(s)
-        let playing = matrix.playing[key]
-        if (this.matrices[i].rows[key] && playing !== null) {
-          this.matrices[i].rows[key].setState({ playing })
-        }
-      })
-    })
   }
 
   render () {
@@ -228,31 +198,33 @@ export class MovableFretsGuitarPlayer extends React.PureComponent<{}, State> {
             </tr>
           </tbody>
         </table>
-        <table>
-          <tbody>
-            <tr>
-              {this.state.save.map((_: (SaveState[] | null), i: number) => (
-                <th key={i} style={{padding: '8px'}}>
-                  <button
-                    onClick={() => this.save(i)}
-                    style={{padding: '8px'}}
-                  >Save {i + 1}</button>
-                </th>
-              ))}
-            </tr>
-            <tr>
-              {this.state.save.map((data: (SaveState[] | null), i: number) => (
-                <th key={i} style={{padding: '8px'}}>
-                  <button
-                    disabled={!data}
-                    onClick={() => this.load(i)}
-                    style={{padding: '8px'}}
-                  >Load {i + 1}</button>
-                </th>
-              ))}
-            </tr>
-          </tbody>
-        </table>
+        <QuickSaves
+          load={(save: SaveState[]) => {
+            save.map((matrix, i) => {
+              Object.keys(matrix.cents).map((s) => {
+                let key = parseInt(s)
+                let cents = matrix.cents[key]
+                if (this.matrices[i].rows[key] && cents !== null) {
+                  this.matrices[i].rows[key].setState({ cents })
+                }
+              })
+              Object.keys(matrix.playing).map((s) => {
+                let key = parseInt(s)
+                let playing = matrix.playing[key]
+                if (this.matrices[i].rows[key] && playing !== null) {
+                  this.matrices[i].rows[key].setState({ playing })
+                }
+              })
+            })
+          }}
+          saveData={() => {
+            return this.matrices.map(matrix => { return {
+              cents: matrix.rows.map((o: Row) => o ? o.state.cents : new Array(WIDTH).fill(0)),
+              playing: matrix.rows.map((o: Row) => o ? o.state.playing : new Array(WIDTH).fill(false))
+            }})
+          }}
+          ref={(e: QuickSaves<SaveState[]>) => { if (e) this.quicksaves = e }}
+        />
         <h4>Guitar 1</h4>
         <Matrix centralC={this.state.centralC} data={(x, y) => {
           return { step: pre[y][x][0] + 2, octave: pre[y][x][1] }
