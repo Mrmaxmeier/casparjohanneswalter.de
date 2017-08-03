@@ -63,8 +63,8 @@ export class FrequencyNode extends React.PureComponent<FNProps, {}> {
   componentWillUnmount () {
     if (this._waves === undefined) { return }
     this.stopWithRelease()
-    clearTimeout(this.unloadTimeout)
-    this.unloadTimeout = setTimeout(this.unload, 50)
+    window.clearTimeout(this.unloadTimeout)
+    this.unloadTimeout = window.setTimeout(this.unload, 50)
   }
 
   componentDidUpdate (prevProps: FNProps, prevState: {}) {
@@ -159,8 +159,8 @@ export class FrequencyNode extends React.PureComponent<FNProps, {}> {
     })
     audio.activeNodes -= this.active
     this.active = 0
-    clearTimeout(this.unloadTimeout)
-    this.unloadTimeout = setTimeout(this.unload, 10000)
+    window.clearTimeout(this.unloadTimeout)
+    this.unloadTimeout = window.setTimeout(this.unload, 10000)
   }
 
   unload () {
@@ -225,7 +225,7 @@ export class AudioController extends React.Component<{}, { activeNodes: number, 
   componentDidMount () {
     if (this.processor === undefined) { return }
     const processor = this.processor
-    this.interval = setInterval(() => {
+    this.interval = window.setInterval(() => {
       this.setState({
         activeNodes: audio.activeNodes,
         nodeCount: audio.nodeCount,
