@@ -4,7 +4,8 @@ import { range, mapValues, clone } from 'lodash'
 import { MathInput, PrecNumber } from './components'
 import { FrequencyNode, AudioController, AudioControllerRow } from './audioComponents'
 import { ratioToCents, centsToRatio } from './converters'
-import { QuickSaves } from './limit5matrix'
+import { Presets, QuickSaves } from './presets'
+import { resizeArray } from './utils'
 const romanize = require<(num: number) => string>('romanize')
 
 const labels = [
@@ -40,10 +41,31 @@ let pre = [
 const WIDTH = 20
 const HEIGHT = 6
 
+const combined = [
+  (x: number, y: number) => {
+    return { step: pre[y][x][0] + 2, octave: pre[y][x][1] }
+  },
+  (x: number, y: number) => {
+    return { step: pre[y][x][0], octave: pre[y][x][1] }
+  },
+  (x: number, y: number) => {
+    return { step: pre[y][x][0] - 2, octave: pre[y][x][1] }
+  },
+].map((func) =>
+  range(0, 6).map((y) =>
+    range(0, 20).map((x) => {
+      const { step, octave } = func(x, y)
+      return 1200 / 53 * step + 1200 * octave
+    })
+  )
+)
+
 interface RowProps {
   y: number,
   centralC: number,
-  data: (x: number, y: number) => { step: number, octave: number }
+  data: number[],
+  onChange: (data: number[]) => void,
+  editmode: boolean
 }
 
 interface RowState {
@@ -65,17 +87,31 @@ class Row extends React.PureComponent<RowProps, RowState> {
     return (
       <tr key={y}>
         <th>{y + 1}</th>
-        {range(0, 19).map(x => {
+        {range(0, 20).map(x => {
           const index = (x + 4)
-          const { step, octave } = this.props.data(x, y)
-          const cents = 1200 / 53 * step + 1200 * octave
+          const cents = this.props.data[x]
           const freq = centsToRatio(cents) * centralC
           return (
             <td key={x} style={{padding: '4px'}}>
               <FrequencyNode freq={freq} playing={this.state.playing[index]} />
-              <div style={{ textAlign: 'center' }}>
-                <PrecNumber value={cents % 1200} precision={0} />
-              </div>
+              {this.props.editmode ? (
+                <div>
+                  <input
+                    type="number"
+                    value={Math.round(cents)}
+                    onChange={(e) => {
+                      const data = [...this.props.data];
+                      data[x] = parseInt(e.target.value)
+                      this.props.onChange(data)
+                    }}
+                    style={{ width: '5em' }}
+                  />
+                </div>
+              ) : (
+                <div style={{ textAlign: 'center' }}>
+                  <PrecNumber value={cents % 1200} precision={0} />
+                </div>
+              )}
               {/* <pre>{valueS}</pre> */}
               <div style={{ textAlign: 'center' }}>
                 <button
@@ -116,7 +152,9 @@ class Row extends React.PureComponent<RowProps, RowState> {
 
 interface MatrixProps {
   centralC: number,
-  data: (x: number, y: number) => { step: number, octave: number }
+  data: number[][],
+  onChange: (data: number[][]) => void,
+  editmode: boolean
 }
 
 class Matrix extends React.PureComponent<MatrixProps, {}> {
@@ -141,7 +179,13 @@ class Matrix extends React.PureComponent<MatrixProps, {}> {
               y={y} key={y}
               centralC={this.props.centralC}
               ref={(e) => { if (e) this.rows[y] = e }}
-              data={this.props.data}
+              data={this.props.data[y]}
+              onChange={(newData) => {
+                const data = [...this.props.data];
+                data[y] = newData
+                this.props.onChange(data)
+              }}
+              editmode={this.props.editmode}
             />
           ))}
           <tr>
@@ -154,32 +198,37 @@ class Matrix extends React.PureComponent<MatrixProps, {}> {
   }
 }
 
+interface Preset {
+  data: { step: number, octave: number }[][],
+  editable: boolean
+}
 
 interface State {
   centralC: number,
   playing: boolean[],
+  data: number[][][],
+  editmode: boolean
 }
 
-interface SaveState {
-  cents: number[][],
-  playing: boolean[][]
-}
+type QuicksaveState = { [key: number]: boolean[][] };
 
 export class MovableFretsGuitarPlayer extends React.PureComponent<{}, State> {
-  private matrices: Matrix[]
+  private matrices: { [key: number]: Matrix }
   private centralC: MathInput
-  private quicksaves: QuickSaves<SaveState[]>
+  private quicksaves: QuickSaves<QuicksaveState>
 
   constructor (props: {}) {
     super(props)
     this.state = {
       centralC: 440 / Math.pow(2, 21 / 12),
       playing: new Array(WIDTH * HEIGHT).fill(false),
+      data: combined,
+      editmode: false
     }
-    this.matrices = new Array(3).fill(null)
   }
 
   render () {
+    this.matrices = {}
     return (
       <div>
         <AudioController />
@@ -196,47 +245,77 @@ export class MovableFretsGuitarPlayer extends React.PureComponent<{}, State> {
                   }} ref={(e) => { if (e) this.centralC = e }} />
               </td>
             </tr>
+            <tr>
+              <th>Edit-mode</th>
+              <td>
+                <input type="checkbox" checked={this.state.editmode} onChange={(e) => {
+                  const editmode = e.target.checked
+                  this.setState({ editmode })
+                }}/>
+              </td>
+            </tr>
+            {this.state.editmode ? (
+              <tr>
+                <th>Rows</th>
+                <td>
+                  <input type="number" min={0} max={5} value={this.state.data.length} onChange={(e) => {
+                    const len = parseInt(e.target.value)
+                    const data = resizeArray(this.state.data, len, () => {
+                      return range(0, 6).map((y) =>
+                        range(0, 20).map((x) => 0)
+                      )
+                    });
+                    this.setState({ data })
+                  }}/>
+                </td>
+              </tr>
+            ) : null}
+            <Presets name='movable_frets_presets' default={combined}
+              onChange={(key: string, data: number[][][]) => this.setState({ data })}
+              current={() => this.state.data} />
+            <Presets name='movable_frets_quicksaves'
+              label="Saves"
+              onChange={(key: string, saves: (QuicksaveState | null)[]) => this.quicksaves.setState({ saves })}
+              current={() => this.quicksaves.state.saves} />
           </tbody>
         </table>
         <QuickSaves
-          load={(save: SaveState[]) => {
-            save.map((matrix, i) => {
-              Object.keys(matrix.cents).map((s) => {
-                let key = parseInt(s)
-                let cents = matrix.cents[key]
-                if (this.matrices[i].rows[key] && cents !== null) {
-                  this.matrices[i].rows[key].setState({ cents })
-                }
-              })
-              Object.keys(matrix.playing).map((s) => {
-                let key = parseInt(s)
-                let playing = matrix.playing[key]
-                if (this.matrices[i].rows[key] && playing !== null) {
-                  this.matrices[i].rows[key].setState({ playing })
-                }
-              })
+          load={(save: QuicksaveState) => {
+            Object.keys(this.matrices).map((s) => {
+              const key = parseInt(s)
+              if (save[key]) {
+                this.matrices[key].rows.map((row, rowi) => {
+                  const playing = save[key][rowi]
+                  row.setState({ playing })
+                })
+              }
             })
           }}
-          saveData={() => {
-            return this.matrices.map(matrix => { return {
-              cents: matrix.rows.map((o: Row) => o ? o.state.cents : new Array(WIDTH).fill(0)),
-              playing: matrix.rows.map((o: Row) => o ? o.state.playing : new Array(WIDTH).fill(false))
-            }})
-          }}
-          ref={(e: QuickSaves<SaveState[]>) => { if (e) this.quicksaves = e }}
+          saveData={() =>
+            mapValues(this.matrices, (matrix: Matrix) => 
+              matrix.rows.map(
+                (o: Row) => o ? o.state.playing : new Array(WIDTH).fill(false)
+              )
+            )
+          }
+          ref={(e: QuickSaves<QuicksaveState>) => { if (e) this.quicksaves = e }}
         />
-        <h4>Guitar 1</h4>
-        <Matrix centralC={this.state.centralC} data={(x, y) => {
-          return { step: pre[y][x][0] + 2, octave: pre[y][x][1] }
-        }} ref={(e) => { if (e) this.matrices[0] = e}}/>
-        <h4>Guitar 2</h4>
-        <Matrix centralC={this.state.centralC} data={(x, y) => {
-          return { step: pre[y][x][0], octave: pre[y][x][1] }
-        }} ref={(e) => { if (e) this.matrices[1] = e}}/>
-        <h4>Guitar 3</h4>
-        <Matrix centralC={this.state.centralC} data={(x, y) => {
-          return { step: pre[y][x][0] - 2, octave: pre[y][x][1] }
-        }} ref={(e) => { if (e) this.matrices[2] = e}}/>
+        {this.state.data.map((matrix, i) =>
+          <div key={i}>
+            <h4>Guitar {i + 1}</h4>
+            <Matrix
+              centralC={this.state.centralC}
+              data={matrix}
+              ref={(e) => { if (e) this.matrices[i] = e}}
+              onChange={(newData) => {
+                const data = [...this.state.data];
+                data[i] = newData
+                this.setState({ data })
+              }}
+              editmode={this.state.editmode}
+            />
+          </div>
+        )}
       </div>
     )
   }
