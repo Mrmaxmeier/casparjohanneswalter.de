@@ -5,11 +5,12 @@ import * as download from 'downloadjs'
 
 interface Props<T> {
     name: string,
-    default?: T, // TODO: unused?
+    default?: T,
+    defaultKey?: string,
     onChange: (key: string, data: T) => void,
     current: () => T,
     presets?: { [preset: string]: T },
-    label?: string
+    label?: string,
 }
 
 interface State<T> {
@@ -23,10 +24,10 @@ export class Presets<T> extends React.PureComponent<Props<T>, State<T>> {
 
   constructor (props: Props<T>) {
     super(props)
-    let defaultPresets: { [key: string]: T | null } = { '-- New --': null }
+    let defaultPresets: { [key: string]: T | null } = { '-- New --': this.props.default || null }
     this.state = {
       presets: {...defaultPresets, ...this.props.presets} as { [preset: string]: T | null },
-      preset: '-- New --',
+      preset: this.props.defaultKey || '-- New --',
       localStorageError: false
     }
     if (typeof window !== 'undefined') {

@@ -41,7 +41,7 @@ let pre = [
 const WIDTH = 20
 const HEIGHT = 6
 
-const combined = [
+const Preset_3Gui_EDO53_Walter = [
   (x: number, y: number) => {
     return { step: pre[y][x][0] + 2, octave: pre[y][x][1] }
   },
@@ -59,6 +59,44 @@ const combined = [
     })
   )
 )
+
+interface InputNumberProps {
+  value: number,
+  onChange: (data: number) => void
+}
+
+interface InputNumberState {
+  override?: string
+}
+
+class InputNumber extends React.PureComponent<InputNumberProps, InputNumberState> {
+  constructor(props: InputNumberProps) {
+    super(props)
+    this.state = { override: undefined }
+  }
+
+  componentWillReceiveProps() {
+    this.setState({ override: undefined })
+  }
+
+  render () {
+    return (
+      <input
+        value={this.state.override || this.props.value}
+        onChange={(e) => {
+          const val = parseInt(e.target.value)
+          if (isNaN(val)) {
+            this.setState({ override: e.target.value })
+          } else {
+            this.props.onChange(val)
+          }
+        }}
+        style={{ width: '4em', color: this.state.override !== undefined ? 'red' : null }}
+      />
+    )
+  }
+}
+
 
 interface RowProps {
   y: number,
@@ -96,15 +134,13 @@ class Row extends React.PureComponent<RowProps, RowState> {
               <FrequencyNode freq={freq} playing={this.state.playing[index]} />
               {this.props.editmode ? (
                 <div>
-                  <input
-                    type="number"
+                  <InputNumber
                     value={Math.round(cents)}
-                    onChange={(e) => {
+                    onChange={(val) => {
                       const data = [...this.props.data];
-                      data[x] = parseInt(e.target.value)
+                      data[x] = val
                       this.props.onChange(data)
                     }}
-                    style={{ width: '5em' }}
                   />
                 </div>
               ) : (
@@ -128,19 +164,6 @@ class Row extends React.PureComponent<RowProps, RowState> {
                 >
                   {labels[y][x]}
                 </button>
-                {/*
-                <br />
-                <input
-                  type="number"
-                  value={this.state.cents[index]}
-                  style={{ width: '3em' }}
-                  onChange={(e) => {
-                    let cents = clone(this.state.cents)
-                    cents[index] = parseInt(e.target.value)
-                    this.setState({ cents })
-                  }}
-                />
-                */}
               </div>
             </td>
           )
@@ -222,7 +245,7 @@ export class MovableFretsGuitarPlayer extends React.PureComponent<{}, State> {
     this.state = {
       centralC: 440 / Math.pow(2, 21 / 12),
       playing: new Array(WIDTH * HEIGHT).fill(false),
-      data: combined,
+      data: Preset_3Gui_EDO53_Walter,
       editmode: false
     }
   }
@@ -270,9 +293,10 @@ export class MovableFretsGuitarPlayer extends React.PureComponent<{}, State> {
                 </td>
               </tr>
             ) : null}
-            <Presets name='movable_frets_presets' default={combined}
+            <Presets name='movable_frets_presets' presets={{'3Gui EDO53 Walter': Preset_3Gui_EDO53_Walter}}
               onChange={(key: string, data: number[][][]) => this.setState({ data })}
-              current={() => this.state.data} />
+              current={() => this.state.data}
+              defaultKey="3Gui EDO53 Walter" />
             <Presets name='movable_frets_quicksaves'
               label="Saves"
               onChange={(key: string, saves: (QuicksaveState | null)[]) => this.quicksaves.setState({ saves })}
