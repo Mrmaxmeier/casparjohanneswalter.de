@@ -65,12 +65,12 @@ class Player extends React.PureComponent<PlayerProps, { playing: boolean }> {
   doLerp (duration: number, changes: { volume: number[], freq: number[] }) {
     this.startTime = window.performance.now()
     let lerpWindow = 5 // 5
-    this.interval = setInterval(() => {
+    this.interval = window.setInterval(() => {
       let now = window.performance.now()
       let tFrom = (now - this.startTime) / duration
       let tTo = (now + lerpWindow - this.startTime) / duration
       if (tFrom >= 1) {
-        clearInterval(this.interval)
+        window.clearInterval(this.interval)
       }
       tFrom = Math.min(tFrom, 1)
       tTo = Math.min(tTo, 1)
@@ -100,7 +100,7 @@ class Player extends React.PureComponent<PlayerProps, { playing: boolean }> {
   stop () {
     this.provider.stop()
     if (this.interval) {
-      clearInterval(this.interval)
+      window.clearInterval(this.interval)
     }
     this.setState({playing: false})
   }
