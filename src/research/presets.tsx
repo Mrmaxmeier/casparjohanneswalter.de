@@ -156,3 +156,57 @@ export class Presets<T> extends React.PureComponent<Props<T>, State<T>> {
     )
   }
 }
+
+
+interface QuickSavesProps<Save> {
+  saveData: (i: number) => Save,
+  load: (save: Save) => void,
+}
+interface QuickSaveState<Save> {
+  saves: (Save | null)[]
+}
+export class QuickSaves<Save> extends React.PureComponent<QuickSavesProps<Save>, QuickSaveState<Save>> {
+  constructor (props: QuickSavesProps<Save>) {
+    super(props)
+    this.state = {
+      saves: new Array(8).fill(null)
+    }
+  }
+  render () {
+    return (
+        <table>
+          <tbody>
+            <tr>
+              {this.state.saves.map((_: Save, i: number) => (
+                <th key={i} style={{padding: '8px'}}>
+                  <button
+                    onClick={() => {
+                      let save = this.props.saveData(i)
+                      let saves = [...this.state.saves];
+                      saves[i] = save
+                      if (i == saves.length - 1) {
+                        saves.push(null);
+                      }
+                      this.setState({ saves })
+                    }}
+                    style={{padding: '8px'}}
+                  >Save {i + 1}</button>
+                </th>
+              ))}
+            </tr>
+            <tr>
+              {this.state.saves.map((data: Save, i: number) => (
+                <th key={i} style={{padding: '8px'}}>
+                  <button
+                    disabled={!data}
+                    onClick={() => this.props.load(data)}
+                    style={{padding: '8px'}}
+                  >Load {i + 1}</button>
+                </th>
+              ))}
+            </tr>
+          </tbody>
+        </table>
+    )
+  }
+}
