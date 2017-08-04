@@ -60,6 +60,15 @@ const Preset_3Gui_EDO53_Walter = [
   )
 )
 
+const Preset_5Gui_EDO12 = range(5).map(() => [
+  [2800, 2900, 3000, 3100, 3200, 3300, 3400, 3500, 3600, 3700, 3800, 3900, 4000, 4100, 4200, 4300, 4400, 4500, 4600, 4700],
+  [2300, 2400, 2500, 2600, 2700, 2800, 2900, 3000, 3100, 3200, 3300, 3400, 3500, 3600, 3700, 3800, 3900, 4000, 4100, 4200],
+  [1900, 2000, 2100, 2200, 2300, 2400, 2500, 2600, 2700, 2800, 2900, 3000, 3100, 3200, 3300, 3400, 3500, 3600, 3700, 3800],
+  [1400, 1500, 1600, 1700, 1800, 1900, 2000, 2100, 2200, 2300, 2400, 2500, 2600, 2700, 2800, 2900, 3000, 3100, 3200, 3300],
+  [900, 1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000, 2100, 2200, 2300, 2400, 2500, 2600, 2700, 2800],
+  [400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000, 2100, 2200, 2300]
+])
+
 interface InputNumberProps {
   value: number,
   onChange: (data: number) => void
@@ -293,7 +302,7 @@ export class MovableFretsGuitarPlayer extends React.PureComponent<{}, State> {
                 </td>
               </tr>
             ) : null}
-            <Presets name='movable_frets_presets' presets={{'3Gui EDO53 Walter': Preset_3Gui_EDO53_Walter}}
+            <Presets name='movable_frets_presets' presets={{'3Gui EDO53 Walter': Preset_3Gui_EDO53_Walter, '5Gui EDO12': Preset_5Gui_EDO12}}
               onChange={(key: string, data: number[][][]) => this.setState({ data })}
               current={() => this.state.data}
               defaultKey="3Gui EDO53 Walter" />
