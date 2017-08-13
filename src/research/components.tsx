@@ -77,7 +77,7 @@ export class MathInput extends React.PureComponent<MathInputProps, MathInputStat
         onChange={(d) => {
           let parsed = evalMath(d.target.value)
           if (typeof parsed === 'number') {
-            this.setState({ value: parsed })
+            this.setState({ value: parsed, error: undefined })
             if (this.props.onChange) {
               this.props.onChange(parsed)
             }
@@ -533,9 +533,7 @@ export class PlayAllButton extends React.PureComponent<PlayAllButtonProps, { act
   toggle () {
     this.setState({ active: !this.state.active })
     this.props.playerRefs.forEach((p, i) => {
-      if (this.state.active) {
-        p.setPlaying(!this.state.active)
-      }
+      p.setPlaying(!this.state.active)
     })
   }
 
