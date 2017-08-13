@@ -18,6 +18,7 @@ import { SuperCembaloPlayer } from '../research/supercembaloplayer'
 import { FrettedInstrumentPlayer } from '../research/fretted_instrument_player'
 import { Limit5MatrixPlayer } from '../research/limit5matrix'
 import { MovableFretsGuitarPlayer } from '../research/movable_frets_guitar'
+import { EDO31 } from '../research/edo31'
 // import { MeanToneCircle } from '../research/mean_tone_circle'
 
 export class Converters extends React.PureComponent {
@@ -163,6 +164,11 @@ let musicCalculators: PageDef[] = [
     id: 'movable_frets_guitar',
     title: 'Movable-Frets Guitar Player',
     component: MovableFretsGuitarPlayer
+  },
+  {
+    id: 'edo31',
+    title: 'EDO-31 Microtonal Guitar Player',
+    component: EDO31
   }
 ]
 
