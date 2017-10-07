@@ -4,7 +4,6 @@ import { max, sqrt, log } from 'mathjs'
 import {MathInput, FreqPlayer, PrecNumber} from './components'
 
 interface State {
-  octave: number,
   freq: number,
 }
 
@@ -13,10 +12,9 @@ export class SoundGen extends React.PureComponent<{}, State> {
   constructor (props: {}) {
     super(props)
     this.state = {
-      octave: 2,
-      freq: 440,
+      freq: 440
     }
-    this._nodes = new Array(32)
+    this._nodes = new Array(32).fill(null)
   }
 
   defaultVolume (index: number, freq?: number) {
@@ -28,18 +26,10 @@ export class SoundGen extends React.PureComponent<{}, State> {
 
   render () {
     let refFreq = this.state.freq
-    let octave = this.state.octave
     return (
       <div>
         <table>
           <tbody>
-            <tr>
-              <th>Octave</th>
-              <th>
-                <MathInput default={2} wide
-                  onChange={(octave) => { this.setState({ octave }) }} />
-              </th>
-            </tr>
             <tr>
               <th>Freq</th>
               <th>
@@ -76,7 +66,7 @@ export class SoundGen extends React.PureComponent<{}, State> {
         <table>
           <tbody>
               {new Array(32).fill(null).map((_, i) => {
-                let freq = Math.pow(octave, Math.log(i + 1)) * refFreq
+                let freq = refFreq * (i + 1);
                 return <FreqPlayer showTypePicker={false}
                           inTable freq={freq} key={i}
                           defaultVolume={this.defaultVolume(i)}

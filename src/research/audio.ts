@@ -113,9 +113,8 @@ export class SoundGenProvider implements IAudioProvider {
   }
 
   frequency (index: number, f?: number) {
-    let octave = 2
     let freq = f || this.options.frequency
-    return Math.pow(octave, Math.log2(index + 1)) * freq
+    return (index + 1) * freq
   }
 
   constructor (options: Partial<Options>) {
@@ -126,7 +125,7 @@ export class SoundGenProvider implements IAudioProvider {
       ...options
     }
     this.count = 16
-    this._waves = new Array(this.count)
+    this._waves = new Array(this.count).fill(null)
     this._freq = undefined
   }
 
