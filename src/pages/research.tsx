@@ -19,7 +19,7 @@ import { FrettedInstrumentPlayer } from '../research/fretted_instrument_player'
 import { Limit5MatrixPlayer } from '../research/limit5matrix'
 import { MovableFretsGuitarPlayer } from '../research/movable_frets_guitar'
 import { EDO31 } from '../research/edo31'
-// import { MeanToneCircle } from '../research/mean_tone_circle'
+import { MeanToneCommaVisualizer } from '../research/mean_tone_comma_visualizer'
 
 export class Converters extends React.PureComponent {
   render () {
@@ -177,6 +177,11 @@ let additionalMathTools: PageDef[] = [
     id: 'fraction_windowing',
     title: 'Fraction Windowing',
     component: FractionWindowing
+  },
+  {
+    id: 'meantone',
+    title: 'Meantone Comma Visualizer',
+    component: MeanToneCommaVisualizer
   }
 ]
 
