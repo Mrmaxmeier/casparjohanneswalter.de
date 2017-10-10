@@ -29,7 +29,26 @@ module.exports = {
       test: /\.(jpe?g$|png)/i,
       loaders: [
         'file-loader?hash=sha512&digest=hex&name=[hash].[ext]',
-        'image-webpack-loader?bypassOnDebug&optipng.optimizationLevel=7&gifsicle.interlaced=false?progressive=true'
+        {
+          loader: 'image-webpack-loader',
+          options: {
+            bypassOnDebug: true,
+            gifsicle: {
+              interlaced: false
+            },
+            pngquant: {
+              quality: '65-90',
+              speed: 4
+            },
+            mozjpeg: {
+              progressive: true,
+              quality: 65
+            },
+            webp: {
+              quality: 75
+            }
+          }
+        }
       ]
     }, {
       test: /\.(ttf|eot|svg|woff(2)?)(\?[a-z0-9=&.]+)?$/,

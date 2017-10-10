@@ -43,5 +43,6 @@ module.exports = Object.assign(config, {
       filename: 'service-worker.js',
       maximumFileSizeToCacheInBytes: 1048576
     })
-  ]
+  ],
+  devtool: 'cheap-module-source-map'
 })
