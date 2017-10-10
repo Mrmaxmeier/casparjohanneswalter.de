@@ -206,6 +206,7 @@ export class PrecNumber extends React.PureComponent<PrecNumberProps, {}> {
 interface SpecificRangeSliderProps extends React.Props<SpecificRangeSlider> {
   defaultMin: number,
   defaultMax: number,
+  defaultValue?: number,
   step?: number,
   onChange: (_: number) => void
 }
@@ -224,7 +225,7 @@ export class SpecificRangeSlider extends React.PureComponent<SpecificRangeSlider
   constructor (props: SpecificRangeSliderProps) {
     super(props)
     this.state = {
-      value: (props.defaultMin + props.defaultMax) / 2,
+      value: props.defaultValue || (props.defaultMin + props.defaultMax) / 2,
       min: props.defaultMin,
       max: props.defaultMax
     }
