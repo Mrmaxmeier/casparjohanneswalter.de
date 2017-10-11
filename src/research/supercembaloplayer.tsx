@@ -23,6 +23,8 @@ let octaveLayout = octaveLayoutS.map((s) => {
   return chars.map((c) => c !== ' ')
 })
 
+console.log(octaveLayout)
+
 let _idx = -1
 let layoutIndex = octaveLayout.map((row) =>
   row.map((a) => {
@@ -87,7 +89,7 @@ export class SuperCembaloPlayer extends React.PureComponent<{}, State> {
       octaves,
       concertPitch: 440,
       pitch11: 440 / 9 * 8,
-      data: new Array(38).fill(null),
+      data: new Array(layoutLabels.length).fill(' '),
       mode: 'ratio',
       muted: false,
       rows: 8

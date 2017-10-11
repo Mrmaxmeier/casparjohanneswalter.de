@@ -225,7 +225,7 @@ export class SpecificRangeSlider extends React.PureComponent<SpecificRangeSlider
   constructor (props: SpecificRangeSliderProps) {
     super(props)
     this.state = {
-      value: props.defaultValue || (props.defaultMin + props.defaultMax) / 2,
+      value: props.defaultValue !== undefined ?  props.defaultValue : (props.defaultMin + props.defaultMax) / 2,
       min: props.defaultMin,
       max: props.defaultMax
     }
@@ -252,7 +252,7 @@ export class SpecificRangeSlider extends React.PureComponent<SpecificRangeSlider
   render () {
     let max = this.state.max
     let min = this.state.min
-    let step = this.props.step || max - min < 100 ? 0.1 : 1
+    let step = this.props.step || (max - min < 100 ? 0.1 : 1)
     return (
       <span>
         <MathInput default={this.props.defaultMin}
