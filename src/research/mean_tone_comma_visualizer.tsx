@@ -216,10 +216,10 @@ export class MeanToneCommaVisualizer extends React.PureComponent<{}, State> {
       "1/5 comma": 697.654,
       "1/6 comma": 698.371,
       "EDO 12": 700,
-      "shismatic pythagorean, optimized third": 701.711,
+      "schismatic pythagorean, optimized third": 701.711,
       "EDO 53": 701.887,
       "perfect fifth (0 comma)": 701.955,
-      "shismatic pythagorean, optimized seventh": 702.227,
+      "schismatic pythagorean, optimized seventh": 702.227,
       "EDO 34": 705.882
     }
     return (
