@@ -75,8 +75,16 @@ export class FrequencyNode extends React.PureComponent<FNProps, {}> {
     if (this._waves !== undefined && (prevProps.volume !== props.volume || prevProps.freq !== props.freq)) {
       this._waves.forEach((wave, index) => {
         if (wave && this.props.freq) {
-          wave.gainNode.gain.value = this.volume(index)
-          wave.node.frequency.value = this.frequency(index)
+          let freq = this.frequency(index)
+          let vol = this.volume(index)
+          // TODO: does this check out?
+          if (freq >= 22050) {
+            wave.gainNode.gain.value = 0
+            wave.node.frequency.value = 22050
+          } else {
+            wave.gainNode.gain.value = vol
+            wave.node.frequency.value = freq
+          }
         }
       })
     }

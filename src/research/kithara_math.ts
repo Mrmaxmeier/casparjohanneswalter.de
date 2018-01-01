@@ -34,7 +34,7 @@ export function calcState (
 
   let passedObj = obj
 
-  return state.map((obj: {ratio: Fraction, octave: number, overtone?: number}, index: number) => {
+  return state.map((obj: {ratio: Fraction, octave?: number, overtone?: number}, index: number) => {
     let ratio = getMultiplier(obj).mul(multiplier)
     let octave = calcOctave(ratio)
     ratio.denominator *= Math.pow(2, octave)

@@ -178,7 +178,7 @@ export class QuickSaves<Save> extends React.PureComponent<QuickSavesProps<Save>,
         <table>
           <tbody>
             <tr>
-              {this.state.saves.map((_: Save, i: number) => (
+              {this.state.saves.map((_: (Save | null), i: number) => (
                 <th key={i} style={{padding: '8px'}}>
                   <button
                     onClick={() => {
@@ -196,11 +196,11 @@ export class QuickSaves<Save> extends React.PureComponent<QuickSavesProps<Save>,
               ))}
             </tr>
             <tr>
-              {this.state.saves.map((data: Save, i: number) => (
+              {this.state.saves.map((data: (Save | null), i: number) => (
                 <th key={i} style={{padding: '8px'}}>
                   <button
                     disabled={!data}
-                    onClick={() => this.props.load(data)}
+                    onClick={() => this.props.load(data as Save)}
                     style={{padding: '8px'}}
                   >Load {i + 1}</button>
                 </th>

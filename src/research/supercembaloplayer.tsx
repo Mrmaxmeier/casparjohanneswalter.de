@@ -23,8 +23,6 @@ let octaveLayout = octaveLayoutS.map((s) => {
   return chars.map((c) => c !== ' ')
 })
 
-console.log(octaveLayout)
-
 let _idx = -1
 let layoutIndex = octaveLayout.map((row) =>
   row.map((a) => {

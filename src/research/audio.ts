@@ -26,7 +26,6 @@ export interface IPlayable {
 }
 
 interface Options {
-  type: string,
   frequency: number,
   volume: number
 }
@@ -39,7 +38,6 @@ export class AudioProvider implements IAudioProvider, IPlayable {
 
   constructor (options: Partial<Options>, wavetype: string) {
     this.options = {
-      type: 'sine',
       frequency: 440,
       volume: 1.0,
       ...options
@@ -86,6 +84,7 @@ export class AudioProvider implements IAudioProvider, IPlayable {
       if (options.volume) {
         this.wave.volume = options.volume
       }
+      /* TODO: test change of wavetype
       if (oldOptions.type !== options.type) {
         let playing = this.playing
         this.stop()
@@ -94,6 +93,7 @@ export class AudioProvider implements IAudioProvider, IPlayable {
           this.play()
         }
       }
+      */
     }
   }
 }
@@ -119,7 +119,6 @@ export class SoundGenProvider implements IAudioProvider {
 
   constructor (options: Partial<Options>) {
     this.options = {
-      type: 'sine',
       frequency: 440,
       volume: 1.0,
       ...options

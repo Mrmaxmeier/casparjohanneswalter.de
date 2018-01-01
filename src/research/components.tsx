@@ -301,7 +301,6 @@ export class FreqPlayer extends React.PureComponent<FreqPlayerProps, FreqPlayerS
     this.provider = new AudioProvider({
       volume: this.state.volume * 0.2,
       frequency: this.props.freq,
-      type: 'sine'
     }, 'sine')
   }
 

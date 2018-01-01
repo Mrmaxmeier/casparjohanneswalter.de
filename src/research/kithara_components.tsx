@@ -225,13 +225,13 @@ export class KitharaCalc extends React.Component<{}, KitharaCalcState> {
 
   setStateFromPreset (instrument: string, preset: string, setState = true) {
     let p = presets[instrument][preset]
-    let row = p.map((a: number[], index: number) => {
+    let row = p.map((a: (number | string)[], index: number) => {
       if (index === 0) {
-        return { ratio: new Fraction(a[0], a[1]) }
+        return { ratio: new Fraction(a[0] as number, a[1] as number) }
       }
       return {
-        ratio: new Fraction(a[0], a[1]),
-        octave: a[2]
+        ratio: new Fraction(a[0] as number, a[1] as number),
+        octave: a[2] as number // TODO: can be string
       }
     })
     let state = {
