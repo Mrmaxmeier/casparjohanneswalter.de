@@ -20,6 +20,7 @@ import { Limit5MatrixPlayer } from '../research/limit5matrix'
 import { MovableFretsGuitarPlayer } from '../research/movable_frets_guitar'
 import { EDO31 } from '../research/edo31'
 import { MeanToneCommaVisualizer } from '../research/mean_tone_comma_visualizer'
+import { SinusGlissando } from '../research/sinus_glissando'
 
 export class Converters extends React.PureComponent {
   render () {
@@ -169,6 +170,11 @@ let musicCalculators: PageDef[] = [
     id: 'edo31',
     title: 'EDO-31 Microtonal Guitar Player',
     component: EDO31
+  },
+  {
+    id: 'sinus_glissando',
+    title: 'Sinus Glissando',
+    component: SinusGlissando
   }
 ]
 
