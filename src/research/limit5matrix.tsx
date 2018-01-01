@@ -135,6 +135,9 @@ interface Preset {
   save: (SaveState | null)[]
 }
 
+type GQuickSaves = new () => QuickSaves<SaveState>;
+const GQuickSaves = QuickSaves as GQuickSaves;
+
 export class Limit5MatrixPlayer extends React.PureComponent<{}, State> {
   private rows: { [key: number]: Row }
   private centralC: MathInput
@@ -240,7 +243,7 @@ export class Limit5MatrixPlayer extends React.PureComponent<{}, State> {
               current={this.dumpPreset.bind(this)} />
           </tbody>
         </table>
-        <QuickSaves
+        <GQuickSaves
           load={(save: SaveState) => {
             Object.keys(save.octave).map((s) => {
               let key = parseInt(s)

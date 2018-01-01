@@ -244,6 +244,13 @@ interface State {
 
 type QuicksaveState = { [key: number]: boolean[][] };
 
+type GPresets = new () => Presets<number[][][]>;
+const GPresets = Presets as GPresets;
+type G2Presets = new () => Presets<(QuicksaveState | null)[]>;
+const G2Presets = Presets as G2Presets;
+type GQuickSaves = new () => QuickSaves<QuicksaveState>;
+const GQuickSaves = QuickSaves as GQuickSaves;
+
 export class MovableFretsGuitarPlayer extends React.PureComponent<{}, State> {
   private matrices: { [key: number]: Matrix }
   private centralC: MathInput
@@ -302,17 +309,17 @@ export class MovableFretsGuitarPlayer extends React.PureComponent<{}, State> {
                 </td>
               </tr>
             ) : null}
-            <Presets name='movable_frets_presets' presets={{'3Gui EDO53 Walter': Preset_3Gui_EDO53_Walter, '5Gui EDO12': Preset_5Gui_EDO12}}
+            <GPresets name='movable_frets_presets' presets={{'3Gui EDO53 Walter': Preset_3Gui_EDO53_Walter, '5Gui EDO12': Preset_5Gui_EDO12}}
               onChange={(key: string, data: number[][][]) => this.setState({ data })}
               current={() => this.state.data}
               defaultKey="3Gui EDO53 Walter" />
-            <Presets name='movable_frets_quicksaves'
+            <G2Presets name='movable_frets_quicksaves'
               label="Saves"
               onChange={(key: string, saves: (QuicksaveState | null)[]) => this.quicksaves.setState({ saves })}
               current={() => this.quicksaves.state.saves} />
           </tbody>
         </table>
-        <QuickSaves
+        <GQuickSaves
           load={(save: QuicksaveState) => {
             Object.keys(this.matrices).map((s) => {
               const key = parseInt(s)

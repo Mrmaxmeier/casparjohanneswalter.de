@@ -117,6 +117,11 @@ interface State {
 
 type QuicksaveState = RowState[];
 
+type GPresets = new () => Presets<(RowState[] | null)[]>;
+const GPresets = Presets as GPresets;
+type GQuickSaves = new () => QuickSaves<QuicksaveState>;
+const GQuickSaves = QuickSaves as GQuickSaves;
+
 const ROWS = 32
 const COLUMNS = 6
 
@@ -160,13 +165,13 @@ export class EDO31 extends React.PureComponent<{}, State> {
                 }}/>
               </td>
             </tr>
-            <Presets name='edo31_quicksaves'
+            <GPresets name='edo31_quicksaves'
               label="Saves"
               onChange={(key: string, saves: (QuicksaveState | null)[]) => this.quicksaves.setState({ saves })}
               current={() => this.quicksaves.state.saves} />
           </tbody>
         </table>
-        <QuickSaves
+        <GQuickSaves
           load={(save: QuicksaveState) => {
             save.forEach((row, i) => {
               this.rows[i].setState(row)
