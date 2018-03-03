@@ -1,6 +1,5 @@
 import * as React from 'react'
 import { BrowserRouter, HashRouter, Router } from 'react-router-dom'
-import * as ReactGA from 'react-ga'
 import { createBrowserHistory, createHashHistory } from 'history'
 
 import { tags, slugify } from './tags'
@@ -14,25 +13,11 @@ interface RoutesProps extends React.Props<any> {
 }
 
 export class Routes extends React.PureComponent<RoutesProps, {}> {
-  componentDidMount () {
-    if (this.props.analytics) {
-      ReactGA.set({ page: window.location.pathname })
-      ReactGA.pageview(window.location.pathname)
-    }
-  }
-
   render () {
     let history = (__IN_BUILD__
       ? () => createBrowserHistory()
       : () => createHashHistory()
     )()
-
-    if (this.props.analytics) {
-      history.listen((location, action) => {
-        ReactGA.set({ page: location.pathname })
-        ReactGA.pageview(location.pathname)
-      })
-    }
 
     return <Router history={history}><App /></Router>
   }
