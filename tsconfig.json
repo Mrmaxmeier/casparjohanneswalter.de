@@ -56,6 +56,6 @@
   "exclude": ["node_modules"],
 
   "awesomeTypescriptLoaderOptions": {
-    "useBabel": true
+    "useBabel": false
   }
 }

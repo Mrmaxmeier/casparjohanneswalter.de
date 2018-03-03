@@ -28,27 +28,7 @@ module.exports = {
     }, {
       test: /\.(jpe?g$|png)/i,
       loaders: [
-        'file-loader?hash=sha512&digest=hex&name=[hash].[ext]',
-        {
-          loader: 'image-webpack-loader',
-          options: {
-            bypassOnDebug: true,
-            gifsicle: {
-              interlaced: false
-            },
-            pngquant: {
-              quality: '65-90',
-              speed: 4
-            },
-            mozjpeg: {
-              progressive: true,
-              quality: 65
-            },
-            webp: {
-              quality: 75
-            }
-          }
-        }
+        'file-loader?hash=sha512&digest=hex&name=[hash].[ext]'
       ]
     }, {
       test: /\.(ttf|eot|svg|woff(2)?)(\?[a-z0-9=&.]+)?$/,
