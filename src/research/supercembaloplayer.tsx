@@ -5,6 +5,7 @@ import { AudioController, AudioControllerRow } from './audioComponents'
 import { concertPitchToC0, ratioToCents, evalMathN } from './converters'
 import { Presets } from './presets'
 import { range, clone } from 'lodash'
+import { ConcertPitchSetting } from './settings';
 
 let octaveLayoutS = [
   ' X X X X X X X ',
@@ -77,8 +78,8 @@ interface Preset {
 export class SuperCembaloPlayer extends React.PureComponent<{}, State> {
   private players: (CompactFrequencyPlayer | null)[]
   private inputs: (MathInput | null)[]
-  private concertPitch: MathInput
-  private pitch11: MathInput
+  private concertPitch?: MathInput
+  private pitch11?: MathInput
 
   constructor (props: {}) {
     super(props)
@@ -97,8 +98,10 @@ export class SuperCembaloPlayer extends React.PureComponent<{}, State> {
   }
 
   onPreset (name: string, preset: Preset) {
-    this.concertPitch.setValue(preset.concertPitch, true)
-    this.pitch11.setValue(preset.pitch11, true)
+    if (this.concertPitch)
+      this.concertPitch.setValue(preset.concertPitch, true)
+    if (this.pitch11)
+      this.pitch11.setValue(preset.pitch11, true)
     let data = this.inputs.map((input, i) => {
       if (input) {
         input.setValue(preset.data[i])
@@ -116,8 +119,8 @@ export class SuperCembaloPlayer extends React.PureComponent<{}, State> {
     return {
       octaves: this.state.octaves,
       mode: this.state.mode,
-      concertPitch: this.concertPitch.text(),
-      pitch11: this.pitch11.text(),
+      concertPitch: (this.concertPitch as MathInput).text(),
+      pitch11: (this.pitch11 as MathInput).text(),
       data: this.inputs.map((i) => i ? i.text() : '')
     }
   }
@@ -213,9 +216,9 @@ export class SuperCembaloPlayer extends React.PureComponent<{}, State> {
               </th>
             </tr>
             <Presets name='superCembaloPlayerPresets' default={{
+              octaves: 4,
               concertPitch: '440',
               pitch11: '440 / 9 * 8',
-              rows: 8,
               mode: 'ratio',
               data: range(38).map(() => '')
             }} onChange={this.onPreset.bind(this)}

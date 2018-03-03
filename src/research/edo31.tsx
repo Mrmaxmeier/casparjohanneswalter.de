@@ -127,8 +127,8 @@ const COLUMNS = 6
 
 export class EDO31 extends React.PureComponent<{}, State> {
   private rows: Row[]
-  private centralC: MathInput
-  private quicksaves: QuickSaves<QuicksaveState>
+  private centralC?: MathInput
+  private quicksaves?: QuickSaves<QuicksaveState>
 
   constructor (props: {}) {
     super(props)
@@ -136,6 +136,7 @@ export class EDO31 extends React.PureComponent<{}, State> {
       centralC: 440 / Math.pow(2, 17 / 12),
       editmode: false
     }
+    this.rows = []
   }
 
   render () {
@@ -167,8 +168,10 @@ export class EDO31 extends React.PureComponent<{}, State> {
             </tr>
             <GPresets name='edo31_quicksaves'
               label="Saves"
-              onChange={(key: string, saves: (QuicksaveState | null)[]) => this.quicksaves.setState({ saves })}
-              current={() => this.quicksaves.state.saves} />
+              onChange={(key: string, saves: (QuicksaveState | null)[]) => {
+                if (this.quicksaves) this.quicksaves.setState({ saves })}
+              }
+              current={() => (this.quicksaves as QuickSaves<QuicksaveState>).state.saves} />
           </tbody>
         </table>
         <GQuickSaves

@@ -105,6 +105,18 @@ export class SoundGenProvider implements IAudioProvider {
   private _freq?: number
   private _waves: Pizzicato.Sound[]
 
+  constructor (options: Partial<Options>) {
+    this.options = {
+      frequency: 440,
+      volume: 1.0,
+      ...options
+    }
+    this.count = 16
+    this._waves = new Array(this.count).fill(null)
+    this._freq = undefined
+    this.playing = false
+  }
+
   volume (index: number, f?: number) {
     let refFreq = f || this.options.frequency
     refFreq = max(refFreq, 32)
@@ -115,17 +127,6 @@ export class SoundGenProvider implements IAudioProvider {
   frequency (index: number, f?: number) {
     let freq = f || this.options.frequency
     return (index + 1) * freq
-  }
-
-  constructor (options: Partial<Options>) {
-    this.options = {
-      frequency: 440,
-      volume: 1.0,
-      ...options
-    }
-    this.count = 16
-    this._waves = new Array(this.count).fill(null)
-    this._freq = undefined
   }
 
   init () {

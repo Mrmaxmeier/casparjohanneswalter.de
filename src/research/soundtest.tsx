@@ -15,6 +15,7 @@ export class SoundTest extends React.PureComponent<{}, State> {
       freq: 440,
       octave: 2
     }
+    this._nodes = []
   }
 
   defaultVolume(i: number, freq?: number) {

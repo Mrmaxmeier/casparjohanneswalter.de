@@ -49,8 +49,7 @@ interface PlayerProps {
 
 class Player extends React.PureComponent<PlayerProps, { playing: boolean }> {
   private provider: SoundGenProvider
-  private interval: number
-  private startTime: number
+  private interval?: number
   constructor (props: PlayerProps) {
     super(props)
     this.state = {
@@ -63,13 +62,13 @@ class Player extends React.PureComponent<PlayerProps, { playing: boolean }> {
   }
 
   doLerp (duration: number, changes: { volume: number[], freq: number[] }) {
-    this.startTime = window.performance.now()
+    const startTime = window.performance.now()
     let lerpWindow = 5 // 5
     this.interval = window.setInterval(() => {
       let now = window.performance.now()
-      let tFrom = (now - this.startTime) / duration
-      let tTo = (now + lerpWindow - this.startTime) / duration
-      if (tFrom >= 1) {
+      let tFrom = (now - startTime) / duration
+      let tTo = (now + lerpWindow - startTime) / duration
+      if (tFrom >= 1 && this.interval) {
         window.clearInterval(this.interval)
       }
       tFrom = Math.min(tFrom, 1)
@@ -151,9 +150,9 @@ interface Preset {
 
 export class ChordPlayer2 extends React.PureComponent<{}, ChordPlayer2State> {
   private players: Player[][]
-  private concertPitch: MathInput
-  private pitch11: MathInput
-  private rows: HTMLInputElement
+  private concertPitch?: MathInput
+  private pitch11?: MathInput
+  private rows?: HTMLInputElement
   constructor (props: {}) {
     super(props)
     let rows = 8
@@ -186,8 +185,10 @@ export class ChordPlayer2 extends React.PureComponent<{}, ChordPlayer2State> {
 
   onPreset (name: string, preset: Preset) {
     this.setRows(preset.rows, () => {
-      this.concertPitch.setValue(preset.concertPitch, true)
-      this.pitch11.setValue(preset.pitch11, true)
+      if (this.concertPitch)
+        this.concertPitch.setValue(preset.concertPitch, true)
+      if (this.pitch11)
+        this.pitch11.setValue(preset.pitch11, true)
       this.setState({
         mode: preset.mode,
         data: preset.data,
@@ -200,8 +201,8 @@ export class ChordPlayer2 extends React.PureComponent<{}, ChordPlayer2State> {
     return {
       rows: this.state.rows,
       mode: this.state.mode,
-      concertPitch: this.concertPitch.text(),
-      pitch11: this.pitch11.text(),
+      concertPitch: (this.concertPitch && this.concertPitch.text()) || "",
+      pitch11: (this.pitch11 && this.pitch11.text()) || "",
       data: this.state.data,
       duration: this.state.duration
     }

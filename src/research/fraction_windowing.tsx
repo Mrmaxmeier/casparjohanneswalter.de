@@ -21,9 +21,9 @@ const classColors: ClassColors = {
 }
 
 export class FractionWindowing extends React.PureComponent<{}, State> {
-  private input: MathInput;
-  private ma: MathInput;
-  private mb: MathInput;
+  private input?: MathInput;
+  private ma?: MathInput;
+  private mb?: MathInput;
 
   constructor (props: {}) {
     super(props)
@@ -77,7 +77,8 @@ export class FractionWindowing extends React.PureComponent<{}, State> {
     let checkMaMb = (ma?: number, mb?: number) => {
       if (ma && mb) {
         let input = Math.log2(ma / mb)
-        this.input.setValue(input, false)
+        if (this.input)
+          this.input.setValue(input, false)
         this.setState({ input })
       }
     }
@@ -93,8 +94,10 @@ export class FractionWindowing extends React.PureComponent<{}, State> {
                   wide ref={(e) => { if(e) this.input = e }}
                   onChange={(input) => {
                     this.setState({ input })
-                    this.ma.setValue('', true)
-                    this.mb.setValue('', true)
+                    if (this.ma)
+                      this.ma.setValue('', true)
+                    if (this.mb)
+                      this.mb.setValue('', true)
                   }} />
               </th>
               <th>

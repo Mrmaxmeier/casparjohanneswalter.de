@@ -27,9 +27,9 @@ interface Preset {
 export class ChordPlayer extends React.PureComponent<{}, State> {
   private players: CompactFrequencyPlayer[][]
   private inputs: MathInput[][]
-  private rows: HTMLInputElement
-  private concertPitch: MathInput
-  private pitch11: MathInput
+  private rows?: HTMLInputElement
+  private concertPitch?: MathInput
+  private pitch11?: MathInput
 
   constructor (props: {}) {
     super(props)
@@ -62,8 +62,10 @@ export class ChordPlayer extends React.PureComponent<{}, State> {
 
   onPreset (name: string, preset: Preset) {
     this.setRows(preset.rows, () => {
-      this.concertPitch.setValue(preset.concertPitch, true)
-      this.pitch11.setValue(preset.pitch11, true)
+      if (this.concertPitch)
+        this.concertPitch.setValue(preset.concertPitch, true)
+      if (this.pitch11)
+        this.pitch11.setValue(preset.pitch11, true)
       preset.data.forEach((row, ri) => {
         row.forEach((input, i) => {
           this.inputs[ri][i].setValue(input, true)
@@ -77,8 +79,8 @@ export class ChordPlayer extends React.PureComponent<{}, State> {
     return {
       rows: this.state.rows,
       mode: this.state.mode,
-      concertPitch: this.concertPitch.text(),
-      pitch11: this.pitch11.text(),
+      concertPitch: (this.concertPitch && this.concertPitch.text()) || "",
+      pitch11: (this.pitch11 && this.pitch11.text()) || "",
       data: range(this.state.rows).map((ri) => {
         return range(6).map((i) => this.inputs[ri][i].text())
       })

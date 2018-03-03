@@ -20,7 +20,7 @@ interface MathInputState extends React.ComponentState {
 }
 
 export class MathInput extends React.PureComponent<MathInputProps, MathInputState> {
-  private elem: HTMLInputElement
+  private elem?: HTMLInputElement
   constructor (props: MathInputProps) {
     super(props)
     let value: number | undefined
@@ -37,7 +37,8 @@ export class MathInput extends React.PureComponent<MathInputProps, MathInputStat
   }
 
   public setValue (value: number | string, callOnChange?: boolean) {
-    this.elem.value = value.toString()
+    if (this.elem)
+      this.elem.value = value.toString()
     let parsed = evalMath(value.toString())
     if (typeof parsed === 'number') {
       this.setState({ value: parsed, error: undefined })
@@ -94,7 +95,7 @@ export class MathInput extends React.PureComponent<MathInputProps, MathInputStat
   }
 
   text () {
-    return this.elem.value
+    return (this.elem && this.elem.value) || ""
   }
 }
 
@@ -218,9 +219,9 @@ interface SpecificRangeSliderState extends React.ComponentState {
 }
 
 export class SpecificRangeSlider extends React.PureComponent<SpecificRangeSliderProps, SpecificRangeSliderState> {
-  private min: MathInput;
-  private max: MathInput;
-  private slider: HTMLInputElement;
+  private min?: MathInput;
+  private max?: MathInput;
+  private slider?: HTMLInputElement;
 
   constructor (props: SpecificRangeSliderProps) {
     super(props)
@@ -235,10 +236,12 @@ export class SpecificRangeSlider extends React.PureComponent<SpecificRangeSlider
     let max = this.state.max
     let min = this.state.min
     if (value > max) {
-      this.max.setValue(value)
+      if (this.max)
+        this.max.setValue(value)
       this.setState({ max: value, value: value })
     } else if (value < min) {
-      this.min.setValue(value)
+      if (this.min)
+        this.min.setValue(value)
       this.setState({ min: value, value: value })
     } else {
       this.setState({ value })

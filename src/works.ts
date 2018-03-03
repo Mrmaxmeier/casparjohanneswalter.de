@@ -20,7 +20,7 @@ export interface Work {
 }
 
 let reqContext = require.context('../works', false, /\.json$/)
-export let works: Work[] = reqContext.keys().map(reqContext)
+export let works: Work[] = reqContext.keys().map(reqContext) as Work[]
 
 export function sorted () {
   return sortBy(works, (work) => {

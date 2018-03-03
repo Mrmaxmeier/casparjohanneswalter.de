@@ -205,8 +205,8 @@ interface TestMemeS extends TMemeSetting, TMemeSwitch {
   other: boolean
 }
 class TestMeme extends React.PureComponent<TestMemeP, TestMemeS> {
-  private mset: MemeSetting<TestMemeS>
-  private ismset: MemeSwitch<TestMemeS>
+  private mset?: MemeSetting<TestMemeS>
+  private ismset?: MemeSwitch<TestMemeS>
   constructor (props: TestMemeP) {
     super(props)
     // let mset = new MemeSetting<TestMemeS>({})

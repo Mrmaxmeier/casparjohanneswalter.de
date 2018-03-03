@@ -28,7 +28,7 @@ interface RatioInputProps {
 }
 
 export class RatioInput extends React.Component<RatioInputProps, {}> {
-  private input: HTMLInputElement
+  private input?: HTMLInputElement
   render () {
     let invalid = isNaN(this.props.data)
     let style = {
@@ -47,7 +47,7 @@ export class RatioInput extends React.Component<RatioInputProps, {}> {
         <input type='text' tabIndex={this.props.tabIndex}
           value={val} onChange={(change) => {
             if (this.props.changeCB) {
-              this.props.changeCB(parseInt(this.input.value))
+              this.props.changeCB(parseInt((this.input && this.input.value) || ''))
             }
           }}
           style={style} ref={(e) => { if (e) this.input = e }} disabled={this.props.disabled} />

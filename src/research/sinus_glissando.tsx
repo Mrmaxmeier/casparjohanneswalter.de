@@ -51,7 +51,7 @@ interface Preset {
 export class SinusGlissando extends React.PureComponent<{}, State> {
   private players: CompactFrequencyPlayer[]
   private inputs: MathInput[]
-  private concertPitch: MathInput
+  private concertPitch?: MathInput
 
   constructor (props: {}) {
     super(props)
@@ -68,7 +68,8 @@ export class SinusGlissando extends React.PureComponent<{}, State> {
   }
 
   onPreset (name: string, preset: Preset) {
-    this.concertPitch.setValue(preset.concertPitch, true)
+    if (this.concertPitch)
+      this.concertPitch.setValue(preset.concertPitch, true)
     this.setState({
       data: preset.data,
     })
@@ -77,7 +78,7 @@ export class SinusGlissando extends React.PureComponent<{}, State> {
   dumpPreset () {
     return {
       data: this.state.data,
-      concertPitch: this.concertPitch.text(),
+      concertPitch: this.concertPitch && this.concertPitch.text(),
     }
   }
 
@@ -185,8 +186,8 @@ interface GPState {
 const UPDATE_INTERVAL = 5 // ms
 class GlissandoPlayer extends React.Component<State, GPState> {
   private interval: number | null
-  private first: Datapoint
-  private last: Datapoint
+  private first?: Datapoint
+  private last?: Datapoint
   private points: Datapoint[]
   private pointsReversed: Datapoint[]
   constructor (props: State) {
@@ -196,6 +197,9 @@ class GlissandoPlayer extends React.Component<State, GPState> {
     this.start = this.start.bind(this)
     this.stop = this.stop.bind(this)
     this.togglePause = this.togglePause.bind(this)
+    this.interval = null
+    this.points = []
+    this.pointsReversed = []
   }
 
   updateFromProps (props: State) {
@@ -232,7 +236,7 @@ class GlissandoPlayer extends React.Component<State, GPState> {
     let time = this.state.time || 0
     let freq = centsToFreq(this.valueAt(time), this.props.concertPitch)
 
-    if (time >= this.last.time) {
+    if (this.last && time >= this.last.time) {
       this.stop()
     } else {
       this.setState({ time: time + UPDATE_INTERVAL, freq })

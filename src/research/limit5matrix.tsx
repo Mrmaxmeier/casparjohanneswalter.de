@@ -140,8 +140,8 @@ const GQuickSaves = QuickSaves as GQuickSaves;
 
 export class Limit5MatrixPlayer extends React.PureComponent<{}, State> {
   private rows: { [key: number]: Row }
-  private centralC: MathInput
-  private quicksaves: QuickSaves<SaveState>
+  private centralC?: MathInput
+  private quicksaves?: QuickSaves<SaveState>
 
   constructor (props: {}) {
     super(props)
@@ -155,21 +155,23 @@ export class Limit5MatrixPlayer extends React.PureComponent<{}, State> {
   }
 
   onPreset (name: string, preset: Preset) {
-    this.centralC.setValue(preset.centralC, true)
+    if (this.centralC)
+      this.centralC.setValue(preset.centralC, true)
     this.setState({
       preset: preset.preset,
       large: preset.large,
     }, () => {
-      this.quicksaves.setState({ saves: preset.save })
+      if (this.quicksaves)
+        this.quicksaves.setState({ saves: preset.save })
     })
   }
 
   dumpPreset () {
     return {
       preset: this.state.preset,
-      centralC: this.centralC.text(),
+      centralC: (this.centralC as MathInput).text(),
       large: this.state.large,
-      save: this.quicksaves.state.saves,
+      save: (this.quicksaves as QuickSaves<SaveState>).state.saves,
     }
   }
 

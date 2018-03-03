@@ -72,8 +72,8 @@ interface Preset {
 }
 
 export class FrettedInstrumentPlayer extends React.PureComponent<{}, State> {
-  private concertPitch: ConcertPitchSetting<State>
-  private pitch11: Pitch11Setting<State>
+  private concertPitch?: ConcertPitchSetting<State>
+  private pitch11?: Pitch11Setting<State>
   constructor (props: {}) {
     super(props)
     this.state = {
@@ -91,8 +91,10 @@ export class FrettedInstrumentPlayer extends React.PureComponent<{}, State> {
   onPreset (_: string, preset: Preset) {
     const { concertPitch, pitch11, rows, columns, rowData, columnData, additional } = preset
     this.setState({ rows, columns, rowData, columnData, additional }, () => {
-      this.concertPitch.setText(concertPitch)
-      this.pitch11.setText(pitch11)
+      if (this.concertPitch)
+        this.concertPitch.setText(concertPitch)
+      if (this.pitch11)
+        this.pitch11.setText(pitch11)
     })
   }
 
@@ -122,8 +124,8 @@ export class FrettedInstrumentPlayer extends React.PureComponent<{}, State> {
               onChange={this.onPreset.bind(this)}
               current={(): Preset => {
                 const { rows, columns, rowData, columnData, additional } = this.state
-                let concertPitch = this.concertPitch.value()
-                let pitch11 = this.pitch11.value()
+                let concertPitch = (this.concertPitch && this.concertPitch.value()) || ''
+                let pitch11 = (this.pitch11 && this.pitch11.value()) || ''
                 return { rows, columns, rowData, columnData, concertPitch, pitch11, additional }
               }} />
           </tbody>

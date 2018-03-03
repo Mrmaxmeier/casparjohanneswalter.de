@@ -33,7 +33,7 @@ interface FNProps {
   playing: boolean
 }
 
-class Wave {
+interface Wave {
   node: OscillatorNode
   gainNode: GainNode
   fadeNode: GainNode
@@ -43,7 +43,7 @@ export class FrequencyNode extends React.PureComponent<FNProps, {}> {
   private count: number
   private _waves?: Wave[]
   private active: number
-  private unloadTimeout: number
+  private unloadTimeout?: number
 
   constructor (props: FNProps) {
     super(props)
@@ -63,7 +63,8 @@ export class FrequencyNode extends React.PureComponent<FNProps, {}> {
   componentWillUnmount () {
     if (this._waves === undefined) { return }
     this.stopWithRelease()
-    window.clearTimeout(this.unloadTimeout)
+    if (this.unloadTimeout)
+      window.clearTimeout(this.unloadTimeout)
     this.unloadTimeout = window.setTimeout(this.unload, 50)
   }
 
@@ -136,7 +137,8 @@ export class FrequencyNode extends React.PureComponent<FNProps, {}> {
 
   applyAttack () {
     if (this._waves === undefined) { return }
-    clearTimeout(this.unloadTimeout)
+    if (this.unloadTimeout)
+      clearTimeout(this.unloadTimeout)
     this._waves.forEach((wave, index) => {
       if (!wave) { return }
       let currentValue = wave.fadeNode.gain.value
@@ -167,7 +169,8 @@ export class FrequencyNode extends React.PureComponent<FNProps, {}> {
     })
     audio.activeNodes -= this.active
     this.active = 0
-    window.clearTimeout(this.unloadTimeout)
+    if (this.unloadTimeout)
+      window.clearTimeout(this.unloadTimeout)
     this.unloadTimeout = window.setTimeout(this.unload, 10000)
   }
 
@@ -218,7 +221,7 @@ export class AudioControllerRow extends React.Component<{}, { volume: number }> 
 
 export class AudioController extends React.Component<{}, { activeNodes: number, nodeCount: number, volume: number }> {
   private processor?: AudioMeter
-  private interval: number
+  private interval?: number
   constructor (props: {}) {
     super(props)
     this.state = {
@@ -242,7 +245,10 @@ export class AudioController extends React.Component<{}, { activeNodes: number, 
     }, 100)
   }
 
-  componentWillUnmount () { clearInterval(this.interval) }
+  componentWillUnmount () {
+    if (this.interval)
+      clearInterval(this.interval)
+  }
 
   render () {
     if (this.processor === undefined) { return null }
@@ -273,19 +279,6 @@ export class AudioController extends React.Component<{}, { activeNodes: number, 
     )
   }
 }
-
-/*
-Usage:
-audioNode = createAudioMeter(audioContext,clipLevel,averaging,clipLag);
-audioContext: the AudioContext you're using.
-clipLevel: the level (0 to 1) that you would consider "clipping".
-   Defaults to 0.98.
-averaging: how "smoothed" you would like the meter to be over time.
-   Should be between 0 and less than 1.  Defaults to 0.95.
-clipLag: how long you would like the "clipping" indicator to show
-   after clipping has occured, in milliseconds.  Defaults to 750ms.
-Access the clipping through node.checkClipping(); use node.shutdown to get rid of it.
-*/
 
 interface AudioMeter {
   clipping: boolean

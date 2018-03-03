@@ -20,7 +20,7 @@ interface State<T> {
 }
 
 export class Presets<T> extends React.PureComponent<Props<T>, State<T>> {
-  private filepicker: HTMLInputElement;
+  private filepicker?: HTMLInputElement;
 
   constructor (props: Props<T>) {
     super(props)
@@ -114,7 +114,8 @@ export class Presets<T> extends React.PureComponent<Props<T>, State<T>> {
         <th>
           <button onClick={() => {
             let e = new MouseEvent('click')
-            this.filepicker.dispatchEvent(e)
+            if (this.filepicker)
+              this.filepicker.dispatchEvent(e)
           }} disabled={this.state.localStorageError}>
             Import file
           </button>

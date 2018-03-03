@@ -11,10 +11,10 @@ interface State {
 }
 
 export class DiffTone extends React.PureComponent<{}, State> {
-  private input1: MathInput
-  private slider1: SpecificRangeSlider
-  private input2: MathInput
-  private slider2: SpecificRangeSlider
+  private input1?: MathInput
+  private slider1?: SpecificRangeSlider
+  private input2?: MathInput
+  private slider2?: SpecificRangeSlider
 
   constructor (props: {}) {
     super(props)
@@ -43,13 +43,15 @@ export class DiffTone extends React.PureComponent<{}, State> {
                 <MathInput default={440} wide
                   onChange={(freq1) => {
                     this.setState({ freq1 })
-                    this.slider1.setValue(freq1)
+                    if (this.slider1)
+                      this.slider1.setValue(freq1)
                   }} ref={(e) => { if (e) this.input1 = e }} />
               </th>
               <th>
                 <SpecificRangeSlider defaultMin={400} defaultMax={600} onChange={(value) => {
                   this.setState({ freq1: value })
-                  this.input1.setValue(value)
+                  if (this.input1)
+                    this.input1.setValue(value)
                 }} ref={(e) => { if (e) this.slider1 = e }} />
               </th>
             </tr>
@@ -60,13 +62,15 @@ export class DiffTone extends React.PureComponent<{}, State> {
                   wide
                   onChange={(freq2) => {
                     this.setState({ freq2 })
-                    this.slider2.setValue(freq2)
+                    if (this.slider2)
+                      this.slider2.setValue(freq2)
                   }} ref={(e) => { if (e) this.input2 = e }} />
               </th>
               <th>
                 <SpecificRangeSlider defaultMin={400} defaultMax={600} onChange={(value) => {
                   this.setState({ freq2: value })
-                  this.input2.setValue(value)
+                  if (this.input2)
+                    this.input2.setValue(value)
                 }} ref={(e) => { if (e) this.slider2 = e }} />
               </th>
             </tr>

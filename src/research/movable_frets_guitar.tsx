@@ -253,8 +253,8 @@ const GQuickSaves = QuickSaves as GQuickSaves;
 
 export class MovableFretsGuitarPlayer extends React.PureComponent<{}, State> {
   private matrices: { [key: number]: Matrix }
-  private centralC: MathInput
-  private quicksaves: QuickSaves<QuicksaveState>
+  private centralC?: MathInput
+  private quicksaves?: QuickSaves<QuicksaveState>
 
   constructor (props: {}) {
     super(props)
@@ -264,6 +264,8 @@ export class MovableFretsGuitarPlayer extends React.PureComponent<{}, State> {
       data: Preset_3Gui_EDO53_Walter,
       editmode: false
     }
+
+    this.matrices = {}
   }
 
   render () {
@@ -315,8 +317,11 @@ export class MovableFretsGuitarPlayer extends React.PureComponent<{}, State> {
               defaultKey="3Gui EDO53 Walter" />
             <G2Presets name='movable_frets_quicksaves'
               label="Saves"
-              onChange={(key: string, saves: (QuicksaveState | null)[]) => this.quicksaves.setState({ saves })}
-              current={() => this.quicksaves.state.saves} />
+              onChange={(key: string, saves: (QuicksaveState | null)[]) => {
+                if (this.quicksaves)
+                  this.quicksaves.setState({ saves })
+              }}
+              current={() => (this.quicksaves as QuickSaves<QuicksaveState>).state.saves} />
           </tbody>
         </table>
         <GQuickSaves

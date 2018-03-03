@@ -94,8 +94,8 @@ interface Preset {
 export class ArciorganoPlayer extends React.PureComponent<{}, State> {
   private players: CompactFrequencyPlayer[]
   private inputs: MathInput[]
-  private concertPitch: MathInput
-  private pitch11: MathInput
+  private concertPitch?: MathInput
+  private pitch11?: MathInput
 
   constructor (props: {}) {
     super(props)
@@ -115,8 +115,10 @@ export class ArciorganoPlayer extends React.PureComponent<{}, State> {
   }
 
   onPreset (name: string, preset: Preset) {
-    this.concertPitch.setValue(preset.concertPitch, true)
-    this.pitch11.setValue(preset.pitch11, true)
+    if (this.concertPitch)
+      this.concertPitch.setValue(preset.concertPitch, true)
+    if (this.pitch11)
+      this.pitch11.setValue(preset.pitch11, true)
     if (preset.data.length === 37) {
       // index 17 is missing...
       // compat w/ old presets
@@ -141,8 +143,8 @@ export class ArciorganoPlayer extends React.PureComponent<{}, State> {
       octaves: this.state.octaves,
       mode: this.state.mode,
       label: this.state.label,
-      concertPitch: this.concertPitch.text(),
-      pitch11: this.pitch11.text(),
+      concertPitch: this.concertPitch && this.concertPitch.text(),
+      pitch11: this.pitch11 && this.pitch11.text(),
       data: this.inputs.map((i) => i.text())
     }
   }

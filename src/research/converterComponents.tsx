@@ -8,7 +8,7 @@ interface FractionToCentsState {
 }
 
 export class FractionToCents extends React.PureComponent<{}, FractionToCentsState> {
-  private input: MathInput
+  private input?: MathInput
   constructor (props: {}) {
     super(props)
     this.state = {
@@ -28,7 +28,7 @@ export class FractionToCents extends React.PureComponent<{}, FractionToCentsStat
       <div>
         <h4>Fraction to cents</h4>
         <p>Converts numbers zu cents
-          (<a onClick={() => { this.input.setValue('5 / 4', true) }}>try 5 / 4</a>)
+          (<a onClick={() => { if (this.input) this.input.setValue('5 / 4', true) }}>try 5 / 4</a>)
         </p>
         <table>
           <tbody>
@@ -70,7 +70,7 @@ interface FrequencyToPitchState {
 }
 
 export class FrequencyToPitch extends React.PureComponent<{}, FrequencyToPitchState> {
-  private input: MathInput
+  private input?: MathInput
   constructor (props: {}) {
     super(props)
     this.state = {
@@ -88,7 +88,7 @@ export class FrequencyToPitch extends React.PureComponent<{}, FrequencyToPitchSt
       <div>
         <h4>Frequency to pitch</h4>
         <p>Converts frequencies to pitch
-          (<a onClick={() => { this.input.setValue('220', true) }}>try 220</a>)
+          (<a onClick={() => { if (this.input) this.input.setValue('220', true) }}>try 220</a>)
         </p>
         <table>
           <tbody>

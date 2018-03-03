@@ -32,7 +32,7 @@ interface State {
 }
 
 export class MeanToneCommaVisualizer extends React.PureComponent<{}, State> {
-  private canvas: HTMLCanvasElement
+  private canvas?: HTMLCanvasElement
   constructor (props: {}) {
     super(props)
     this.state = {
@@ -53,7 +53,7 @@ export class MeanToneCommaVisualizer extends React.PureComponent<{}, State> {
   }
 
   paint () {
-    let canvas = this.canvas
+    const canvas = this.canvas
     if (canvas) {
       const ctx = canvas.getContext('2d')
       if (ctx == null) { return }
