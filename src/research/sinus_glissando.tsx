@@ -1,13 +1,13 @@
 import * as React from 'react'
 
 import { MathInput, NoteDisplay, NoteImage, CompactFrequencyPlayer } from './components'
-import { AudioController, AudioControllerRow, FrequencyNode } from './audioComponents'
+import { AudioController, AudioControllerRow, FrequencyNode, WebMIDIHandler } from './audioComponents'
 import { concertPitchToC0, ratioToCents, evalMathN, centsToFrequency } from './converters'
 import { Presets } from './presets'
 import { range, clone } from 'lodash'
 
-type LerpMode = 'linear' | 'overtone' | 'undertone' | 'sin'
-function lerpFunc(mode: LerpMode, from: number, to: number, time: number, concertPitch: number) {
+type LerpMode = 'linear' | 'overtone' | 'undertone' | 'sin' | 'step'
+function lerpFunc(mode: LerpMode, from: number, to: number, time: number, concertPitch: number, timeLeft: number) {
   switch (mode) {
     case 'linear':
       return from + (to - from) * time
@@ -25,6 +25,12 @@ function lerpFunc(mode: LerpMode, from: number, to: number, time: number, concer
     case 'sin':
       let t = Math.cos((time + 1) * Math.PI) / 2 + 0.5
       return from + (to - from) * t
+    case 'step':
+      const LERP_PERIOD = 20
+      if (timeLeft > LERP_PERIOD)
+        return from
+      time = 1 - (timeLeft / LERP_PERIOD)
+      return from + (to - from) * time
   }
 }
 
@@ -36,10 +42,12 @@ function freqToCents (freq: number, concertPitch: number) {
   return Math.log2(freq / concertPitch) * 1200 + 3300
 }
 
-type Datapoint = { time: number, value: number, mode: LerpMode }
+type Datapoint = { time: number, value: number, mode: LerpMode, trigger?: number }
 interface State {
   concertPitch: number,
-  data: Datapoint[]
+  data: Datapoint[],
+  midiDevice?: string,
+  triggerListen?: number
 }
 
 
@@ -52,6 +60,7 @@ export class SinusGlissando extends React.PureComponent<{}, State> {
   private players: CompactFrequencyPlayer[]
   private inputs: MathInput[]
   private concertPitch?: MathInput
+  private player?: GlissandoPlayer
 
   constructor (props: {}) {
     super(props)
@@ -59,9 +68,10 @@ export class SinusGlissando extends React.PureComponent<{}, State> {
     this.state = {
       concertPitch: 440,
       data: [
-        { value: 0, time: 0, mode: 'linear' },
+        { value: 0, time: 1000, mode: 'linear' },
         { value: 1200, time: 1000, mode: 'linear' }
-      ]
+      ],
+      triggerListen: undefined
     }
     this.players = []
     this.inputs = []
@@ -82,8 +92,25 @@ export class SinusGlissando extends React.PureComponent<{}, State> {
     }
   }
 
-  render () {
+  preparePlayerProps () {
+    let accTime: number[] = []
+    let last = 0
+    for (let data of this.state.data) {
+      accTime.push(last)
+      last += data.time
+    }
+    return {
+      ...this.state,
+      data: this.state.data.map((data, i) => {
+        return {
+          ...data,
+          time: accTime[i]
+        }
+      })
+    }
+  }
 
+  render () {
     return (
       <div>
         <AudioController />
@@ -103,14 +130,22 @@ export class SinusGlissando extends React.PureComponent<{}, State> {
             <Presets name='sinusGlissandoPresets' default={{
               concertPitch: "440",
               data: [
-                { value: 0, time: 0, mode: 'linear' },
-                { value: 1200, time: 1000, mode: 'linear' }
+                { value: 1200, time: 1000, mode: 'linear' },
+                { value: 2400, time: 1000, mode: 'linear' }
               ]
             }}
               label="Preset"
               onChange={this.onPreset.bind(this)}
               current={this.dumpPreset.bind(this)} />
-            <GlissandoPlayer {...this.state} />
+            <GlissandoPlayer {...this.preparePlayerProps()} ref={(e) => {if (e) this.player = e}} />
+            <WebMIDIHandler onKey={(id, mag) => {
+              if (this.state.triggerListen !== undefined) {
+                let data = this.state.data.slice(0)
+                data[this.state.triggerListen].trigger = id
+                this.setState({ data, triggerListen: undefined })
+              } else if (this.player)
+                this.player.onMidi(id, mag)
+            }} />
           </tbody>
         </table>
         <table>
@@ -118,6 +153,7 @@ export class SinusGlissando extends React.PureComponent<{}, State> {
             <tr>
               <th></th>
               <th>Cents</th>
+              <th>\delta ms</th>
               <th>ms</th>
             </tr>
             {this.state.data.map(({ time, value, mode }, i) =>
@@ -145,11 +181,12 @@ export class SinusGlissando extends React.PureComponent<{}, State> {
                     }}
                   />
                 </td>
+                <td>{this.state.data.slice(0, i).reduce((acc, e) => acc + e.time, 0)}</td>
                 <td>
                   <select onChange={(e) => {
                     let mode = e.target.value
                     let data = this.state.data.slice(0)
-                    if (mode === 'linear' || mode === 'sin' || mode === 'undertone' || mode === 'overtone')
+                    if (mode === 'linear' || mode === 'sin' || mode === 'undertone' || mode === 'overtone' || mode === 'step')
                       data[i].mode = mode
                     this.setState({ data })
                   }} value={mode}>
@@ -157,13 +194,33 @@ export class SinusGlissando extends React.PureComponent<{}, State> {
                     <option value="overtone">Overtone</option>
                     <option value="undertone">Undertone</option>
                     <option value="sin">Sinus</option>
+                    <option value="step">Step +20ms</option>
                   </select>
+                </td>
+                <td>
+                  {this.state.triggerListen == i ? (
+                    <button>Press Key...</button>
+                  ) : (
+                    this.state.data[i].trigger !== undefined ? (
+                      <button style={{
+                        background: 'white', color: 'black'
+                      }} onClick={() => {
+                        let data = this.state.data.slice(0)
+                        data[i].trigger = undefined
+                        this.setState({ data })
+                      }}>Trigger: {this.state.data[i].trigger}</button>
+                    ) : (
+                      <button style={{
+                        background: 'white', color: 'grey'
+                      }} onClick={() => this.setState({ triggerListen: i })}>Set Trigger</button>
+                    )
+                  )}
                 </td>
                 {i == (this.state.data.length - 1) ? (
                   <th>
                     <button onClick={() => {
                       let data = this.state.data.slice(0)
-                      data.push({ time: time + 1000, value, mode })
+                      data.push({ time: 1000, value, mode })
                       this.setState({ data })
                     }}>+</button>
                   </th>
@@ -188,18 +245,21 @@ class GlissandoPlayer extends React.Component<State, GPState> {
   private interval: number | null
   private first?: Datapoint
   private last?: Datapoint
+  private pauseAt?: number
   private points: Datapoint[]
   private pointsReversed: Datapoint[]
+
   constructor (props: State) {
     super(props)
+    this.interval = null
+    this.points = []
+    this.pointsReversed = []
+
     this.state = this.updateFromProps(props)
 
     this.start = this.start.bind(this)
     this.stop = this.stop.bind(this)
     this.togglePause = this.togglePause.bind(this)
-    this.interval = null
-    this.points = []
-    this.pointsReversed = []
   }
 
   updateFromProps (props: State) {
@@ -227,7 +287,7 @@ class GlissandoPlayer extends React.Component<State, GPState> {
     let progress = (time - lerpFrom.time) / dTime
     if (isNaN(progress))
       progress = 1
-    return lerpFunc(lerpFrom.mode, lerpFrom.value, lerpTo.value, progress, this.props.concertPitch)
+    return lerpFunc(lerpFrom.mode, lerpFrom.value, lerpTo.value, progress, this.props.concertPitch, lerpTo.time - time)
   }
 
   update () {
@@ -235,6 +295,12 @@ class GlissandoPlayer extends React.Component<State, GPState> {
       return
     let time = this.state.time || 0
     let freq = centsToFreq(this.valueAt(time), this.props.concertPitch)
+
+    if (this.pauseAt !== undefined && time >= this.pauseAt) {
+      this.setState({ paused: true })
+      this.pauseAt = undefined
+      return
+    }
 
     if (this.last && time >= this.last.time) {
       this.stop()
@@ -250,12 +316,31 @@ class GlissandoPlayer extends React.Component<State, GPState> {
     this.setState({ time: null })
   }
 
-  start () {
+  start (triggerIdx?: number) {
     if (this.interval)
       return
 
-    this.setState({ time: 0, paused: false })
+    let time = 0
+    if (triggerIdx !== undefined) {
+      time = this.props.data[triggerIdx].time
+      let nextTrigger = this.props.data.slice(triggerIdx + 1).find(d => d.trigger !== undefined)
+      this.pauseAt = (nextTrigger && nextTrigger.time) || (this.last && this.last.time)
+    }
+
+    let freq = centsToFreq(this.valueAt(time), this.props.concertPitch)
+    this.setState({ time, paused: false, freq })
     this.interval = setInterval(this.update.bind(this), UPDATE_INTERVAL)
+  }
+
+  onMidi (id: number, mag: number) {
+    let idx = this.props.data.findIndex((e) => e.trigger === id)
+    if (idx !== -1) {
+      if (this.state.paused && this.interval) {
+        clearInterval(this.interval)
+        this.interval = null
+      }
+      this.start(idx)
+    }
   }
 
   togglePause () {
@@ -265,6 +350,7 @@ class GlissandoPlayer extends React.Component<State, GPState> {
   componentWillUnmount () {
     if (this.interval !== null)
       clearInterval(this.interval)
+    this.interval = null
   }
 
   render () {
@@ -275,7 +361,7 @@ class GlissandoPlayer extends React.Component<State, GPState> {
         </th>
         <th>
           {this.state.time === null ? (
-            <button onClick={this.start}>Play</button>
+            <button onClick={() => this.start()}>Play</button>
           ) : (
             <button onClick={this.stop} style={{color: 'red'}}>Stop</button>
           )}
@@ -284,7 +370,7 @@ class GlissandoPlayer extends React.Component<State, GPState> {
           <button
             onClick={this.togglePause}
             disabled={this.state.time === null}
-            style={{color: this.state.paused ? 'green' : 'white'}}
+            style={{color: this.state.paused ? '#61ff61' : 'white'}}
           >Pause</button>
         </th>
         <th>{this.state.time} {this.state.time !== null ? "ms" : null}</th>
@@ -293,7 +379,7 @@ class GlissandoPlayer extends React.Component<State, GPState> {
           "#" + (this.points.length - this.pointsReversed.findIndex((v) => v.time <= (this.state.time as number)))
           ) : null}
         </th>
-        <th><FrequencyNode freq={this.state.freq} playing={this.state.time !== null} /></th>
+        <th><FrequencyNode lerp={true} freq={this.state.freq} playing={this.state.time !== null} /></th>
       </tr>
     )
   }

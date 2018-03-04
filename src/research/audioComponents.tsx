@@ -30,7 +30,8 @@ const defaultRelease = 0.04
 interface FNProps {
   freq: number,
   volume?: number,
-  playing: boolean
+  playing: boolean,
+  lerp?: boolean,
 }
 
 interface Wave {
@@ -80,11 +81,9 @@ export class FrequencyNode extends React.PureComponent<FNProps, {}> {
           let vol = this.volume(index)
           // TODO: does this check out?
           if (freq >= 22050) {
-            wave.gainNode.gain.value = 0
-            wave.node.frequency.value = 22050
+            this._set(wave, 0, 22050)
           } else {
-            wave.gainNode.gain.value = vol
-            wave.node.frequency.value = freq
+            this._set(wave, vol, freq)
           }
         }
       })
@@ -93,6 +92,30 @@ export class FrequencyNode extends React.PureComponent<FNProps, {}> {
       this.init()
       this.applyAttack()
     }
+  }
+
+
+  // TODO: transition from real-time API
+  _set(wave: Wave, gain: number, freq: number, time?: number) {
+    const timeConstant = 15 // 10-20ms was default pre Chrome M64
+    const startTime = time || audio.context.currentTime
+    /*
+    if (false) { // this.props.lerp === undefined || this.props.lerp {
+      wave.gainNode.gain.setTargetAtTime(
+        gain,
+        startTime,
+        timeConstant
+      )
+      wave.node.frequency.setTargetAtTime(
+        freq,
+        startTime,
+        timeConstant
+      )
+    } else {
+      */
+      wave.gainNode.gain.setValueAtTime(gain, startTime)
+      wave.node.frequency.setValueAtTime(freq, startTime)
+    // }
   }
 
   render () { return null }
@@ -348,4 +371,74 @@ function volumeAudioProcess (meter: AudioMeter, event: AudioProcessingEvent) {
   // to the previous sample - take the max here because we
   // want "fast attack, slow release."
   meter.volume = Math.max(rms, meter.volume * meter.averaging)
+}
+
+
+interface WebMIDIHandlerProps {
+  onKey: (id: number, mag: number) => void
+}
+
+interface WebMIDIHandlerState {
+  selectedDevice?: WebMidi.MIDIInput,
+  devices: WebMidi.MIDIInput[]
+}
+
+export class WebMIDIHandler extends React.Component<WebMIDIHandlerProps, WebMIDIHandlerState> {
+  public supported: boolean
+
+  constructor(props: WebMIDIHandlerProps) {
+    super(props)
+    if (navigator.requestMIDIAccess !== undefined) {
+      this.supported = true
+			console.log("Initializing MIDI...");
+			navigator.requestMIDIAccess().then( this.onSuccess, console.error ); // get midi access
+    } else {
+      this.supported = false
+    }
+    this.state = {
+      selectedDevice: undefined,
+      devices: []
+    }
+  }
+
+  onSuccess = (access: WebMidi.MIDIAccess) => {
+
+    let inputs = access.inputs;
+
+    console.log("Found " + inputs.size + " MIDI input(s)");
+
+    let inputArr = Array.from(inputs.values())
+    let devices = []
+    for (let input of inputArr) {
+      input.onmidimessage = this.handleMIDIMessage
+      devices.push(input)
+    }
+    this.setState({ devices })
+  }
+
+
+  handleMIDIMessage = (event: WebMidi.MIDIMessageEvent) => {
+    // console.log(JSON.stringify(event.data))
+    if (event.data.length === 3) {
+      this.props.onKey(event.data[1], event.data[2])
+    }
+  }
+
+  render () {
+    return (
+      <tr>
+        <th>Midi Trigger</th>
+        <td>
+          <select onChange={(e) => {
+            let key = e.target.value
+            let selectedDevice = this.state.devices.find((device) => device.name === key)
+            this.setState({ selectedDevice })
+          }} value={(this.state.selectedDevice && this.state.selectedDevice.name) || "disabled"}>
+            <option value="disabled">Disabled</option>
+            {this.state.devices.map((device, i) => <option key={i} value={device.name}>{device.name}</option>)}
+          </select>
+        </td>
+      </tr>
+    )
+  }
 }
