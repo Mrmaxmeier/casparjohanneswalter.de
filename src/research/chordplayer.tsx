@@ -168,10 +168,12 @@ export class ChordPlayer extends React.PureComponent<{}, State> {
                 <tr key={rowi}>
                   <th>{rowi + 1}</th>
                   {row.map((e, i) => {
-                    let freq = {
-                      ratio: (pitch: number, r: number) => pitch * r,
-                      cents: (pitch: number, r: number) => pitch * Math.pow(2, r / 1200)
-                    }[this.state.mode](this.state.pitch11, e || 0)
+                    let freq = 0;
+                    if (e)
+                      freq = {
+                        ratio: (pitch: number, r: number) => pitch * r,
+                        cents: (pitch: number, r: number) => pitch * Math.pow(2, r / 1200)
+                      }[this.state.mode](this.state.pitch11, e)
                     return (
                       <th key={i} style={{padding: '4px'}}>
                         <MathInput size={7} default={i === 0 ? '1 / 1' : ''}
