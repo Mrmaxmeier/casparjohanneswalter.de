@@ -153,7 +153,7 @@ export class SinusGlissando extends React.PureComponent<{}, State> {
             <tr>
               <th></th>
               <th>Cents</th>
-              <th>\delta ms</th>
+              <th>Δms</th>
               <th>ms</th>
             </tr>
             {this.state.data.map(({ time, value, mode }, i) =>
