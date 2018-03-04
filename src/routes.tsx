@@ -8,11 +8,7 @@ import { App } from './app'
 
 declare var __IN_BUILD__: boolean
 
-interface RoutesProps extends React.Props<any> {
-    analytics: boolean
-}
-
-export class Routes extends React.PureComponent<RoutesProps, {}> {
+export class Routes extends React.PureComponent<{}, {}> {
   render () {
     let history = (__IN_BUILD__
       ? () => createBrowserHistory()

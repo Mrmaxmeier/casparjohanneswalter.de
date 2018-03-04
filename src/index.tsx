@@ -19,6 +19,6 @@ if (__IN_BUILD__) {
 }
 
 render(
-  <Routes analytics={__IN_BUILD__} />,
+  <Routes />,
   document.getElementById('app')
 )
