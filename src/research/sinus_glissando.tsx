@@ -61,6 +61,7 @@ export class SinusGlissando extends React.PureComponent<{}, State> {
   private inputs: MathInput[]
   private concertPitch?: MathInput
   private player?: GlissandoPlayer
+  private volumeRow?: AudioControllerRow
 
   constructor (props: {}) {
     super(props)
@@ -116,7 +117,7 @@ export class SinusGlissando extends React.PureComponent<{}, State> {
         <AudioController />
         <table>
           <tbody>
-            <AudioControllerRow />
+            <AudioControllerRow withMidi ref={(e) => { if (e) this.volumeRow = e }} />
             <tr>
               <th>Concert Pitch a4</th>
               <th>
@@ -139,6 +140,8 @@ export class SinusGlissando extends React.PureComponent<{}, State> {
               current={this.dumpPreset.bind(this)} />
             <GlissandoPlayer {...this.preparePlayerProps()} ref={(e) => {if (e) this.player = e}} />
             <WebMIDIHandler onKey={(id, mag) => {
+              if (this.volumeRow)
+                this.volumeRow.onMidi(id, mag)
               if (this.state.triggerListen !== undefined) {
                 let data = this.state.data.slice(0)
                 data[this.state.triggerListen].trigger = id

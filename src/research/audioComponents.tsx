@@ -210,11 +210,25 @@ export class FrequencyNode extends React.PureComponent<FNProps, {}> {
   }
 }
 
-export class AudioControllerRow extends React.Component<{}, { volume: number }> {
-  constructor (props: {}) {
+interface AudioControllerRowProps {
+  withMidi?: boolean
+}
+export class AudioControllerRow extends React.Component<AudioControllerRowProps, { volume: number, midiId?: number | null }> {
+  constructor (props: AudioControllerRowProps) {
     super(props)
     this.state = {
-      volume: 0.25
+      volume: 0.25,
+      midiId: undefined
+    }
+  }
+
+  onMidi (val: number, vol: number) {
+    if (this.state.midiId === null) {
+      this.setState({ midiId: val })
+    } else if (this.state.midiId === val) {
+      let volume = (vol / 127) / 4
+      audio.masterNode.gain.value = volume
+      this.setState({ volume })
     }
   }
 
@@ -237,6 +251,25 @@ export class AudioControllerRow extends React.Component<{}, { volume: number }> 
           />
         </td>
         <td>{Math.round(this.state.volume * 400)}%</td>
+        {this.props.withMidi ? (
+          <td>
+            {this.state.midiId === null ? (
+              <button>Turn Knob...</button>
+            ) : (
+              this.state.midiId !== null && this.state.midiId !== undefined ? (
+                <button style={{
+                  background: 'white', color: 'black'
+                }} onClick={() => {
+                  this.setState({ midiId: undefined })
+                }}>Knob: {this.state.midiId}</button>
+              ) : (
+                <button style={{
+                  background: 'white', color: 'grey'
+                }} onClick={() => this.setState({ midiId: null })}>Set Knob</button>
+              )
+            )}
+          </td>
+        ) : null}
       </tr>
     )
   }
