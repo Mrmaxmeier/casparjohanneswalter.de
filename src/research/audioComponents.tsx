@@ -298,7 +298,7 @@ export class AudioController extends React.Component<{}, { activeNodes: number, 
         nodeCount: audio.nodeCount,
         volume: Math.round(processor.volume * 100) * 3
       })
-    }, 100)
+    }, 250)
   }
 
   componentWillUnmount () {

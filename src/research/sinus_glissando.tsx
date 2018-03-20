@@ -243,6 +243,7 @@ interface GPState {
   paused: boolean
 }
 
+// TODO: track performance issues
 const UPDATE_INTERVAL = 5 // ms
 class GlissandoPlayer extends React.Component<State, GPState> {
   private interval: number | null
@@ -251,6 +252,7 @@ class GlissandoPlayer extends React.Component<State, GPState> {
   private pauseAt?: number
   private points: Datapoint[]
   private pointsReversed: Datapoint[]
+  private startTime: number
 
   constructor (props: State) {
     super(props)
@@ -263,6 +265,7 @@ class GlissandoPlayer extends React.Component<State, GPState> {
     this.start = this.start.bind(this)
     this.stop = this.stop.bind(this)
     this.togglePause = this.togglePause.bind(this)
+    this.startTime = performance.now()
   }
 
   updateFromProps (props: State) {
@@ -308,7 +311,7 @@ class GlissandoPlayer extends React.Component<State, GPState> {
     if (this.last && time >= this.last.time) {
       this.stop()
     } else {
-      this.setState({ time: time + UPDATE_INTERVAL, freq })
+      this.setState({ time: performance.now() - this.startTime, freq })
     }
   }
 
@@ -316,13 +319,14 @@ class GlissandoPlayer extends React.Component<State, GPState> {
     if (this.interval)
       clearInterval(this.interval)
     this.interval = null
-    this.setState({ time: null })
+    this.setState({ time: null, paused: false })
   }
 
   start (triggerIdx?: number) {
     if (this.interval)
       return
 
+    this.startTime = performance.now()
     let time = 0
     if (triggerIdx !== undefined) {
       time = this.props.data[triggerIdx].time
@@ -347,6 +351,9 @@ class GlissandoPlayer extends React.Component<State, GPState> {
   }
 
   togglePause () {
+    if (this.state.paused) {
+      this.startTime = performance.now() - (this.state.time || 0)
+    }
     this.setState({ paused: !this.state.paused })
   }
 
@@ -376,7 +383,7 @@ class GlissandoPlayer extends React.Component<State, GPState> {
             style={{color: this.state.paused ? '#61ff61' : 'white'}}
           >Pause</button>
         </th>
-        <th>{this.state.time} {this.state.time !== null ? "ms" : null}</th>
+        <th>{this.state.time !== null ? Math.round(this.state.time) + " ms" : null}</th>
         <th>
           {this.state.time !== null ? (
           "#" + (this.points.length - this.pointsReversed.findIndex((v) => v.time <= (this.state.time as number)))
