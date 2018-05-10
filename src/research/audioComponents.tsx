@@ -134,6 +134,11 @@ export class FrequencyNode extends React.PureComponent<FNProps, {}> {
 
   init () {
     if (typeof window === 'undefined' || this._waves !== undefined) { return }
+
+    // Chrome M66 introduces aggressive auto-mute and might stop our AudioContext.
+    // This hopes to resumes the audio context as part of a user gesture
+    audio.context.resume()
+
     this._waves = new Array(this.count).fill(null).map((_: null, index: number) => {
       let node = audio.context.createOscillator()
       node.type = 'sine'
