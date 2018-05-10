@@ -71,7 +71,7 @@ class Row extends React.PureComponent<RowProps, RowState> {
                         paddingTop: 0,
                         height: '1em',
                         width: '3em',
-                        textDecoration: this.state.visible[index] ? null : 'line-through'
+                        textDecoration: this.state.visible[index] ? undefined : 'line-through'
                       }}
                     >
                       {labels[index][y]}

@@ -134,10 +134,9 @@ export class FractionInput extends React.PureComponent<FractionInputProps, Fract
 
   render () {
     let style = {
-      textAlign: 'center',
       width: '5em',
       maxWidth: '5em',
-      color: this.props.disabled ? '#444' : null
+      color: this.props.disabled ? '#444' : undefined
     }
 
     let tdStyle = {
@@ -157,7 +156,7 @@ export class FractionInput extends React.PureComponent<FractionInputProps, Fract
                   this.handleChange(numerator, this.state.denominator)
                   this.setState({ numerator })
                 }}
-                style={style} disabled={this.props.disabled} />
+                style={{textAlign: 'center', ...style}} disabled={this.props.disabled} />
             </td>
           </tr>
           <tr>
@@ -168,7 +167,7 @@ export class FractionInput extends React.PureComponent<FractionInputProps, Fract
                   this.handleChange(this.state.numerator, denominator)
                   this.setState({ denominator })
                 }}
-                style={style} disabled={this.props.disabled} />
+                style={{textAlign: 'center', ...style}} disabled={this.props.disabled} />
             </td>
           </tr>
         </tbody>

@@ -324,7 +324,7 @@ export class AudioController extends React.Component<{}, { activeNodes: number, 
             <tr>
               <th>Volume:</th>
               <td>
-                <span style={{ color: this.processor.checkClipping() ? 'red' : null, fontFamily: 'monospace' }}>
+                <span style={{ color: this.processor.checkClipping() ? 'red' : undefined, fontFamily: 'monospace' }}>
                   {this.state.volume}%
                 </span>
               </td>

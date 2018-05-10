@@ -31,13 +31,6 @@ export class RatioInput extends React.Component<RatioInputProps, {}> {
   private input?: HTMLInputElement
   render () {
     let invalid = isNaN(this.props.data)
-    let style = {
-      textAlign: 'center',
-      width: '5em',
-      maxWidth: '5em',
-      borderColor: this.props.highlighted ? 'blue' : (invalid ? 'red' : undefined),
-      color: this.props.disabled ? '#444' : undefined,
-    }
     let tdStyle = this.props.isUpper ? Object.assign({
       borderBottom: '2px black solid'
     }, tdWidth) : tdWidth
@@ -50,7 +43,13 @@ export class RatioInput extends React.Component<RatioInputProps, {}> {
               this.props.changeCB(parseInt((this.input && this.input.value) || ''))
             }
           }}
-          style={style} ref={(e) => { if (e) this.input = e }} disabled={this.props.disabled} />
+          style={{
+            textAlign: 'center',
+            width: '5em',
+            maxWidth: '5em',
+            borderColor: this.props.highlighted ? 'blue' : (invalid ? 'red' : undefined),
+            color: this.props.disabled ? '#444' : undefined,
+          }} ref={(e) => { if (e) this.input = e }} disabled={this.props.disabled} />
       </td>
     )
   }
@@ -135,7 +134,7 @@ class LowerInput extends React.Component<LowerInputProps, {}> {
                 onChange={(d) => {
                   if (this.props.setOvertone)
                     this.props.setOvertone(parseInt(d.target.value))
-                }} style={{width: '3.5em', heigh: '1.5em'}} />
+                }} style={{width: '3.5em'}} />
             </span>
           </td>
         )

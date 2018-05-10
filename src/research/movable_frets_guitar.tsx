@@ -100,7 +100,7 @@ class InputNumber extends React.PureComponent<InputNumberProps, InputNumberState
             this.props.onChange(val)
           }
         }}
-        style={{ width: '4em', color: this.state.override !== undefined ? 'red' : null }}
+        style={{ width: '4em', color: this.state.override !== undefined ? 'red' : undefined }}
       />
     )
   }
