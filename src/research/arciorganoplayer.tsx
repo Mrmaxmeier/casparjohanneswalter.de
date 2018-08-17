@@ -177,7 +177,7 @@ export class ArciorganoPlayer extends React.PureComponent<{}, State> {
     let muted = this.state.muted || disabled
     return (
       <div>
-        <MathInput size={small ? 3.15 : 3.95} default=''
+        <MathInput size={small ? 3.35 : 4.25} default=''
           onChange={(v) => {
             let data = clone(this.state.data)
             data[index] = v
@@ -310,8 +310,8 @@ export class ArciorganoPlayer extends React.PureComponent<{}, State> {
                         return (
                           <td key={i} style={{padding: '0'}}>
                             <CompactFrequencyPlayer freq={freq}
-                              buttonStyle={small ? {padding: '.5em', width: '3.15em'} : {width: '3.95em'}}
                               text={layoutLabels[this.state.label][index]} muted={this.state.muted} />
+                              buttonStyle={small ? {padding: '.5em', width: '3.35em'} : {width: '4.25em'}}
                           </td>
                         )
                       } else {
