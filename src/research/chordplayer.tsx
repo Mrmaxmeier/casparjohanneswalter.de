@@ -181,7 +181,15 @@ export class ChordPlayer extends React.PureComponent<{}, State> {
                             let data = clone(this.state.data)
                             data[rowi][i] = v
                             this.setState({ data })
-                          }} ref={(ref) => {
+                          }}
+                          onError={(e) => {
+                            let data = clone(this.state.data)
+                            data[rowi][i] = null
+                            if (this.players[rowi][i])
+                              this.players[rowi][i].stop()
+                            this.setState({ data })
+                          }}
+                          ref={(ref) => {
                             if (this.inputs[rowi] && ref) {
                               this.inputs[rowi][i] = ref
                             }
