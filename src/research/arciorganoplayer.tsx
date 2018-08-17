@@ -11,6 +11,7 @@ const presets = {
   'Mode2_1-4comma_adapted': require('./presets/ArcOrg_mode2_1-4comma_adapted.json'),
   'Mode3_Walter_pseudorein': require('./presets/ArcOrg_mode3_Walter_pseudorein.json'),
   'Mode4_Partch': require('./presets/ArcOrg_mode4_Partch.json'),
+  'Mode4b_Partch2': require('./presets/ArcOrg_mode4b_Partch2.json'),
   'Mode5_EDO34': require('./presets/ArcOrg_mode5_EDO34.json'),
   'Mode6_1-3Comma_ad': require('./presets/ArcOrg_mode6_1-3Comma_ad.json'),
   'Mode7_Salinas24+12': require('./presets/ArcOrg_mode7_Salinas24+12.json')
@@ -54,20 +55,35 @@ let normalLabels = [
   'cis', 'es', 'fis', 'gis', 'b',
   'c', 'd', 'e', 'f', 'g', 'a', 'h', 'c'
 ];
+
+let partchLabels = [
+  '8/5', '7/4', '16/15', '6/5', '9/7',
+  '14/9', '9/5', '33/32', '8/7', '27/20',
+  '3/2', '5/3', '11/6', '1/1', '11/10', '5/4', '7/5', '3/2',
+  '11/7', '12/7', '15/8', '21/20', '7/6', '14/11', '10/7',
+  '32/21', '16/9', '81/80', '9/8', '4/3',
+  '16/11', '18/11', '20/11', '160/81', '12/11', '11/9', '11/8', '16/11'
+];
+
 let ces_fes_labels = clone(normalLabels)
 ces_fes_labels[20] = 'fes'
 ces_fes_labels[24] = 'ces'
+
+let partch2Labels = clone(partchLabels);
+partch2Labels[2] = '15/14'
+partch2Labels[7] = '21/20'
+partch2Labels[9] = '4/3'
+partch2Labels[14] = '10/9'
+partch2Labels[21] = '16/15'
+partch2Labels[27] = '33/32'
+partch2Labels[29] = '21/16'
+partch2Labels[33] = '64/33'
+
 let layoutLabels = {
   normal: normalLabels,
   ces_fes: ces_fes_labels,
-  partch: [
-    '8/5', '7/4', '16/15', '6/5', '9/7',
-    '14/9', '9/5', '33/32', '8/7', '27/20',
-    '3/2', '5/3', '11/6', '1/1', '11/10', '5/4', '7/5', '3/2',
-    '11/7', '12/7', '15/8', '21/20', '7/6', '14/11', '10/7',
-    '32/21', '16/9', '81/80', '9/8', '4/3',
-    '16/11', '18/11', '20/11', '160/81', '12/11', '11/9', '11/8', '16/11'
-  ]
+  partch: partchLabels,
+  partch2: partch2Labels,
 }
 
 
@@ -79,7 +95,7 @@ interface State {
   data: (number | null)[],
   mode: 'ratio' | 'cents',
   muted: boolean,
-  label: 'normal' | 'partch' | 'ces_fes'
+  label: 'normal' | 'partch' | 'partch2' | 'ces_fes'
 }
 
 interface Preset {
@@ -87,7 +103,7 @@ interface Preset {
   pitch11: string,
   data: string[],
   mode: 'ratio' | 'cents',
-  label: 'normal' | 'partch' | 'ces_fes',
+  label: 'normal' | 'partch' | 'partch2' | 'ces_fes',
   octaves: number
 }
 
@@ -231,12 +247,13 @@ export class ArciorganoPlayer extends React.PureComponent<{}, State> {
               <th>
                 <select onChange={(e) => {
                   let label = e.target.value
-                  if (label === 'normal' || label === 'ces_fes' || label === 'partch')
+                  if (label === 'normal' || label === 'ces_fes' || label === 'partch' || label === 'partch2')
                     this.setState({ label })
                 }} value={this.state.label}>
                   <option value="normal">Normal</option>
                   <option value="ces_fes">Normal (ces/fes)</option>
                   <option value="partch">Partch</option>
+                  <option value="partch2">Partch 2</option>
                 </select>
               </th>
             </tr>
