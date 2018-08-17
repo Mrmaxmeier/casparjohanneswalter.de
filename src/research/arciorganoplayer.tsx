@@ -3,8 +3,8 @@ import * as React from 'react'
 import { MathInput, NoteDisplay, NoteImage, CompactFrequencyPlayer } from './components'
 import { AudioController, AudioControllerRow } from './audioComponents'
 import { concertPitchToC0, ratioToCents, evalMathN } from './converters'
-import { Presets } from './presets'
-import { range, clone } from 'lodash'
+import { Presets, QuickSaves } from './presets'
+import { range, clone, mapValues } from 'lodash'
 
 const presets = {
   'Mode1_meantone31': require('./presets/ArcOrg_mode1_meantone31.json'),
@@ -107,11 +107,19 @@ interface Preset {
   octaves: number
 }
 
+interface SaveState {
+  playing: {[octave: number]: {[idx: number]: boolean}}
+}
+
+type GQuickSaves = new () => QuickSaves<SaveState>;
+const GQuickSaves = QuickSaves as GQuickSaves;
+
 export class ArciorganoPlayer extends React.PureComponent<{}, State> {
-  private players: CompactFrequencyPlayer[]
+  private players: {[octave: number]: {[idx: number]: CompactFrequencyPlayer}}
   private inputs: MathInput[]
   private concertPitch?: MathInput
   private pitch11?: MathInput
+  private quicksaves?: QuickSaves<SaveState>
 
   constructor (props: {}) {
     super(props)
@@ -126,7 +134,7 @@ export class ArciorganoPlayer extends React.PureComponent<{}, State> {
       muted: false,
       label: 'normal'
     }
-    this.players = []
+    this.players = {}
     this.inputs = []
   }
 
@@ -165,7 +173,14 @@ export class ArciorganoPlayer extends React.PureComponent<{}, State> {
     }
   }
 
-  renderElement (index: number, small: boolean, disabled: boolean) {
+  _setPlayerRef (octave: number, index: number, ref: CompactFrequencyPlayer | null) {
+    if (ref === null) return
+    if (!this.players[octave])
+      this.players[octave] = {}
+    this.players[octave][index] = ref
+  }
+
+  renderElement (index: number, small: boolean, disabled: boolean, octave: number) {
     let data = this.state.data[index]
     let freq: number | undefined
     if (data !== null) {
@@ -186,9 +201,8 @@ export class ArciorganoPlayer extends React.PureComponent<{}, State> {
             if (ref) this.inputs[index] = ref
           }} />
         <CompactFrequencyPlayer freq={freq} muted={muted}
-          text={layoutLabels[this.state.label][index]} ref={(ref) => {
-            if (ref) this.players[index] = ref
-          }} buttonStyle={small ? {padding: '.5em', width: '100%'} : {width: '100%'}} />
+          text={layoutLabels[this.state.label][index]} ref={(ref) => this._setPlayerRef(octave, index, ref)}
+          buttonStyle={small ? {padding: '.5em', width: '100%'} : {width: '100%'}} />
       </div>
     )
   }
@@ -269,7 +283,7 @@ export class ArciorganoPlayer extends React.PureComponent<{}, State> {
                   }}/>
               </th>
             </tr>
-            <Presets name='arciorganoPlayerPresets' default={{
+            <Presets name='arciorganoPlayerPresets' label='Tuning Preset' default={{
               concertPitch: '440',
               pitch11: '440 / 9 * 8',
               rows: 8,
@@ -285,6 +299,37 @@ export class ArciorganoPlayer extends React.PureComponent<{}, State> {
                 <button onClick={() => {
                   this.setState({muted: !this.state.muted})
                 }}>{this.state.muted ? 'un' : ''}mute</button>
+              </th>
+            </tr>
+            <Presets name='arciorganoSavePresets' label='Music Preset'
+              default={{ saves: [null, null, null, null] }} newAsDefault
+              onChange={(_, state) => this.quicksaves && this.quicksaves.setState(state)}
+              current={() => (this.quicksaves && this.quicksaves.state) || {saves: []}} />
+          </tbody>
+        </table>
+        <table>
+          <tbody>
+            <tr>
+              <th>Playing</th>
+              <th>
+                <GQuickSaves
+                  load={(save) => {
+                    for (let octave of Object.keys(save.playing)) { // TODO: ES2017 entries
+                      for (let i of Object.keys(save.playing[octave as any as number])) { // TODO: Object.keys returns strins
+                        let playing = save.playing[octave as any as number][i as any as number]
+                        let player = (this.players[octave as any as number] || {})[i as any as number]
+                        if (player) player.setPlaying(playing)
+                      }
+                    }
+                  }}
+                  saveData={() => {
+                    console.log(mapValues(this.players, octave => mapValues(octave, player => player.state.isPlaying)))
+                    return {
+                      playing: mapValues(this.players, octave => mapValues(octave, player => player.state.isPlaying))
+                    }
+                  }}
+                  ref={(e: QuickSaves<SaveState>) => { if (e) this.quicksaves = e }}
+                />
               </th>
             </tr>
           </tbody>
@@ -310,8 +355,9 @@ export class ArciorganoPlayer extends React.PureComponent<{}, State> {
                         return (
                           <td key={i} style={{padding: '0'}}>
                             <CompactFrequencyPlayer freq={freq}
-                              text={layoutLabels[this.state.label][index]} muted={this.state.muted} />
                               buttonStyle={small ? {padding: '.5em', width: '3.35em'} : {width: '4.25em'}}
+                              text={layoutLabels[this.state.label][index]} muted={this.state.muted}
+                              ref={(ref) => this._setPlayerRef(oc, index, ref)} />
                           </td>
                         )
                       } else {
@@ -336,7 +382,7 @@ export class ArciorganoPlayer extends React.PureComponent<{}, State> {
                       <td key={i} style={{padding: '0px'}}>
                         {
                           isThing
-                          ? this.renderElement(layoutIndex[rowi][i], (rowi !== 2) && (rowi !== 5), octave0Disabled[rowi][i])
+                          ? this.renderElement(layoutIndex[rowi][i], (rowi !== 2) && (rowi !== 5), octave0Disabled[rowi][i], 0)
                           : null
                         }
                       </td>
