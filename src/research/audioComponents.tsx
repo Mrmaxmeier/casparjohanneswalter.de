@@ -426,16 +426,20 @@ export class WebMIDIHandler extends React.Component<WebMIDIHandlerProps, WebMIDI
 
   constructor(props: WebMIDIHandlerProps) {
     super(props)
+    this.state = {
+      selectedDevice: undefined,
+      devices: []
+    }
+    if (typeof navigator === 'undefined') {
+      this.supported = false
+      return
+    }
     if (navigator.requestMIDIAccess !== undefined) {
       this.supported = true
 			console.log("Initializing MIDI...");
 			navigator.requestMIDIAccess().then( this.onSuccess, console.error ); // get midi access
     } else {
       this.supported = false
-    }
-    this.state = {
-      selectedDevice: undefined,
-      devices: []
     }
   }
 

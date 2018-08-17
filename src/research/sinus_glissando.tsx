@@ -265,7 +265,10 @@ class GlissandoPlayer extends React.Component<State, GPState> {
     this.start = this.start.bind(this)
     this.stop = this.stop.bind(this)
     this.togglePause = this.togglePause.bind(this)
-    this.startTime = performance.now()
+    if (typeof window !== 'undefined')
+      this.startTime = performance.now()
+    else
+      this.startTime = 0
   }
 
   updateFromProps (props: State) {

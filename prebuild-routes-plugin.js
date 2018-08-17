@@ -12,6 +12,9 @@ function requirePatched (asset) {
 
 module.exports = function (options) {
   function buildRoute (routes, route, compilation, base) {
+    if (route[0] !== '/') {
+      route = '/' + route
+    }
     console.error('building route', route) // don't disturb stdout
     let context = {}
     const rendered = ReactDOMServer.renderToString(
