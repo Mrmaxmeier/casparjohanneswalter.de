@@ -6,6 +6,7 @@ import * as download from 'downloadjs'
 interface Props<T> {
     name: string,
     default?: T,
+    newAsDefault?: boolean,
     defaultKey?: string,
     onChange: (key: string, data: T) => void,
     current: () => T,
@@ -76,6 +77,8 @@ export class Presets<T> extends React.PureComponent<Props<T>, State<T>> {
             this.setState({preset}, () => {
               if (data) {
                 this.props.onChange(preset, data)
+              } else if (this.props.newAsDefault && this.props.default) {
+                this.props.onChange(preset, this.props.default)
               }
             })
           }} value={this.state.preset}>
@@ -171,7 +174,7 @@ export class QuickSaves<Save> extends React.PureComponent<QuickSavesProps<Save>,
   constructor (props: QuickSavesProps<Save>) {
     super(props)
     this.state = {
-      saves: new Array(8).fill(null)
+      saves: new Array(4).fill(null)
     }
   }
   render () {
