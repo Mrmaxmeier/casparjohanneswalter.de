@@ -14,6 +14,7 @@ import { TonalityDiamond } from '../research/tonalitydiamond'
 import { ChordPlayer } from '../research/chordplayer'
 import { ChordPlayer2 } from '../research/chordplayer2'
 import { ArciorganoPlayer } from '../research/arciorganoplayer'
+import { QuartertonePlayer } from '../research/quartertone_player'
 import { SuperCembaloPlayer } from '../research/supercembaloplayer'
 import { FrettedInstrumentPlayer } from '../research/fretted_instrument_player'
 import { Limit5MatrixPlayer } from '../research/limit5matrix'
@@ -23,7 +24,7 @@ import { MeanToneCommaVisualizer } from '../research/mean_tone_comma_visualizer'
 import { SinusGlissando } from '../research/sinus_glissando'
 
 export class Converters extends React.PureComponent {
-  render () {
+  render() {
     return (
       <div>
         <FractionToCents />
@@ -34,54 +35,54 @@ export class Converters extends React.PureComponent {
 }
 
 let kitharaDescription = () => <div>
-    <p>
-      Der Kithara I Calculator berechnet die Tonhöhen aller Saiten der Kithara I, wenn der Glissandostab (Pyrex Rod) auf einen bestimmten neuen Punkt (Ratio) geschoben wird bzw. er berechnet die Obertöne auf allen Saiten.
+  <p>
+    Der Kithara I Calculator berechnet die Tonhöhen aller Saiten der Kithara I, wenn der Glissandostab (Pyrex Rod) auf einen bestimmten neuen Punkt (Ratio) geschoben wird bzw. er berechnet die Obertöne auf allen Saiten.
     </p>
-    <ol>
-      <li>
-        Wählen Sie aus den Presets einen der 12 „hexads“ der Kithara I aus.
-        [Jeder „hexad“ ist ein set aus sechs Saiten in einer harmonisch konsistenten Stimmung. Diese leere-Saiten-Stimmung erscheint in der oberen Reihe.
-        Die Grundstimmung als O-dentity bzw. U-dentity erscheint ganz links; die sechs Kästchen daneben geben die Stimmung aller sechs Saiten des „hexads“ an.]
+  <ol>
+    <li>
+      Wählen Sie aus den Presets einen der 12 „hexads“ der Kithara I aus.
+      [Jeder „hexad“ ist ein set aus sechs Saiten in einer harmonisch konsistenten Stimmung. Diese leere-Saiten-Stimmung erscheint in der oberen Reihe.
+      Die Grundstimmung als O-dentity bzw. U-dentity erscheint ganz links; die sechs Kästchen daneben geben die Stimmung aller sechs Saiten des „hexads“ an.]
         <br />
-        Alternativ dazu können auch individuell in die Kästchen für die Stimmung der sechs Saiten frei sechs „ratios“ [Teiltonverhältnisse] inklusive der gewünschten Oktavlagen (im englischen System; a4 = 440 Hz) eingetragen werden.
+      Alternativ dazu können auch individuell in die Kästchen für die Stimmung der sechs Saiten frei sechs „ratios“ [Teiltonverhältnisse] inklusive der gewünschten Oktavlagen (im englischen System; a4 = 440 Hz) eingetragen werden.
       </li>
-      <li>
-        Tragen Sie in die untere Reihe eine Information ein, die als Grundlage der Neuberechnung der Tonhöhen aller sechs Saiten dient.
-        <ol {...{type: "a"} /* TODO type attr is missing in react type def */}>
-          <li>
-            Eine Zieltonhöhe einer beliebigen Saite (als „ratio“ mit Angabe der Oktavlage).
-            Durch das Drücken des „apply“-Knopfes darunter wird berechnet, wie alle Saiten klingen würden, wenn der Glissandostab (Pyrex Rod) auf diese Stelle geschoben worden wäre.
+    <li>
+      Tragen Sie in die untere Reihe eine Information ein, die als Grundlage der Neuberechnung der Tonhöhen aller sechs Saiten dient.
+        <ol {...{ type: "a" } /* TODO type attr is missing in react type def */}>
+        <li>
+          Eine Zieltonhöhe einer beliebigen Saite (als „ratio“ mit Angabe der Oktavlage).
+          Durch das Drücken des „apply“-Knopfes darunter wird berechnet, wie alle Saiten klingen würden, wenn der Glissandostab (Pyrex Rod) auf diese Stelle geschoben worden wäre.
           </li>
-          <li>
-            Eine neue Grundstimmung (O-dentity bzw. U-dentity) als „ratio“ in das höhere Feld unten links.
-            Durch den „apply“-Knopf darunter berechnen sich alle sechs Saiten neu. Die software sucht sich die geeignete Oktavlage selbst, damit die Stimmung innerhalb der ersten Oktave über der leere-Saiten-Stimmung bleibt.
+        <li>
+          Eine neue Grundstimmung (O-dentity bzw. U-dentity) als „ratio“ in das höhere Feld unten links.
+          Durch den „apply“-Knopf darunter berechnen sich alle sechs Saiten neu. Die software sucht sich die geeignete Oktavlage selbst, damit die Stimmung innerhalb der ersten Oktave über der leere-Saiten-Stimmung bleibt.
           </li>
-          <li>
-            Durch einen Eintrag in das Feld „overtone“.
-            Das Drücken des „apply“-Knopfes darunter berechnet die Tonhöhen dieses Obertones auf allen sechs Saiten der leere-Saiten-Stimmung.
+        <li>
+          Durch einen Eintrag in das Feld „overtone“.
+          Das Drücken des „apply“-Knopfes darunter berechnet die Tonhöhen dieses Obertones auf allen sechs Saiten der leere-Saiten-Stimmung.
           </li>
-        </ol>
-      </li>
-    </ol>
-    <p>
-      Die Tonhöhen sind angegeben als Ratios, als konventionelle temperierte Notation, gerundet zu 1/12 Tönen und als Abstand in Cents zum Bezugston G = 1/1.
+      </ol>
+    </li>
+  </ol>
+  <p>
+    Die Tonhöhen sind angegeben als Ratios, als konventionelle temperierte Notation, gerundet zu 1/12 Tönen und als Abstand in Cents zum Bezugston G = 1/1.
     </p>
-  </div>
+</div>
 
 let soundGenDescription = () => <div>
-    <p>
-      Der Sound generator besteht aus 32 Sinuston-Generatoren. Wenn die Oktave auf 2 gestellt wird (wie im default eingestellt) erzeugt dieser poly-Generator ein Spektrum von 32 Partialtönen eines Grundtones, dessen Frequenz man bei frequency eingeben kann.
+  <p>
+    Der Sound generator besteht aus 32 Sinuston-Generatoren. Wenn die Oktave auf 2 gestellt wird (wie im default eingestellt) erzeugt dieser poly-Generator ein Spektrum von 32 Partialtönen eines Grundtones, dessen Frequenz man bei frequency eingeben kann.
     </p>
-    <p>
-      Die Intensität der Partialtöne nimmt nach oben hin logarithmisch ab. Bei tiefen Tönen verläuft diese Kurve flacher und bei hohen Töhen steiler. So haben die tiefen Töne genug Unterstützung durch die Obertöne während hohe Töne immer ähnlicher einem Sinuston werden.
+  <p>
+    Die Intensität der Partialtöne nimmt nach oben hin logarithmisch ab. Bei tiefen Tönen verläuft diese Kurve flacher und bei hohen Töhen steiler. So haben die tiefen Töne genug Unterstützung durch die Obertöne während hohe Töne immer ähnlicher einem Sinuston werden.
     </p>
-  </div>
+</div>
 
 let partchFractionDescription = () => <p>
-    Ein Bruch (oberes Feld) wird mit einer Reihe von Brüchen (2. Zeile) verrechnet.
-    Die dritte Zeile gibt das Produkt der Brüche aus (die entsprechenden Intervalle über dem Bruch).
-    Die vierte Zeile gibt die Teilung vom oberen Bruch durch die Reihe der unteren Brüche aus (die entsprechenden Intervalle unter dem Bruch).
-    Die Brüche der beiden unteren Reihen sind so oktaviert, dass sie zwischen 1 und 2 liegen.
+  Ein Bruch (oberes Feld) wird mit einer Reihe von Brüchen (2. Zeile) verrechnet.
+  Die dritte Zeile gibt das Produkt der Brüche aus (die entsprechenden Intervalle über dem Bruch).
+  Die vierte Zeile gibt die Teilung vom oberen Bruch durch die Reihe der unteren Brüche aus (die entsprechenden Intervalle unter dem Bruch).
+  Die Brüche der beiden unteren Reihen sind so oktaviert, dass sie zwischen 1 und 2 liegen.
   </p>
 
 let musicCalculators: PageDef[] = [
@@ -132,7 +133,7 @@ let musicCalculators: PageDef[] = [
     id: 'chord_player',
     title: 'Chord Player I',
     component: ChordPlayer,
-    description: function chordPlayerDescription () {
+    description: function chordPlayerDescription() {
       return <p><a href="/static/chord_player_1_manual.pdf">Introduction</a></p>
     }
   },
@@ -145,6 +146,11 @@ let musicCalculators: PageDef[] = [
     id: 'arciorgano_player',
     title: 'Arciorgano Player',
     component: ArciorganoPlayer
+  },
+  {
+    id: 'quartertone_player',
+    title: 'Quartertone Player',
+    component: QuartertonePlayer
   },
   {
     id: 'supercembalo_player',
@@ -201,10 +207,10 @@ export interface PageDef {
 export const subpages = ([] as PageDef[]).concat(musicCalculators, additionalMathTools)
 
 export class ResearchPage extends React.PureComponent<RouteComponentProps<any>, {}> {
-  render () {
+  render() {
     let link = (id: string, title: string) => <li key={id}>
-        <Link to={'/research/' + id}>{title}</Link>
-      </li>
+      <Link to={'/research/' + id}>{title}</Link>
+    </li>
     return (
       <div>
         <Switch>
