@@ -24,7 +24,6 @@
     "downloadjs": "^1.4.6",
     "es6-shim": "^0.35.3",
     "file-loader": "^3.0.1",
-    "image-webpack-loader": "^4.1.0",
     "json-loader": "^0.5.4",
     "lodash": "^4.17.4",
     "marked": "^0.6.0",
