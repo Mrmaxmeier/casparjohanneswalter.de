@@ -4,9 +4,4 @@ extends:
 plugins:
   - standard
   - react
-  - babel
 
-parser: "babel-eslint"
-parserOptions:
-  sourceType: "module"
-  allowImportExportEverywhere: false
