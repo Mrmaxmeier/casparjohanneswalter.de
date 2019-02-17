@@ -6,16 +6,13 @@ let SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin')
 let config = require('./webpack.config.js')
 
 module.exports = Object.assign(config, {
+  mode: 'production',
   entry: {
     index: './src/index.tsx',
     routes: './src/routes.tsx'
   },
+  optimization: { minimize: true },
   plugins: [
-    new webpack.optimize.UglifyJsPlugin({
-      compress: {warnings: false},
-      output: {comments: false},
-      sourceMap: true
-    }),
     new webpack.DefinePlugin({
       __IN_BUILD__: JSON.stringify(true)
     }),
