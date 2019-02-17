@@ -3,15 +3,20 @@ let ReactDOMServer = require('react-dom/server')
 let StaticRouter = require('react-router-dom').StaticRouter
 let Sitemap = require('sitemap')
 
-function requirePatched (asset) {
+function requirePatched(asset) {
   let Module = module.constructor
   let m = new Module()
   m._compile(asset.source(), 'module')
   return global['__PREBUILD_REQUIRE__'](global['__PREBUILD_REQUIRE__'].s)
 }
 
-module.exports = function (options) {
-  function buildRoute (routes, route, compilation, base) {
+class PrebuildRoutesPlugin {
+  constructor(options) {
+    this.options = options
+    this.buildRoute = this.buildRoute.bind(this)
+    this.apply = this.apply.bind(this)
+  }
+  buildRoute(routes, route, compilation, base) {
     if (route[0] !== '/') {
       route = '/' + route
     }
@@ -24,20 +29,19 @@ module.exports = function (options) {
         routes.node
       )
     )
-    let html = options.embed(route, rendered, base)
+    let html = this.options.embed(route, rendered, base)
     compilation.assets[route + '.html'] = {
       source: () => html,
       size: () => html.length
     }
   }
 
-  function apply (compiler) {
-    compiler.plugin('compilation', function (compilation) {
+  apply(compiler) {
+    compiler.hooks.thisCompilation.tap("prebuild-routes comp", (compilation) => {
       // FIXME: this is incredibly horrible
-      compilation.mainTemplate.plugin('startup', function (source, module, hash) {
-        if (!module.chunks.length && source.indexOf('__PREBUILD_REQUIRE__') === -1) {
-          let originName = module.origins && module.origins.length ? module.origins[0].name : 'main'
-          if (originName === options.require) {
+      compilation.mainTemplate.hooks.startup.tap("prebuild-routes startup", (source, module, hash) => {
+        if (source.indexOf('__PREBUILD_REQUIRE__') === -1) {
+          if (module.name === this.options.require) {
             return 'global.__PREBUILD_REQUIRE__ = __webpack_require__' + source
           }
         }
@@ -45,19 +49,19 @@ module.exports = function (options) {
       })
     })
 
-    compiler.plugin('emit', function (compilation, callback) {
-      let required = requirePatched(compilation.assets[options.require + '.js'])
-      let routes = options.routes(required)
-      let base = options.base(compilation.assets)
+    compiler.hooks.emit.tap("prebuild-routes emit", (compilation) => {
+      let required = requirePatched(compilation.assets[this.options.require + '.js'])
+      let routes = this.options.routes(required)
+      let base = this.options.base(compilation.assets)
 
-      routes.routes.forEach((route) => buildRoute(routes, route, compilation, base))
-      if (options.sitemap) {
+      routes.routes.forEach((route) => this.buildRoute(routes, route, compilation, base))
+      if (this.options.sitemap) {
         let sitemap = Sitemap.createSitemap({
-          hostname: 'https://' + options.hostname,
-          cacheTime: 600000,
+          hostname: 'https://' + this.options.hostname,
+          cacheTime: 60000,
           urls: []
         })
-        routes.routes.filter(options.sitemapFilter)
+        routes.routes.filter(this.options.sitemapFilter)
           .forEach((route) => {
             sitemap.add({ url: route })
           })
@@ -67,12 +71,8 @@ module.exports = function (options) {
           size: () => data.length
         }
       }
-      callback()
     })
   }
-
-  return {
-    buildRoute: buildRoute,
-    apply: apply
-  }
 }
+
+module.exports = PrebuildRoutesPlugin
