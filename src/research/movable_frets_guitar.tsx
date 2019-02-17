@@ -88,7 +88,7 @@ class InputNumber extends React.PureComponent<InputNumberProps, InputNumberState
     this.setState({ override: undefined })
   }
 
-  render () {
+  render() {
     return (
       <input
         value={this.state.override || this.props.value}
@@ -121,7 +121,7 @@ interface RowState {
 }
 
 class Row extends React.PureComponent<RowProps, RowState> {
-  constructor (props: RowProps) {
+  constructor(props: RowProps) {
     super(props)
     this.state = {
       cents: new Array(WIDTH).fill(0),
@@ -129,7 +129,7 @@ class Row extends React.PureComponent<RowProps, RowState> {
     }
   }
 
-  render () {
+  render() {
     let { y, centralC } = this.props
     return (
       <tr key={y}>
@@ -139,7 +139,7 @@ class Row extends React.PureComponent<RowProps, RowState> {
           const cents = this.props.data[x]
           const freq = centsToRatio(cents) * centralC
           return (
-            <td key={x} style={{padding: '4px'}}>
+            <td key={x} style={{ padding: '4px' }}>
               <FrequencyNode freq={freq} playing={this.state.playing[index]} />
               {this.props.editmode ? (
                 <div>
@@ -153,10 +153,10 @@ class Row extends React.PureComponent<RowProps, RowState> {
                   />
                 </div>
               ) : (
-                <div style={{ textAlign: 'center' }}>
-                  <PrecNumber value={cents % 1200} precision={0} />
-                </div>
-              )}
+                  <div style={{ textAlign: 'center' }}>
+                    <PrecNumber value={cents % 1200} precision={0} />
+                  </div>
+                )}
               {/* <pre>{valueS}</pre> */}
               <div style={{ textAlign: 'center' }}>
                 <button
@@ -195,7 +195,7 @@ class Matrix extends React.PureComponent<MatrixProps, {}> {
     super(props)
     this.rows = new Array(HEIGHT).fill(null)
   }
-  render () {
+  render() {
     return (
       <table>
         <tbody>
@@ -244,19 +244,12 @@ interface State {
 
 type QuicksaveState = { [key: number]: boolean[][] };
 
-type GPresets = new () => Presets<number[][][]>;
-const GPresets = Presets as GPresets;
-type G2Presets = new () => Presets<(QuicksaveState | null)[]>;
-const G2Presets = Presets as G2Presets;
-type GQuickSaves = new () => QuickSaves<QuicksaveState>;
-const GQuickSaves = QuickSaves as GQuickSaves;
-
 export class MovableFretsGuitarPlayer extends React.PureComponent<{}, State> {
   private matrices: { [key: number]: Matrix }
   private centralC?: MathInput
   private quicksaves?: QuickSaves<QuicksaveState>
 
-  constructor (props: {}) {
+  constructor(props: {}) {
     super(props)
     this.state = {
       centralC: 440 / Math.pow(2, 21 / 12),
@@ -268,7 +261,7 @@ export class MovableFretsGuitarPlayer extends React.PureComponent<{}, State> {
     this.matrices = {}
   }
 
-  render () {
+  render() {
     this.matrices = {}
     return (
       <div>
@@ -292,7 +285,7 @@ export class MovableFretsGuitarPlayer extends React.PureComponent<{}, State> {
                 <input type="checkbox" checked={this.state.editmode} onChange={(e) => {
                   const editmode = e.target.checked
                   this.setState({ editmode })
-                }}/>
+                }} />
               </td>
             </tr>
             {this.state.editmode ? (
@@ -307,24 +300,24 @@ export class MovableFretsGuitarPlayer extends React.PureComponent<{}, State> {
                       )
                     });
                     this.setState({ data })
-                  }}/>
+                  }} />
                 </td>
               </tr>
             ) : null}
-            <GPresets name='movable_frets_presets' presets={{'3Gui EDO53 Walter': Preset_3Gui_EDO53_Walter, '5Gui EDO12': Preset_5Gui_EDO12}}
+            <Presets name='movable_frets_presets' presets={{ '3Gui EDO53 Walter': Preset_3Gui_EDO53_Walter, '5Gui EDO12': Preset_5Gui_EDO12 }}
               onChange={(key: string, data: number[][][]) => this.setState({ data })}
               current={() => this.state.data}
               defaultKey="3Gui EDO53 Walter" />
-            <G2Presets name='movable_frets_quicksaves'
+            <Presets name='movable_frets_quicksaves'
               label="Saves"
               onChange={(key: string, saves: (QuicksaveState | null)[]) => {
                 if (this.quicksaves)
                   this.quicksaves.setState({ saves })
               }}
-              current={() => (this.quicksaves as QuickSaves<QuicksaveState>).state.saves} />
+              current={() => this.quicksaves!.state.saves} />
           </tbody>
         </table>
-        <GQuickSaves
+        <QuickSaves
           load={(save: QuicksaveState) => {
             Object.keys(this.matrices).map((s) => {
               const key = parseInt(s)
@@ -337,7 +330,7 @@ export class MovableFretsGuitarPlayer extends React.PureComponent<{}, State> {
             })
           }}
           saveData={() =>
-            mapValues(this.matrices, (matrix: Matrix) => 
+            mapValues(this.matrices, (matrix: Matrix) =>
               matrix.rows.map(
                 (o: Row) => o ? o.state.playing : new Array(WIDTH).fill(false)
               )
@@ -351,7 +344,7 @@ export class MovableFretsGuitarPlayer extends React.PureComponent<{}, State> {
             <Matrix
               centralC={this.state.centralC}
               data={matrix}
-              ref={(e) => { if (e) this.matrices[i] = e}}
+              ref={(e) => { if (e) this.matrices[i] = e }}
               onChange={(newData) => {
                 const data = [...this.state.data];
                 data[i] = newData

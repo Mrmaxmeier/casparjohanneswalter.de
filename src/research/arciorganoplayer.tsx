@@ -102,26 +102,24 @@ interface Preset {
   concertPitch: string,
   pitch11: string,
   data: string[],
+  rows: number | undefined,
   mode: 'ratio' | 'cents',
   label: 'normal' | 'partch' | 'partch2' | 'ces_fes',
   octaves: number
 }
 
 interface SaveState {
-  playing: {[octave: number]: {[idx: number]: boolean}}
+  playing: { [octave: number]: { [idx: number]: boolean } }
 }
 
-type GQuickSaves = new () => QuickSaves<SaveState>;
-const GQuickSaves = QuickSaves as GQuickSaves;
-
 export class ArciorganoPlayer extends React.PureComponent<{}, State> {
-  private players: {[octave: number]: {[idx: number]: CompactFrequencyPlayer}}
+  private players: { [octave: number]: { [idx: number]: CompactFrequencyPlayer } }
   private inputs: MathInput[]
   private concertPitch?: MathInput
   private pitch11?: MathInput
   private quicksaves?: QuickSaves<SaveState>
 
-  constructor (props: {}) {
+  constructor(props: {}) {
     super(props)
     let octaves = 1
     this.state = {
@@ -138,7 +136,7 @@ export class ArciorganoPlayer extends React.PureComponent<{}, State> {
     this.inputs = []
   }
 
-  onPreset (name: string, preset: Preset) {
+  onPreset(name: string, preset: Preset) {
     if (this.concertPitch)
       this.concertPitch.setValue(preset.concertPitch, true)
     if (this.pitch11)
@@ -162,25 +160,26 @@ export class ArciorganoPlayer extends React.PureComponent<{}, State> {
     })
   }
 
-  dumpPreset () {
+  dumpPreset() {
     return {
       octaves: this.state.octaves,
       mode: this.state.mode,
       label: this.state.label,
-      concertPitch: this.concertPitch && this.concertPitch.text(),
-      pitch11: this.pitch11 && this.pitch11.text(),
+      rows: this.state.rows,
+      concertPitch: this.concertPitch!.text(),
+      pitch11: this.pitch11!.text(),
       data: this.inputs.map((i) => i.text())
     }
   }
 
-  _setPlayerRef (octave: number, index: number, ref: CompactFrequencyPlayer | null) {
+  _setPlayerRef(octave: number, index: number, ref: CompactFrequencyPlayer | null) {
     if (ref === null) return
     if (!this.players[octave])
       this.players[octave] = {}
     this.players[octave][index] = ref
   }
 
-  renderElement (index: number, small: boolean, disabled: boolean, octave: number) {
+  renderElement(index: number, small: boolean, disabled: boolean, octave: number) {
     let data = this.state.data[index]
     let freq: number | undefined
     if (data !== null) {
@@ -202,12 +201,12 @@ export class ArciorganoPlayer extends React.PureComponent<{}, State> {
           }} />
         <CompactFrequencyPlayer freq={freq} muted={muted}
           text={layoutLabels[this.state.label][index]} ref={(ref) => this._setPlayerRef(octave, index, ref)}
-          buttonStyle={small ? {padding: '.5em', width: '100%'} : {width: '100%'}} />
+          buttonStyle={small ? { padding: '.5em', width: '100%' } : { width: '100%' }} />
       </div>
     )
   }
 
-  render () {
+  render() {
     let c0 = concertPitchToC0(this.state.concertPitch)
     let cents = ratioToCents(this.state.pitch11 / c0)
 
@@ -226,7 +225,7 @@ export class ArciorganoPlayer extends React.PureComponent<{}, State> {
                   default={440}
                   onChange={(concertPitch) => {
                     this.setState({ concertPitch })
-                  }} ref={(e) => { if (e) this.concertPitch = e }}/>
+                  }} ref={(e) => { if (e) this.concertPitch = e }} />
               </th>
             </tr>
             <tr>
@@ -236,7 +235,7 @@ export class ArciorganoPlayer extends React.PureComponent<{}, State> {
                   wide default="440 / 9 * 8"
                   onChange={(pitch11) => {
                     this.setState({ pitch11 })
-                  }} ref={(e) => { if(e) this.pitch11 = e }} />
+                  }} ref={(e) => { if (e) this.pitch11 = e }} />
               </th>
               <th>
                 <NoteImage cents={cents} />
@@ -276,16 +275,18 @@ export class ArciorganoPlayer extends React.PureComponent<{}, State> {
               <th>
                 <input type="number"
                   min="1" max="4" value={this.state.octaves}
-                  style={{width: '3em'}}
+                  style={{ width: '3em' }}
                   onChange={(event) => {
                     let octaves = parseInt(event.target.value)
                     this.setState({ octaves })
-                  }}/>
+                  }} />
               </th>
             </tr>
             <Presets name='arciorganoPlayerPresets' label='Tuning Preset' default={{
               concertPitch: '440',
               pitch11: '440 / 9 * 8',
+              label: 'partch',
+              octaves: 4,
               rows: 8,
               mode: 'ratio',
               data: range(38).map(() => '')
@@ -297,14 +298,14 @@ export class ArciorganoPlayer extends React.PureComponent<{}, State> {
               <th>Mute</th>
               <th>
                 <button onClick={() => {
-                  this.setState({muted: !this.state.muted})
+                  this.setState({ muted: !this.state.muted })
                 }}>{this.state.muted ? 'un' : ''}mute</button>
               </th>
             </tr>
             <Presets name='arciorganoSavePresets' label='Music Preset'
               default={{ saves: [null, null, null, null] }} newAsDefault
               onChange={(_, state) => this.quicksaves && this.quicksaves.setState(state)}
-              current={() => (this.quicksaves && this.quicksaves.state) || {saves: []}} />
+              current={() => (this.quicksaves && this.quicksaves.state) || { saves: [] }} />
           </tbody>
         </table>
         <table>
@@ -312,12 +313,14 @@ export class ArciorganoPlayer extends React.PureComponent<{}, State> {
             <tr>
               <th>Playing</th>
               <th>
-                <GQuickSaves
+                <QuickSaves
                   load={(save) => {
-                    for (let octave of Object.keys(save.playing)) { // TODO: ES2017 entries
-                      for (let i of Object.keys(save.playing[octave as any as number])) { // TODO: Object.keys returns strins
-                        let playing = save.playing[octave as any as number][i as any as number]
-                        let player = (this.players[octave as any as number] || {})[i as any as number]
+                    for (let _octave of Object.keys(save.playing)) { // TODO: ES2017 entries
+                      let octave = parseInt(_octave)
+                      for (let _i of Object.keys(save.playing[octave])) {
+                        let i = parseInt(_i);
+                        let playing = save.playing[octave][i]
+                        let player = (this.players[octave] || {})[i]
                         if (player) player.setPlaying(playing)
                       }
                     }
@@ -353,15 +356,15 @@ export class ArciorganoPlayer extends React.PureComponent<{}, State> {
                           cents: (pitch: number, r: number) => pitch * Math.pow(2, r / 1200 + oc)
                         }[this.state.mode](this.state.pitch11, data)
                         return (
-                          <td key={i} style={{padding: '0'}}>
+                          <td key={i} style={{ padding: '0' }}>
                             <CompactFrequencyPlayer freq={freq}
-                              buttonStyle={small ? {padding: '.5em', width: '3.35em'} : {width: '4.25em'}}
+                              buttonStyle={small ? { padding: '.5em', width: '3.35em' } : { width: '4.25em' }}
                               text={layoutLabels[this.state.label][index]} muted={this.state.muted}
                               ref={(ref) => this._setPlayerRef(oc, index, ref)} />
                           </td>
                         )
                       } else {
-                        return <td key={i} style={{padding: '0'}} />
+                        return <td key={i} style={{ padding: '0' }} />
                       }
                     })}
                   </tr>
@@ -379,11 +382,11 @@ export class ArciorganoPlayer extends React.PureComponent<{}, State> {
                 <tr key={rowi}>
                   {row.map((isThing, i) => {
                     return (
-                      <td key={i} style={{padding: '0px'}}>
+                      <td key={i} style={{ padding: '0px' }}>
                         {
                           isThing
-                          ? this.renderElement(layoutIndex[rowi][i], (rowi !== 2) && (rowi !== 5), octave0Disabled[rowi][i], 0)
-                          : null
+                            ? this.renderElement(layoutIndex[rowi][i], (rowi !== 2) && (rowi !== 5), octave0Disabled[rowi][i], 0)
+                            : null
                         }
                       </td>
                     )

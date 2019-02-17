@@ -30,7 +30,7 @@ interface RowState {
 }
 
 class Row extends React.PureComponent<RowProps, RowState> {
-  constructor (props: RowProps) {
+  constructor(props: RowProps) {
     super(props)
     this.state = {
       playing: new Array(COLUMNS).fill(false),
@@ -38,7 +38,7 @@ class Row extends React.PureComponent<RowProps, RowState> {
     }
   }
 
-  render () {
+  render() {
     let { y, centralC } = this.props
     return (
       <tr key={y}>
@@ -51,7 +51,7 @@ class Row extends React.PureComponent<RowProps, RowState> {
             return <td key={index} style={{ height: '0.8em', width: '3em' }} />
           }
           return (
-            <td key={index} style={{padding: '4px'}}>
+            <td key={index} style={{ padding: '4px' }}>
               <FrequencyNode freq={freq} playing={this.state.playing[index]} />
               <div style={{ textAlign: 'center' }}>
                 {this.props.editmode ? (
@@ -78,22 +78,22 @@ class Row extends React.PureComponent<RowProps, RowState> {
                     </button>
                   </div>
                 ) : (
-                  <button
-                    onClick={() => {
-                      let playing = clone(this.state.playing)
-                      playing[index] = !playing[index]
-                      this.setState({ playing })
-                    }}
-                    style={{
-                      background: this.state.playing[index] ? '#f15f55' : '#2196f3',
-                      paddingTop: 0,
-                      height: '1em',
-                      width: '3em'
-                    }}
-                  >
-                    {labels[index][y]}
-                  </button>
-                )}
+                    <button
+                      onClick={() => {
+                        let playing = clone(this.state.playing)
+                        playing[index] = !playing[index]
+                        this.setState({ playing })
+                      }}
+                      style={{
+                        background: this.state.playing[index] ? '#f15f55' : '#2196f3',
+                        paddingTop: 0,
+                        height: '1em',
+                        width: '3em'
+                      }}
+                    >
+                      {labels[index][y]}
+                    </button>
+                  )}
               </div>
             </td>
           )
@@ -117,11 +117,6 @@ interface State {
 
 type QuicksaveState = RowState[];
 
-type GPresets = new () => Presets<(RowState[] | null)[]>;
-const GPresets = Presets as GPresets;
-type GQuickSaves = new () => QuickSaves<QuicksaveState>;
-const GQuickSaves = QuickSaves as GQuickSaves;
-
 const ROWS = 32
 const COLUMNS = 6
 
@@ -130,7 +125,7 @@ export class EDO31 extends React.PureComponent<{}, State> {
   private centralC?: MathInput
   private quicksaves?: QuickSaves<QuicksaveState>
 
-  constructor (props: {}) {
+  constructor(props: {}) {
     super(props)
     this.state = {
       centralC: 440 / Math.pow(2, 17 / 12),
@@ -139,7 +134,7 @@ export class EDO31 extends React.PureComponent<{}, State> {
     this.rows = []
   }
 
-  render () {
+  render() {
     this.rows = new Array(ROWS).fill(null);
     return (
       <div>
@@ -163,18 +158,19 @@ export class EDO31 extends React.PureComponent<{}, State> {
                 <input type="checkbox" checked={this.state.editmode} onChange={(e) => {
                   const editmode = e.target.checked
                   this.setState({ editmode })
-                }}/>
+                }} />
               </td>
             </tr>
-            <GPresets name='edo31_quicksaves'
+            <Presets name='edo31_quicksaves'
               label="Saves"
               onChange={(key: string, saves: (QuicksaveState | null)[]) => {
-                if (this.quicksaves) this.quicksaves.setState({ saves })}
+                if (this.quicksaves) this.quicksaves.setState({ saves })
               }
-              current={() => (this.quicksaves as QuickSaves<QuicksaveState>).state.saves} />
+              }
+              current={() => this.quicksaves!.state.saves} />
           </tbody>
         </table>
-        <GQuickSaves
+        <QuickSaves
           load={(save: QuicksaveState) => {
             save.forEach((row, i) => {
               this.rows[i].setState(row)

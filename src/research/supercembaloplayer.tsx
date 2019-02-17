@@ -45,7 +45,7 @@ let layoutLabels = [
   3, 14, 25, 34, 44,
   0, 8, 17, 22, 31, 39, 48, 0
 ]
-const presets = {
+const presets: { [key: string]: Preset } = {
   'EDO 53': {
     octaves: 4,
     mode: 'ratio',
@@ -81,7 +81,7 @@ export class SuperCembaloPlayer extends React.PureComponent<{}, State> {
   private concertPitch?: MathInput
   private pitch11?: MathInput
 
-  constructor (props: {}) {
+  constructor(props: {}) {
     super(props)
     let octaves = 1
     this.state = {
@@ -97,7 +97,7 @@ export class SuperCembaloPlayer extends React.PureComponent<{}, State> {
     this.inputs = []
   }
 
-  onPreset (name: string, preset: Preset) {
+  onPreset(name: string, preset: Preset) {
     if (this.concertPitch)
       this.concertPitch.setValue(preset.concertPitch, true)
     if (this.pitch11)
@@ -115,17 +115,17 @@ export class SuperCembaloPlayer extends React.PureComponent<{}, State> {
     })
   }
 
-  dumpPreset (): Preset {
+  dumpPreset(): Preset {
     return {
       octaves: this.state.octaves,
       mode: this.state.mode,
-      concertPitch: (this.concertPitch as MathInput).text(),
-      pitch11: (this.pitch11 as MathInput).text(),
+      concertPitch: this.concertPitch!.text(),
+      pitch11: this.pitch11!.text(),
       data: this.inputs.map((i) => i ? i.text() : '')
     }
   }
 
-  renderElement (index: number, small: boolean) {
+  renderElement(index: number, small: boolean) {
     let r = this.state.data[index]
     if (r === null) { return }
     let freq = {
@@ -146,12 +146,12 @@ export class SuperCembaloPlayer extends React.PureComponent<{}, State> {
         <CompactFrequencyPlayer freq={freq} muted={muted}
           text={'' + layoutLabels[index]} ref={(ref) => {
             this.players[index] = ref
-          }} buttonStyle={small ? {padding: '.5em', width: '100%'} : {width: '100%'}} />
+          }} buttonStyle={small ? { padding: '.5em', width: '100%' } : { width: '100%' }} />
       </div>
     )
   }
 
-  render () {
+  render() {
     let c0 = concertPitchToC0(this.state.concertPitch)
     let cents = ratioToCents(this.state.pitch11 / c0)
 
@@ -171,7 +171,7 @@ export class SuperCembaloPlayer extends React.PureComponent<{}, State> {
                   default={440}
                   onChange={(concertPitch) => {
                     this.setState({ concertPitch })
-                  }} ref={(e) => { if (e) this.concertPitch = e }}/>
+                  }} ref={(e) => { if (e) this.concertPitch = e }} />
               </th>
             </tr>
             <tr>
@@ -208,11 +208,11 @@ export class SuperCembaloPlayer extends React.PureComponent<{}, State> {
               <th>
                 <input type="number"
                   min="1" max="4" value={this.state.octaves}
-                  style={{width: '3em'}}
+                  style={{ width: '3em' }}
                   onChange={(event) => {
                     let octaves = parseInt(event.target.value)
                     this.setState({ octaves })
-                  }}/>
+                  }} />
               </th>
             </tr>
             <Presets name='superCembaloPlayerPresets' default={{
@@ -222,13 +222,13 @@ export class SuperCembaloPlayer extends React.PureComponent<{}, State> {
               mode: 'ratio',
               data: range(38).map(() => '')
             }} onChange={this.onPreset.bind(this)}
-              presets={presets}
-              current={this.dumpPreset.bind(this)} />
+              current={this.dumpPreset.bind(this)}
+              presets={presets} />
             <tr>
               <th>Mute</th>
               <th>
                 <button onClick={() => {
-                  this.setState({muted: !this.state.muted})
+                  this.setState({ muted: !this.state.muted })
                 }}>{this.state.muted ? 'un' : ''}mute</button>
               </th>
             </tr>
@@ -257,14 +257,14 @@ export class SuperCembaloPlayer extends React.PureComponent<{}, State> {
                           throw "invalid mode"
                         }
                         return (
-                          <td key={i} style={{padding: '0'}}>
+                          <td key={i} style={{ padding: '0' }}>
                             <CompactFrequencyPlayer freq={freq}
-                              buttonStyle={small ? {padding: '.5em', width: '3.15em'} : {width: '3.95em'}}
+                              buttonStyle={small ? { padding: '.5em', width: '3.15em' } : { width: '3.95em' }}
                               text={'' + layoutLabels[index]} muted={this.state.muted} />
                           </td>
                         )
                       } else {
-                        return <td key={i} style={{padding: '0'}} />
+                        return <td key={i} style={{ padding: '0' }} />
                       }
                     })}
                   </tr>
@@ -282,11 +282,11 @@ export class SuperCembaloPlayer extends React.PureComponent<{}, State> {
                 <tr key={rowi}>
                   {row.map((isThing, i) => {
                     return (
-                      <td key={i} style={{padding: '0px'}}>
+                      <td key={i} style={{ padding: '0px' }}>
                         {
                           isThing
-                          ? this.renderElement(layoutIndex[rowi][i], (rowi !== 4) && (rowi !== 8))
-                          : null
+                            ? this.renderElement(layoutIndex[rowi][i], (rowi !== 4) && (rowi !== 8))
+                            : null
                         }
                       </td>
                     )

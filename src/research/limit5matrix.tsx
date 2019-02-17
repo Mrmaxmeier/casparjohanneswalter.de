@@ -49,7 +49,7 @@ interface RowState {
 }
 
 class Row extends React.PureComponent<RowProps, RowState> {
-  constructor (props: RowProps) {
+  constructor(props: RowProps) {
     super(props)
     this.state = {
       octave: new Array(WIDTH).fill(0),
@@ -57,7 +57,7 @@ class Row extends React.PureComponent<RowProps, RowState> {
     }
   }
 
-  data (x: number, y: number) {
+  data(x: number, y: number) {
     return {
       ji: 3 ** y * 5 ** x,
       schismatic: 3 ** (y - x * 8),
@@ -66,7 +66,7 @@ class Row extends React.PureComponent<RowProps, RowState> {
     }[this.props.preset]
   }
 
-  render () {
+  render() {
     let { y, centralC } = this.props
     return (
       <tr key={y}>
@@ -78,7 +78,7 @@ class Row extends React.PureComponent<RowProps, RowState> {
           let cents = ratioToCents(freqRatio)
           let freq = freqRatio * centralC * Math.pow(2, this.state.octave[index])
           return (
-            <td key={x} style={{padding: '4px'}}>
+            <td key={x} style={{ padding: '4px' }}>
               <FrequencyNode freq={freq} playing={this.state.playing[index]} />
               <div style={{ textAlign: 'center' }}>
                 <PrecNumber value={cents} precision={1} />
@@ -91,7 +91,7 @@ class Row extends React.PureComponent<RowProps, RowState> {
                     playing[index] = !playing[index]
                     this.setState({ playing })
                   }}
-                  style={{background: this.state.playing[index] ? '#f15f55' : '#2196f3'}}
+                  style={{ background: this.state.playing[index] ? '#f15f55' : '#2196f3' }}
                 >
                   {labels[12 - y][x + 4]}
                 </button>
@@ -135,15 +135,13 @@ interface Preset {
   save: (SaveState | null)[]
 }
 
-type GQuickSaves = new () => QuickSaves<SaveState>;
-const GQuickSaves = QuickSaves as GQuickSaves;
 
 export class Limit5MatrixPlayer extends React.PureComponent<{}, State> {
   private rows: { [key: number]: Row }
   private centralC?: MathInput
   private quicksaves?: QuickSaves<SaveState>
 
-  constructor (props: {}) {
+  constructor(props: {}) {
     super(props)
     this.state = {
       centralC: 440 / Math.pow(2, 9 / 12),
@@ -154,7 +152,7 @@ export class Limit5MatrixPlayer extends React.PureComponent<{}, State> {
     this.rows = {}
   }
 
-  onPreset (name: string, preset: Preset) {
+  onPreset(name: string, preset: Preset) {
     if (this.centralC)
       this.centralC.setValue(preset.centralC, true)
     this.setState({
@@ -166,16 +164,16 @@ export class Limit5MatrixPlayer extends React.PureComponent<{}, State> {
     })
   }
 
-  dumpPreset () {
+  dumpPreset(): Preset {
     return {
       preset: this.state.preset,
-      centralC: (this.centralC as MathInput).text(),
+      centralC: this.centralC!.text(),
       large: this.state.large,
-      save: (this.quicksaves as QuickSaves<SaveState>).state.saves,
+      save: this.quicksaves!.state.saves,
     }
   }
 
-  render () {
+  render() {
     let large = this.state.large
     this.rows = {}
     return (
@@ -200,7 +198,7 @@ export class Limit5MatrixPlayer extends React.PureComponent<{}, State> {
                 <select onChange={(e) => {
                   let preset = e.target.value
                   if (preset === 'ji' || preset === 'schismatic' ||
-                      preset === 'schismatic_optimized7' || preset === 'edo53') {
+                    preset === 'schismatic_optimized7' || preset === 'edo53') {
                     this.setState({ preset })
                   }
                 }} value={this.state.preset}>
@@ -234,8 +232,8 @@ export class Limit5MatrixPlayer extends React.PureComponent<{}, State> {
                 </fieldset>
               </td>
             </tr>
-            <Presets name='limit5Presets' default={{
-              pitch11: '440 / 2^(9/12)',
+            <Presets<Preset> name='limit5Presets' default={{
+              centralC: "440 / 2 ^ (9 / 12)",
               large: true,
               preset: 'edo53',
               save: [null, null, null, null]
@@ -245,7 +243,7 @@ export class Limit5MatrixPlayer extends React.PureComponent<{}, State> {
               current={this.dumpPreset.bind(this)} />
           </tbody>
         </table>
-        <GQuickSaves
+        <QuickSaves<SaveState>
           load={(save: SaveState) => {
             Object.keys(save.octave).map((s) => {
               let key = parseInt(s)
@@ -286,7 +284,7 @@ export class Limit5MatrixPlayer extends React.PureComponent<{}, State> {
                 ref={(e) => {
                   if (e) this.rows[y] = e
                 }}
-                // playing={this.state.playing.slice(y * WIDTH, (y + 1) * WIDTH)} TODO?
+              // playing={this.state.playing.slice(y * WIDTH, (y + 1) * WIDTH)} TODO?
               />
             ))}
             <tr>

@@ -1,10 +1,8 @@
 import * as React from 'react'
 
-import { MathInput, NoteDisplay, NoteImage, CompactFrequencyPlayer } from './components'
+import { MathInput, CompactFrequencyPlayer } from './components'
 import { AudioController, AudioControllerRow, FrequencyNode, WebMIDIHandler } from './audioComponents'
-import { concertPitchToC0, ratioToCents, evalMathN, centsToFrequency } from './converters'
 import { Presets } from './presets'
-import { range, clone } from 'lodash'
 
 type LerpMode = 'linear' | 'overtone' | 'undertone' | 'sin' | 'step'
 function lerpFunc(mode: LerpMode, from: number, to: number, time: number, concertPitch: number, timeLeft: number) {
@@ -34,11 +32,11 @@ function lerpFunc(mode: LerpMode, from: number, to: number, time: number, concer
   }
 }
 
-function centsToFreq (cents: number, concertPitch: number) {
+function centsToFreq(cents: number, concertPitch: number) {
   return Math.pow(2, (cents / 1200)) * concertPitch / Math.pow(2, 33 / 12)
 }
 
-function freqToCents (freq: number, concertPitch: number) {
+function freqToCents(freq: number, concertPitch: number) {
   return Math.log2(freq / concertPitch) * 1200 + 3300
 }
 
@@ -63,7 +61,7 @@ export class SinusGlissando extends React.PureComponent<{}, State> {
   private player?: GlissandoPlayer
   private volumeRow?: AudioControllerRow
 
-  constructor (props: {}) {
+  constructor(props: {}) {
     super(props)
     let octaves = 1
     this.state = {
@@ -78,7 +76,7 @@ export class SinusGlissando extends React.PureComponent<{}, State> {
     this.inputs = []
   }
 
-  onPreset (name: string, preset: Preset) {
+  onPreset(name: string, preset: Preset) {
     if (this.concertPitch)
       this.concertPitch.setValue(preset.concertPitch, true)
     this.setState({
@@ -86,14 +84,14 @@ export class SinusGlissando extends React.PureComponent<{}, State> {
     })
   }
 
-  dumpPreset () {
+  dumpPreset() {
     return {
       data: this.state.data,
-      concertPitch: this.concertPitch && this.concertPitch.text(),
+      concertPitch: this.concertPitch!.text(),
     }
   }
 
-  preparePlayerProps () {
+  preparePlayerProps() {
     let accTime: number[] = []
     let last = 0
     for (let data of this.state.data) {
@@ -111,7 +109,7 @@ export class SinusGlissando extends React.PureComponent<{}, State> {
     }
   }
 
-  render () {
+  render() {
     return (
       <div>
         <AudioController />
@@ -125,7 +123,7 @@ export class SinusGlissando extends React.PureComponent<{}, State> {
                   default={440}
                   onChange={(concertPitch) => {
                     this.setState({ concertPitch })
-                  }} ref={(e) => { if (e) this.concertPitch = e }}/>
+                  }} ref={(e) => { if (e) this.concertPitch = e }} />
               </th>
             </tr>
             <Presets name='sinusGlissandoPresets' default={{
@@ -138,7 +136,7 @@ export class SinusGlissando extends React.PureComponent<{}, State> {
               label="Preset"
               onChange={this.onPreset.bind(this)}
               current={this.dumpPreset.bind(this)} />
-            <GlissandoPlayer {...this.preparePlayerProps()} ref={(e) => {if (e) this.player = e}} />
+            <GlissandoPlayer {...this.preparePlayerProps()} ref={(e) => { if (e) this.player = e }} />
             <WebMIDIHandler onKey={(id, mag) => {
               if (this.volumeRow)
                 this.volumeRow.onMidi(id, mag)
@@ -165,7 +163,7 @@ export class SinusGlissando extends React.PureComponent<{}, State> {
                 <td>
                   <input type="number"
                     value={value}
-                    style={{width: '5em'}}
+                    style={{ width: '5em' }}
                     onChange={(e) => {
                       let data = this.state.data.slice(0)
                       data[i].value = parseInt(e.target.value)
@@ -176,7 +174,7 @@ export class SinusGlissando extends React.PureComponent<{}, State> {
                 <td>
                   <input type="number" min={0} step={1}
                     value={time}
-                    style={{width: '5em'}}
+                    style={{ width: '5em' }}
                     onChange={(e) => {
                       let data = this.state.data.slice(0)
                       data[i].time = parseInt(e.target.value)
@@ -204,20 +202,20 @@ export class SinusGlissando extends React.PureComponent<{}, State> {
                   {this.state.triggerListen == i ? (
                     <button>Press Key...</button>
                   ) : (
-                    this.state.data[i].trigger !== undefined ? (
-                      <button style={{
-                        background: 'white', color: 'black'
-                      }} onClick={() => {
-                        let data = this.state.data.slice(0)
-                        data[i].trigger = undefined
-                        this.setState({ data })
-                      }}>Trigger: {this.state.data[i].trigger}</button>
-                    ) : (
-                      <button style={{
-                        background: 'white', color: 'grey'
-                      }} onClick={() => this.setState({ triggerListen: i })}>Set Trigger</button>
-                    )
-                  )}
+                      this.state.data[i].trigger !== undefined ? (
+                        <button style={{
+                          background: 'white', color: 'black'
+                        }} onClick={() => {
+                          let data = this.state.data.slice(0)
+                          data[i].trigger = undefined
+                          this.setState({ data })
+                        }}>Trigger: {this.state.data[i].trigger}</button>
+                      ) : (
+                          <button style={{
+                            background: 'white', color: 'grey'
+                          }} onClick={() => this.setState({ triggerListen: i })}>Set Trigger</button>
+                        )
+                    )}
                 </td>
                 {i == (this.state.data.length - 1) ? (
                   <th>
@@ -254,7 +252,7 @@ class GlissandoPlayer extends React.Component<State, GPState> {
   private pointsReversed: Datapoint[]
   private startTime: number
 
-  constructor (props: State) {
+  constructor(props: State) {
     super(props)
     this.interval = null
     this.points = []
@@ -271,7 +269,7 @@ class GlissandoPlayer extends React.Component<State, GPState> {
       this.startTime = 0
   }
 
-  updateFromProps (props: State) {
+  updateFromProps(props: State) {
     if (this.interval)
       clearInterval(this.interval)
     this.interval = null
@@ -282,7 +280,7 @@ class GlissandoPlayer extends React.Component<State, GPState> {
     return { time: null, freq: this.first.value, paused: false }
   }
 
-  componentWillReceiveProps (props: State) {
+  componentWillReceiveProps(props: State) {
     this.setState(this.updateFromProps(props))
   }
 
@@ -299,7 +297,7 @@ class GlissandoPlayer extends React.Component<State, GPState> {
     return lerpFunc(lerpFrom.mode, lerpFrom.value, lerpTo.value, progress, this.props.concertPitch, lerpTo.time - time)
   }
 
-  update () {
+  update() {
     if (this.state.paused)
       return
     let time = this.state.time || 0
@@ -318,14 +316,14 @@ class GlissandoPlayer extends React.Component<State, GPState> {
     }
   }
 
-  stop () {
+  stop() {
     if (this.interval)
       clearInterval(this.interval)
     this.interval = null
     this.setState({ time: null, paused: false })
   }
 
-  start (triggerIdx?: number) {
+  start(triggerIdx?: number) {
     if (this.interval)
       return
 
@@ -342,7 +340,7 @@ class GlissandoPlayer extends React.Component<State, GPState> {
     this.interval = setInterval(this.update.bind(this), UPDATE_INTERVAL)
   }
 
-  onMidi (id: number, mag: number) {
+  onMidi(id: number, mag: number) {
     let idx = this.props.data.findIndex((e) => e.trigger === id)
     if (idx !== -1) {
       if (this.state.paused && this.interval) {
@@ -353,20 +351,20 @@ class GlissandoPlayer extends React.Component<State, GPState> {
     }
   }
 
-  togglePause () {
+  togglePause() {
     if (this.state.paused) {
       this.startTime = performance.now() - (this.state.time || 0)
     }
     this.setState({ paused: !this.state.paused })
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     if (this.interval !== null)
       clearInterval(this.interval)
     this.interval = null
   }
 
-  render () {
+  render() {
     return (
       <tr>
         <th>
@@ -376,20 +374,20 @@ class GlissandoPlayer extends React.Component<State, GPState> {
           {this.state.time === null ? (
             <button onClick={() => this.start()}>Play</button>
           ) : (
-            <button onClick={this.stop} style={{color: 'red'}}>Stop</button>
-          )}
+              <button onClick={this.stop} style={{ color: 'red' }}>Stop</button>
+            )}
         </th>
         <th>
           <button
             onClick={this.togglePause}
             disabled={this.state.time === null}
-            style={{color: this.state.paused ? '#61ff61' : 'white'}}
+            style={{ color: this.state.paused ? '#61ff61' : 'white' }}
           >Pause</button>
         </th>
         <th>{this.state.time !== null ? Math.round(this.state.time) + " ms" : null}</th>
         <th>
           {this.state.time !== null ? (
-          "#" + (this.points.length - this.pointsReversed.findIndex((v) => v.time <= (this.state.time as number)))
+            "#" + (this.points.length - this.pointsReversed.findIndex((v) => v.time <= (this.state.time!)))
           ) : null}
         </th>
         <th><FrequencyNode lerp={true} freq={this.state.freq} playing={this.state.time !== null} /></th>

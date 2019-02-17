@@ -1,17 +1,16 @@
 import * as React from 'react'
 
-import { extend } from 'lodash'
 import * as download from 'downloadjs'
 
 interface Props<T> {
-    name: string,
-    default?: T,
-    newAsDefault?: boolean,
-    defaultKey?: string,
-    onChange: (key: string, data: T) => void,
-    current: () => T,
-    presets?: { [preset: string]: T },
-    label?: string,
+  name: string,
+  default?: T,
+  newAsDefault?: boolean,
+  defaultKey?: string,
+  onChange: (key: string, data: T) => void,
+  current: () => T,
+  presets?: { [preset: string]: T },
+  label?: string,
 }
 
 interface State<T> {
@@ -23,11 +22,11 @@ interface State<T> {
 export class Presets<T> extends React.PureComponent<Props<T>, State<T>> {
   private filepicker?: HTMLInputElement;
 
-  constructor (props: Props<T>) {
+  constructor(props: Props<T>) {
     super(props)
     let defaultPresets: { [key: string]: T | null } = { '-- New --': this.props.default || null }
     this.state = {
-      presets: {...defaultPresets, ...this.props.presets} as { [preset: string]: T | null },
+      presets: { ...defaultPresets, ...this.props.presets } as { [preset: string]: T | null },
       preset: this.props.defaultKey || '-- New --',
       localStorageError: false
     }
@@ -38,7 +37,7 @@ export class Presets<T> extends React.PureComponent<Props<T>, State<T>> {
     }
   }
 
-  load (): { [key: string]: T | null } {
+  load(): { [key: string]: T | null } {
     let data = window.localStorage.getItem(this.props.name) || '{}'
     let presets = {
       '-- New --': null,
@@ -49,7 +48,7 @@ export class Presets<T> extends React.PureComponent<Props<T>, State<T>> {
     return presets
   }
 
-  save () {
+  save() {
     let data = JSON.stringify(this.state.presets)
     try {
       window.localStorage.setItem(this.props.name, data)
@@ -59,7 +58,7 @@ export class Presets<T> extends React.PureComponent<Props<T>, State<T>> {
     }
   }
 
-  render () {
+  render() {
     return (
       <tr>
         <th>
@@ -74,7 +73,7 @@ export class Presets<T> extends React.PureComponent<Props<T>, State<T>> {
           <select onChange={(e) => {
             let preset = e.target.value
             let data = this.state.presets[preset]
-            this.setState({preset}, () => {
+            this.setState({ preset }, () => {
               if (data) {
                 this.props.onChange(preset, data)
               } else if (this.props.newAsDefault && this.props.default) {
@@ -122,14 +121,14 @@ export class Presets<T> extends React.PureComponent<Props<T>, State<T>> {
           }} disabled={this.state.localStorageError}>
             Import file
           </button>
-          <input ref={(e) => { if (e) this.filepicker = e }} type="file" style={{display: 'none'}}
+          <input ref={(e) => { if (e) this.filepicker = e }} type="file" style={{ display: 'none' }}
             onChange={(event) => {
               let file = (event.target.files || [])[0]
               let name = file.name.replace('.json', '')
               let reader = new FileReader()
               reader.readAsText(file)
               reader.onload = () => {
-                let data = JSON.parse(reader.result)
+                let data = JSON.parse(reader.result as string)
                 let presets = this.load()
                 presets[name] = data
                 this.save()
@@ -171,47 +170,47 @@ interface QuickSaveState<Save> {
   saves: (Save | null)[]
 }
 export class QuickSaves<Save> extends React.PureComponent<QuickSavesProps<Save>, QuickSaveState<Save>> {
-  constructor (props: QuickSavesProps<Save>) {
+  constructor(props: QuickSavesProps<Save>) {
     super(props)
     this.state = {
       saves: new Array(4).fill(null)
     }
   }
-  render () {
+  render() {
     return (
-        <table>
-          <tbody>
-            <tr>
-              {this.state.saves.map((_: (Save | null), i: number) => (
-                <th key={i} style={{padding: '8px'}}>
-                  <button
-                    onClick={() => {
-                      let save = this.props.saveData(i)
-                      let saves = [...this.state.saves];
-                      saves[i] = save
-                      if (i == saves.length - 1) {
-                        saves.push(null);
-                      }
-                      this.setState({ saves })
-                    }}
-                    style={{padding: '8px'}}
-                  >Save {i + 1}</button>
-                </th>
-              ))}
-            </tr>
-            <tr>
-              {this.state.saves.map((data: (Save | null), i: number) => (
-                <th key={i} style={{padding: '8px'}}>
-                  <button
-                    disabled={!data}
-                    onClick={() => this.props.load(data as Save)}
-                    style={{padding: '8px'}}
-                  >Load {i + 1}</button>
-                </th>
-              ))}
-            </tr>
-          </tbody>
-        </table>
+      <table>
+        <tbody>
+          <tr>
+            {this.state.saves.map((_: (Save | null), i: number) => (
+              <th key={i} style={{ padding: '8px' }}>
+                <button
+                  onClick={() => {
+                    let save = this.props.saveData(i)
+                    let saves = [...this.state.saves];
+                    saves[i] = save
+                    if (i == saves.length - 1) {
+                      saves.push(null);
+                    }
+                    this.setState({ saves })
+                  }}
+                  style={{ padding: '8px' }}
+                >Save {i + 1}</button>
+              </th>
+            ))}
+          </tr>
+          <tr>
+            {this.state.saves.map((data: (Save | null), i: number) => (
+              <th key={i} style={{ padding: '8px' }}>
+                <button
+                  disabled={!data}
+                  onClick={() => this.props.load(data!)}
+                  style={{ padding: '8px' }}
+                >Load {i + 1}</button>
+              </th>
+            ))}
+          </tr>
+        </tbody>
+      </table>
     )
   }
 }
