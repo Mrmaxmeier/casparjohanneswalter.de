@@ -11,7 +11,7 @@ let labels = [
   'd', '+', 'es', '+',
   'e', '+',
   'f', '+', 'fis', '+',
-  'g', '+', 'as', 'b',
+  'g', '+', 'as', '+',
   'a', '+', 'b', '+',
   'h', '+',
   'c'
@@ -179,11 +179,11 @@ export class QuartertonePlayer extends React.PureComponent<{}, State> {
             </tr>
           </tbody>
         </table>
-        {this.renderOctave("4. Oktave", 6)}
-        {this.renderOctave("3. Oktave", 5)}
-        {this.renderOctave("2. Oktave", 4)}
-        {this.renderOctave("Kl. Oktave", 3)}
-        {this.renderOctave("Gr. Oktave", 2)}
+        {this.renderOctave("3. Oktave", 4)}
+        {this.renderOctave("2. Oktave", 3)}
+        {this.renderOctave("1. Oktave", 2)}
+        {this.renderOctave("Kl. Oktave", 1)}
+        {this.renderOctave("Gr. Oktave", 0)}
       </div>
     )
   }
