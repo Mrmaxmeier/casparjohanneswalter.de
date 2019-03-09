@@ -153,6 +153,10 @@ export class QuartertonePlayer extends React.PureComponent<{}, State> {
         </table>
         <table>
           <tbody>
+            <Presets name='quartertoneQuicksaves' label='Music Preset'
+              default={{ saves: [null, null, null, null] }} newAsDefault
+              onChange={(_, state) => this.quicksaves && this.quicksaves.setState(state)}
+              current={() => (this.quicksaves && this.quicksaves.state) || { saves: [] }} />
             <tr>
               <th>Playing</th>
               <th>
