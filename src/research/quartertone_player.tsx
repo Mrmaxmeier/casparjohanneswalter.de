@@ -1,8 +1,7 @@
 import * as React from 'react'
 
-import { MathInput, NoteDisplay, NoteImage, CompactFrequencyPlayer } from './components'
+import { MathInput, CompactFrequencyPlayer } from './components'
 import { AudioController, AudioControllerRow } from './audioComponents'
-import { concertPitchToC0, ratioToCents } from './converters'
 import { Presets, QuickSaves } from './presets'
 import { mapValues } from 'lodash'
 
@@ -105,9 +104,6 @@ export class QuartertonePlayer extends React.PureComponent<{}, State> {
   }
 
   render() {
-    let c0 = concertPitchToC0(this.state.concertPitch)
-    let cents = ratioToCents(this.state.pitch11 / c0)
-
     this.players = new Array(6).fill(null)
     return (
       <div>
@@ -123,22 +119,6 @@ export class QuartertonePlayer extends React.PureComponent<{}, State> {
                   onChange={(concertPitch) => {
                     this.setState({ concertPitch })
                   }} />
-              </th>
-            </tr>
-            <tr>
-              <th>Pitch 1 / 1</th>
-              <th>
-                <MathInput
-                  wide default="440 / 9 * 8"
-                  onChange={(pitch11) => {
-                    this.setState({ pitch11 })
-                  }} />
-              </th>
-              <th>
-                <NoteImage cents={cents} />
-              </th>
-              <th>
-                <NoteDisplay cents={cents} />
               </th>
             </tr>
             <tr>
