@@ -69,7 +69,7 @@ class Row extends React.PureComponent<RowProps, RowState> {
                         color: 'black',
                         background: this.state.visible[index] ? '#ABF2A5' : '#FAEEDC',
                         paddingTop: 0,
-                        height: '1em',
+                        height: '1.3em',
                         width: '3em',
                         textDecoration: this.state.visible[index] ? undefined : 'line-through'
                       }}
@@ -87,7 +87,7 @@ class Row extends React.PureComponent<RowProps, RowState> {
                       style={{
                         background: this.state.playing[index] ? '#f15f55' : '#2196f3',
                         paddingTop: 0,
-                        height: '1em',
+                        height: '1.3em',
                         width: '3em'
                       }}
                     >

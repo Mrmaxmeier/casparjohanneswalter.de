@@ -168,7 +168,7 @@ class Row extends React.PureComponent<RowProps, RowState> {
                   style={{
                     background: this.state.playing[index] ? '#f15f55' : '#2196f3',
                     paddingTop: 0,
-                    height: '1em'
+                    height: '1.3em'
                   }}
                 >
                   {labels[y][x]}

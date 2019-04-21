@@ -355,11 +355,12 @@ export class ArciorganoPlayer extends React.PureComponent<{}, State> {
                           ratio: (pitch: number, r: number) => pitch * r * Math.pow(2, oc),
                           cents: (pitch: number, r: number) => pitch * Math.pow(2, r / 1200 + oc)
                         }[this.state.mode](this.state.pitch11, data)
+                        let disabled = (oc+2 == 5) && normalLabels[index] === 'his'
                         return (
                           <td key={i} style={{ padding: '0' }}>
                             <CompactFrequencyPlayer freq={freq}
                               buttonStyle={small ? { padding: '.5em', width: '3.35em' } : { width: '4.25em' }}
-                              text={layoutLabels[this.state.label][index]} muted={this.state.muted}
+                              text={layoutLabels[this.state.label][index]} muted={this.state.muted || disabled}
                               ref={(ref) => this._setPlayerRef(oc, index, ref)} />
                           </td>
                         )
