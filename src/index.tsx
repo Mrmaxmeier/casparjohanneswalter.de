@@ -1,4 +1,3 @@
-require('es6-shim')
 import * as React from 'react'
 import { render } from 'react-dom'
 import 'react-router'

@@ -13,7 +13,8 @@ interface State {
   pitch11: number,
   mode: 'ratio' | 'cents',
   playingAll: boolean[],
-  data: (number | null)[][]
+  data: (number | null)[][],
+  rowLabels: string[]
 }
 
 interface Preset {
@@ -21,7 +22,8 @@ interface Preset {
   mode: 'ratio' | 'cents',
   concertPitch: string,
   pitch11: string,
-  data: string[][]
+  data: string[][],
+  rowLabels: string[]
 }
 
 export class ChordPlayer extends React.PureComponent<{}, State> {
@@ -42,7 +44,8 @@ export class ChordPlayer extends React.PureComponent<{}, State> {
         () => range(6).map((i) => i === 0 ? 1 : null)
       ),
       playingAll: new Array(rows).fill(false),
-      mode: 'ratio'
+      mode: 'ratio',
+      rowLabels: new Array(rows).fill(null).map((_, x) => ''+(x+1))
     }
     this.players = []
     this.inputs = []
@@ -57,7 +60,8 @@ export class ChordPlayer extends React.PureComponent<{}, State> {
     }
     let playingAll = resizeArray(this.state.playingAll, rows, () => false)
     let data = resizeArray(this.state.data, rows, () => range(6).map((i) => i === 0 ? 1 : null))
-    this.setState({ rows, playingAll, data }, cb)
+    let rowLabels = resizeArray(this.state.rowLabels, rows, i => ''+(i+1))
+    this.setState({ rows, playingAll, data, rowLabels }, cb)
   }
 
   onPreset (name: string, preset: Preset) {
@@ -71,7 +75,8 @@ export class ChordPlayer extends React.PureComponent<{}, State> {
           this.inputs[ri][i].setValue(input, true)
         })
       })
-      this.setState({ mode: preset.mode })
+      let rowLabels = preset.rowLabels || (new Array(preset.rows).fill(null).map((_, x) => ''+(x+1)));
+      this.setState({ mode: preset.mode, rowLabels })
     })
   }
 
@@ -83,7 +88,8 @@ export class ChordPlayer extends React.PureComponent<{}, State> {
       pitch11: (this.pitch11 && this.pitch11.text()) || "",
       data: range(this.state.rows).map((ri) => {
         return range(6).map((i) => this.inputs[ri][i].text())
-      })
+      }),
+      rowLabels: this.state.rowLabels
     }
   }
 
@@ -156,7 +162,8 @@ export class ChordPlayer extends React.PureComponent<{}, State> {
               pitch11: '440 / 9 * 8',
               rows: 8,
               mode: 'ratio',
-              data: range(8).map(() => ['1 / 1', '', '', '', '', ''])
+              data: range(8).map(() => ['1 / 1', '', '', '', '', '']),
+              rowLabels: range(8).map(x => '' + (x+1))
             }} onChange={this.onPreset.bind(this)}
               current={this.dumpPreset.bind(this)} />
           </tbody>
@@ -166,7 +173,12 @@ export class ChordPlayer extends React.PureComponent<{}, State> {
             {this.state.data.map((row, rowi) => {
               return (
                 <tr key={rowi}>
-                  <th>{rowi + 1}</th>
+                  <th>
+                    <input value={this.state.rowLabels[rowi]} onChange={v => {
+                      let rowLabels = this.state.rowLabels.map((x, i) => i == rowi ? v.target.value : x)
+                      this.setState({ rowLabels })
+                    }} style={{width: '7em'}}/>
+                  </th>
                   {row.map((e, i) => {
                     let freq = 0;
                     if (e)

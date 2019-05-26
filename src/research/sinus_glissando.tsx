@@ -244,7 +244,7 @@ interface GPState {
 // TODO: track performance issues
 const UPDATE_INTERVAL = 5 // ms
 class GlissandoPlayer extends React.Component<State, GPState> {
-  private interval: number | null
+  private interval: NodeJS.Timeout | null
   private first?: Datapoint
   private last?: Datapoint
   private pauseAt?: number
