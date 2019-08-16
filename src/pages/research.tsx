@@ -8,7 +8,7 @@ import { FractionToCents, FrequencyToPitch } from '../research/converterComponen
 import { SoundGen } from '../research/soundgen'
 import { DiffTone } from '../research/difftone'
 import { FractionWindowing } from '../research/fraction_windowing'
-import { PianoMultiphonicCalculatorII } from '../research/piano_multiphonic'
+import { PianoMultiphonicCalculator } from '../research/piano_multiphonic'
 import { HarmonicBeatingCalculator } from '../research/harmonic_beating'
 import { TonalityDiamond } from '../research/tonalitydiamond'
 import { ChordPlayer } from '../research/chordplayer'
@@ -115,9 +115,9 @@ let musicCalculators: PageDef[] = [
     component: DiffTone
   },
   {
-    id: 'piano_multiphonic_calculator_2',
-    title: 'Piano Multiphonic Calculator II',
-    component: PianoMultiphonicCalculatorII
+    id: 'piano_multiphonic_calculator',
+    title: 'Piano Multiphonic Calculator',
+    component: PianoMultiphonicCalculator
   },
   {
     id: 'harmonic_beating_calculator',

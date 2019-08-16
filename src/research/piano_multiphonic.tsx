@@ -29,7 +29,7 @@ interface State {
   data2: Data,
 }
 
-export class PianoMultiphonicCalculatorII extends React.PureComponent<{}, State> {
+export class PianoMultiphonicCalculator extends React.PureComponent<{}, State> {
   constructor (props: {}) {
     super(props)
     this.state = {
