@@ -12,7 +12,6 @@ interface State {
   concertPitch: number,
   pitch11: number,
   mode: 'ratio' | 'cents',
-  playingAll: boolean[],
   data: (number | null)[][],
   rowLabels: string[]
 }
@@ -32,6 +31,7 @@ export class ChordPlayer extends React.PureComponent<{}, State> {
   private rows?: HTMLInputElement
   private concertPitch?: MathInput
   private pitch11?: MathInput
+  private playAllButtons: PlayAllButton[]
 
   constructor (props: {}) {
     super(props)
@@ -43,12 +43,12 @@ export class ChordPlayer extends React.PureComponent<{}, State> {
       data: new Array(rows).fill(null).map(
         () => range(6).map((i) => i === 0 ? 1 : null)
       ),
-      playingAll: new Array(rows).fill(false),
       mode: 'ratio',
       rowLabels: new Array(rows).fill(null).map((_, x) => ''+(x+1))
     }
     this.players = []
     this.inputs = []
+    this.playAllButtons = []
   }
 
   setRows (rows: number, cb?: () => void) {
@@ -58,10 +58,9 @@ export class ChordPlayer extends React.PureComponent<{}, State> {
           row.forEach((player) => player.setPlaying(false))
         })
     }
-    let playingAll = resizeArray(this.state.playingAll, rows, () => false)
     let data = resizeArray(this.state.data, rows, () => range(6).map((i) => i === 0 ? 1 : null))
     let rowLabels = resizeArray(this.state.rowLabels, rows, i => ''+(i+1))
-    this.setState({ rows, playingAll, data, rowLabels }, cb)
+    this.setState({ rows, data, rowLabels }, cb)
   }
 
   onPreset (name: string, preset: Preset) {
@@ -166,6 +165,13 @@ export class ChordPlayer extends React.PureComponent<{}, State> {
               rowLabels: range(8).map(x => '' + (x+1))
             }} onChange={this.onPreset.bind(this)}
               current={this.dumpPreset.bind(this)} />
+            <tr><th><button onClick={() => {
+              let idx = this.playAllButtons.findIndex(playAll => playAll.state.active)
+              if (idx >= 0)
+                this.playAllButtons[idx].set(false)
+              if (this.playAllButtons[idx+1])
+                this.playAllButtons[idx+1].set(true)
+            }}>Play Next</button></th></tr>
           </tbody>
         </table>
         <table>
@@ -173,6 +179,26 @@ export class ChordPlayer extends React.PureComponent<{}, State> {
             {this.state.data.map((row, rowi) => {
               return (
                 <tr key={rowi}>
+                  <th>
+                    <button
+                      style={{height: '2em', width: '2em', padding: 0}}
+                      title="delete row"
+                      onClick={_ => this.setState({
+                        rowLabels: [...this.state.rowLabels.slice(0, rowi), ...this.state.rowLabels.slice(rowi+1)],
+                        data: [...this.state.data.slice(0, rowi), ...this.state.data.slice(rowi+1)],
+                        rows: this.state.rows - 1,
+                      })}
+                    >-</button>
+                    <button
+                      style={{height: '2em', width: '2em', padding: 0}}
+                      title="duplicate row"
+                      onClick={_ => this.setState({
+                        rowLabels: [...this.state.rowLabels.slice(0, rowi+1), ...this.state.rowLabels.slice(rowi)],
+                        data: [...this.state.data.slice(0, rowi+1), ...this.state.data.slice(rowi)],
+                        rows: this.state.rows + 1,
+                      })}
+                    >+</button>
+                  </th>
                   <th>
                     <input value={this.state.rowLabels[rowi]} onChange={v => {
                       let rowLabels = this.state.rowLabels.map((x, i) => i == rowi ? v.target.value : x)
@@ -217,7 +243,10 @@ export class ChordPlayer extends React.PureComponent<{}, State> {
                   })}
                   <th />
                   <th>
-                    <PlayAllButton playerRefs={this.players[rowi]} />
+                    <PlayAllButton playerRefs={this.players[rowi]} ref={(ref: PlayAllButton | null) => {
+                      if (ref)
+                        this.playAllButtons[rowi] = ref;
+                    }} />
                   </th>
                 </tr>
               )
