@@ -280,8 +280,8 @@ class GlissandoPlayer extends React.Component<State, GPState> {
     return { time: null, freq: this.first.value, paused: false }
   }
 
-  componentWillReceiveProps(props: State) {
-    this.setState(this.updateFromProps(props))
+  getDerivedStateFromProps(props: State) {
+    return this.updateFromProps(props)
   }
 
   valueAt(time: number) {

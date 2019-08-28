@@ -84,8 +84,8 @@ class InputNumber extends React.PureComponent<InputNumberProps, InputNumberState
     this.state = { override: undefined }
   }
 
-  componentWillReceiveProps() {
-    this.setState({ override: undefined })
+  getDerivedStateFromProps() {
+    return { override: undefined }
   }
 
   render() {

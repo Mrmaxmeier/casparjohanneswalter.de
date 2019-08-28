@@ -124,11 +124,11 @@ export class FractionInput extends React.PureComponent<FractionInputProps, Fract
     }
   }
 
-  componentWillReceiveProps (nextProps: FractionInputProps) {
+  getDerivedStateFromProps (nextProps: FractionInputProps, state: FractionInputState) {
     if (nextProps.value !== null) {
       let numerator = nextProps.value && nextProps.value.numerator.toString() || ''
       let denominator = nextProps.value && nextProps.value.denominator.toString() || ''
-      this.setState({ numerator, denominator })
+      return { numerator, denominator }
     }
   }
 
@@ -532,11 +532,13 @@ export class PlayAllButton extends React.PureComponent<PlayAllButtonProps, { act
     this.toggle = this.toggle.bind(this)
   }
 
+  set (value: boolean) {
+    this.setState({ active: value })
+    this.props.playerRefs.forEach(p => p.setPlaying(value))
+  }
+
   toggle () {
-    this.setState({ active: !this.state.active })
-    this.props.playerRefs.forEach((p, i) => {
-      p.setPlaying(!this.state.active)
-    })
+    this.set(!this.state.active)
   }
 
   render () {
