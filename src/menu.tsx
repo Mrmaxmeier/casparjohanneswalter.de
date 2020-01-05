@@ -22,9 +22,10 @@ export class Menu extends React.Component {
     let items = [
       { id: '', name: 'Home' },
       { id: 'works', name: 'List of Works' },
+      { id: 'research', name: 'Research' },
+      { id: 'texts', name: 'Texts' },
       { id: 'biography', name: 'Biography' },
       { id: 'press', name: 'Press' },
-      { id: 'research', name: 'Research' }
     ]
     return (
       <nav>

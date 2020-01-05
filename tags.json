@@ -1,5 +1,5 @@
 {
-    "Chamber Music": ["Strings", "Winds", "Brass", "Percussion Ensemble", "Mixed"],
-    "by Instruments": ["Flute", "Oboe", "Clarinet", "Bassoon", "Trumpet", "Horn", "Trombone", "Tuba", "Percussion", "Accordeon", "Theremin", "Piano", "Violin", "Viola", "Cello", "Double Bass", "Soprano", "Mezzo Soprano", "Voice", "Guitar", "Harpsichord"],
-    "by Genre": ["Ensemble", "Music Theatre", "Chamber Music", "Organ", "Solo", "Video", "Vocal Music", "Orchestra"]
+    "Chamber Music": ["Strings", "Winds", "Brass", "Percussion Ensemble", "Baroque Instruments", "Mixed"],
+    "by Instruments": ["Flute", "Oboe", "Clarinet", "Trumpet", "Trombone", "Tuba", "Accordion", "Percussion", "Piano", "Organ", "Harpsichord", "Harp", "Guitar", "Violin", "Viola", "Cello", "Double Bass", "Piccolo", "Traverso", "Basssflute", "Recorder", "English Horn", "Bass Clarinet", "Piano 4 Hands", "Prepared Piano", "Clavemusicum", "Arciorgano", "Theremin", "Pedal Steel Guitar", "Voice", "Soprano", "Mezzo Soprano", "Alto", "Counter Tenor", "Sound Cube"],
+    "by Genre": ["Solo", "Chamber Music (Strings)", "Chamber Music (Winds)", "Chamber Music (Brass)", "Chamber Music (Percussion)", "Chamber Music (Mixed)", "Ensemble", "Orchestra", "Vocal Music", "Lied", "Choir", "Music Theatre", "Video", "Radio Piece", "Transcription", "Live-Electronics", "Baroque Instruments", "Japanese Instruments"]
 }

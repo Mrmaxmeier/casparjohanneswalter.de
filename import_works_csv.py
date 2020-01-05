@@ -1,0 +1,37 @@
+import csv
+import json
+from pprint import pprint
+
+works = []
+
+medialinks = ["video (full)",  "audio (full)", "score video (full)", "audio example", "score example", "score video (excerpt)", "score video (excerpt 2)", "program note", "additional material"]
+
+with open("works.csv") as csvfile:
+    csvreader = csv.reader(csvfile)
+    fields = next(csvreader)
+    print(fields)
+    for row in csvreader:
+        if row[1] == '':
+            continue
+        print()
+        d = {}
+        for k, v in zip(fields, row):
+            if v and v != "Ja":
+                d[k] = v.strip()
+        if "tags" in d:
+            d["tags"] = d["tags"].split(", ")
+        media = []
+        for k in medialinks:
+            if k in d:
+                media.append([k, d[k]])
+                del d[k]
+        if media:
+            d["media"] = media
+        d["index"] = int(d["index"])
+        if len(d) < 3:
+            continue
+        pprint(d)
+        works.append(d)
+
+with open("works.json", "w") as f:
+    json.dump(works, f, sort_keys=True)

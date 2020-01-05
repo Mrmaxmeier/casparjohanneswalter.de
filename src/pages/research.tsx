@@ -224,6 +224,31 @@ export class ResearchPage extends React.PureComponent<RouteComponentProps<any>, 
               <ul>
                 {additionalMathTools.map((d, i) => link(d.id, d.title))}
               </ul>
+              <h3>Examples</h3>
+              <ul>
+                {[
+                  ['The technique of rhythmical morphing',
+                    'https://www.youtube.com/watch?v=stFgU7ito6A&feature=youtu.be'],
+                  ['metrical harmony in metrische Dissonanzen',
+                    'https://www.youtube.com/watch?v=gshCr43MiSc&feature=youtu.be'],
+                  ['piano multiphonics, comparison between live and multi phonic App',
+                    'https://www.youtube.com/watch?v=IS6j9OJlrqE&feature=youtu.be'],
+                  ['Chord progression raising in syntonic commas',
+                    'https://www.youtube.com/watch?v=9ahFyKsAAe0&feature=youtu.be'],
+                  ['1/4-comma as interval on Arciorgano and baroque harp',
+                    'https://www.youtube.com/watch?v=ElzsNAzfgZI&feature=youtu.be'],
+                  ['chord progression on the „Supercembalo“ (53 keys/octave)',
+                    'https://www.youtube.com/watch?v=M4vlukrz63w&feature=youtu.be'],
+                  ['Sounds on Arciorgano and quarter tone Accordion',
+                    'https://www.youtube.com/watch?v=kyPUjuiZjf8&feature=youtu.be'],
+                  ['Microtonal interpretation of an Anton Reicha-flux',
+                    'https://www.youtube.com/watch?v=jNB4TNuaGZ4&feature=youtu.be'],
+                  ['diminished limit-7 chord (audio simulation and 3D-visualisation)',
+                    'https://soundcloud.com/user-857531595/dim-chord-limit7'],
+                  ['Harry Partch-flux (audio simulation and 3D-visualisation)',
+                    'https://soundcloud.com/user-857531595/partch-flux1'],
+                ].map((s, i) => <li key={i}><a href={s[1]}>{s[0]}</a></li>)}
+              </ul>
             </div>
           </Route>
           {subpages.map((page: PageDef) =>

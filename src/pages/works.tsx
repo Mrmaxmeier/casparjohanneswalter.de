@@ -18,7 +18,7 @@ class MenuTag extends React.PureComponent<{
       return null
     }
     return (
-      <li>
+      <li style={{width: (tag.name === 'by Genre') ? '11em' : undefined}}>
         <a>{tag.name}</a>
         <ul>
           {tag.subtags.map((subtag) => {
@@ -46,17 +46,15 @@ class WorkSummary extends React.PureComponent<{ work: Work }, {}> {
       <div className='work'>
         <h3>
           {work.title}
-          {tagif(work.dateStr, (dateStr) => <em> ({dateStr})</em>)}
-          {tagif(work.date, (date) => <em> ({date})</em>)}
+          {tagif(work.year, (year) => <em> ({year})</em>)}
         </h3>
         {tagif(work.subtitle, p)}
         {tagif(work.instrumentation, p)}
         {tagif(work.text, p)}
-        {tagif(work.dateStr, p)}
         {tagif(work.duration, p)}
         {tagif(work.commision, p)}
         {tagif(work.dedication, p)}
-        {tagif(work['1st performance'], p)}
+        {tagif(work.wp, p)}
         {tagif(work.documentation, p)}
         {tagif(work.content, (content) => <div>Content; TODO: markdown</div>)}
         {tagif(work.media, (media) => (media || []).map(

@@ -4,6 +4,7 @@ import { createBrowserHistory, createHashHistory } from 'history'
 
 import { tags, slugify } from './tags'
 import { subpages as researchPages, PageDef } from './pages/research'
+import { route_urls } from './pages/texts'
 import { App } from './app'
 
 declare var __IN_BUILD__: boolean
@@ -25,7 +26,9 @@ export let routes = [
   '/works',
   '/biography',
   '/press',
-  '/research'
+  '/research',
+  '/articles'
 ]
   .concat(tags().map((tag) => 'works/' + slugify(tag)))
   .concat(researchPages.map((page: PageDef) => 'research/' + page.id))
+  .concat(route_urls)

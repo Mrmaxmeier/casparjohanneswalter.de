@@ -1,32 +1,26 @@
 import { sortBy } from 'lodash'
 
 export interface Work {
-  year?: number,
-  index?: number,
+  year?: string,
+  index: number,
   tags: string[]
   title: string,
-  date?: string,
-  dateStr?: string,
   subtitle?: string,
   instrumentation?: string,
   text?: string,
   duration?: string,
   commision?: string,
   dedication?: string,
-  ['1st performance']?: string,
+  wp?: string,
   documentation?: string,
   content?: string,
   media?: string[]
 }
 
-let reqContext = require.context('../works', false, /\.json$/)
-export let works: Work[] = reqContext.keys().map(reqContext) as Work[]
+export let works: Work[] = require('../works.json') as Work[]
 
 export function sorted () {
-  return sortBy(works, (work) => {
-    let year = (work.year || 0) + (work.index || 0) / 10
-    return -year
-  })
+  return sortBy(works, (work) => -work.index)
 }
 
 export function rows (list?: Work[]) {

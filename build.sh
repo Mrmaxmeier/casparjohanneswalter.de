@@ -15,6 +15,8 @@ echo "$ webpack -p --config webpack.config.build.js"
 
 echo "$ cp -r static build"
 cp -r static build
+mkdir -p build/texts/
+cp -r src/texts/figures build/texts/
 
 echo "build finished, moving build/ to prod/"
 
