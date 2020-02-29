@@ -8,12 +8,15 @@ let groupsJson = require<{
 export function tags () {
   let l: string[] = []
   works.forEach((w) => {
-    l = l.concat(w.tags)
+    if (w.tags)
+      l = l.concat(w.tags)
   })
   mapValues(groupsJson, (subtags) => {
     l = l.concat(subtags)
   })
-  return l
+  let res = Array.from(new Set(l));
+  res.sort();
+  return res
 }
 
 export function slugify (s: string) {

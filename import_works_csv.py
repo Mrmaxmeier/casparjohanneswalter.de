@@ -4,7 +4,18 @@ from pprint import pprint
 
 works = []
 
-medialinks = ["video (full)",  "audio (full)", "score video (full)", "audio example", "score example", "score video (excerpt)", "score video (excerpt 2)", "program note", "additional material"]
+medialinks = [
+    "video (full)",
+    "audio (full)",
+    "score video (full)",
+    "audio example",
+    "score example",
+    "score video (excerpt)",
+    "score video (excerpt 2)",
+    "score video (excerpt 3)",
+    "program note",
+    "additional material"
+]
 
 with open("works.csv") as csvfile:
     csvreader = csv.reader(csvfile)
@@ -20,6 +31,8 @@ with open("works.csv") as csvfile:
                 d[k] = v.strip()
         if "tags" in d:
             d["tags"] = d["tags"].split(", ")
+        else:
+            print("tags missing?", d)
         media = []
         for k in medialinks:
             if k in d:
@@ -34,4 +47,4 @@ with open("works.csv") as csvfile:
         works.append(d)
 
 with open("works.json", "w") as f:
-    json.dump(works, f, sort_keys=True)
+    json.dump(works, f, sort_keys=True, indent=2, ensure_ascii=False)
