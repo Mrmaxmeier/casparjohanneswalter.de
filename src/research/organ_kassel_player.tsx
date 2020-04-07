@@ -195,6 +195,12 @@ export class OrganKasselPlayer extends React.PureComponent<{}, IState> {
         </span>
 
         <br />
+        <img src={require<string>("../../assets/Tastaturlayout_Orgel_Kassel3.png")} style={{
+          display: 'block',
+          marginLeft: '-6rem',
+          maxWidth: 'calc(100% + 6rem)',
+        }} />
+        <br />
 
         <h3>Manual 1 (12-tone)</h3>
 

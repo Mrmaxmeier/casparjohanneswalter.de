@@ -1,6 +1,6 @@
-let webpack = require('webpack')
-let path = require('path')
-let SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin')
+const webpack = require('webpack')
+const path = require('path')
+const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin')
 
 module.exports = {
   mode: 'development',
@@ -36,7 +36,7 @@ module.exports = {
       loader: 'file-loader'
     }, {
       test: /\.md$/,
-      loader: 'raw-loader',
+      loader: 'raw-loader'
     }]
   },
   plugins: [

@@ -1,5 +1,6 @@
 node_modules
 .vscode
+.cache
 build/
 build
 prod/
