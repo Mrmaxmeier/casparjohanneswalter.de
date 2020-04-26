@@ -9,23 +9,13 @@ interface IState {
   concertPitch: number;
   muted: boolean;
   playing: boolean[];
-  mode4: boolean;
-  mode8: boolean;
-  modeQuarte2: boolean;
-  modeMollterz1: boolean;
-}
 
-interface IPreset {
-  mode4: boolean;
-  mode8: boolean;
-  modeQuarte2: boolean;
-  modeMollterz1: boolean;
-  playing: boolean[];
-  concertPitch: number;
+  modes: { [key: string]: boolean },
 }
 
 interface ISaveState {
   playing: boolean[];
+  modes: { [key: string]: boolean }
 }
 
 export class OrganKasselPlayer extends React.PureComponent<{}, IState> {
@@ -36,12 +26,9 @@ export class OrganKasselPlayer extends React.PureComponent<{}, IState> {
     super(props);
     this.state = {
       concertPitch: 440,
-      mode4: false,
-      mode8: false,
-      modeMollterz1: false,
-      modeQuarte2: false,
       muted: false,
       playing: new Array(133).fill(false),
+      modes: {},
       rows: 8,
     };
     this.players = {};
@@ -100,38 +87,66 @@ export class OrganKasselPlayer extends React.PureComponent<{}, IState> {
     const a1 = this.state.concertPitch;
     return <>
       {index < 73 ? (
-        <FrequencyNode
-          volume={this.state.muted ? 0 : 0.5}
-          freq={a1 * Math.pow(2, -21 / 12) * Math.pow(2, index / 31)}
-          playing={playing}
-        />
+        <>
+          <FrequencyNode
+            volume={this.state.muted ? 0 : 0.5}
+            freq={a1 * Math.pow(2, -21 / 12) * Math.pow(2, index / 31)}
+            playing={playing && this.state.modes.man2_31tone}
+          />
+          <FrequencyNode
+            volume={this.state.muted ? 0 : 0.5}
+            freq={a1 * Math.pow(2, (index - 34) / 12)}
+            playing={playing && this.state.modes.man2_8}
+          />
+          <FrequencyNode
+            volume={this.state.muted ? 0 : 0.5}
+            freq={a1 * Math.pow(2, (index - 34) / 12) / 2}
+            playing={playing && this.state.modes.man2_16}
+          />
+        </>
       ) : (
           <>
             <FrequencyNode
               volume={this.state.muted ? 0 : 0.5}
               freq={a1 * Math.pow(2, (index - 72 - 22) / 12)}
-              playing={playing && this.state.mode4}
+              playing={playing && this.state.modes.man1_4}
             />
             <FrequencyNode
               volume={this.state.muted ? 0 : 0.5}
               freq={a1 * Math.pow(2, (index - 72 - 34) / 12)}
-              playing={playing && this.state.mode8}
+              playing={playing && this.state.modes.man1_8}
             />
             <FrequencyNode
               volume={this.state.muted ? 0 : 0.5}
-              freq={a1 * Math.pow(2, (index - 72 - 34) / 12) * 8 / 3}
-              playing={playing && this.state.modeQuarte2}
+              freq={a1 * Math.pow(2, (index - 72 - 34) / 12) * 11 / 4}
+              playing={playing && this.state.modes.man1_quarte2}
             />
             <FrequencyNode
               volume={this.state.muted ? 0 : 0.5}
-              freq={a1 * Math.pow(2, (index - 72 - 34) / 12) * 24 / 5}
-              playing={playing && this.state.modeMollterz1}
+              freq={a1 * Math.pow(2, (index - 72 - 34) / 12) * 19 / 4}
+              playing={playing && this.state.modes.man1_mollterz1}
             />
           </>
         )}
     </>;
   }
+
+
   public render() {
+
+    const ModeToggle: React.FC<{ k: string }> = ({ children, k }) => <button
+      style={{
+        background: this.state.modes[k] ? "#f15f55" : "#2196f3",
+        margin: "1em",
+      }}
+      onClick={() => {
+        const modes = Object.assign({}, this.state.modes);
+        modes[k] = !this.state.modes[k];
+        this.setState({ modes })
+      }}
+    >
+      {children}
+    </button>
 
     this.players = new Array(this.state.rows).fill(null);
     return (
@@ -170,12 +185,13 @@ export class OrganKasselPlayer extends React.PureComponent<{}, IState> {
               <th>Playing</th>
               <th>
                 <QuickSaves
-                  load={({ playing }) => {
-                    this.setState({ playing });
+                  load={({ playing, modes }) => {
+                    this.setState({ playing, modes });
                   }}
                   saveData={() => {
                     return {
                       playing: this.state.playing,
+                      modes: this.state.modes,
                     };
                   }}
                   ref={(e: QuickSaves<ISaveState>) => { if (e) { this.quicksaves = e; } }}
@@ -186,6 +202,12 @@ export class OrganKasselPlayer extends React.PureComponent<{}, IState> {
         </table>
 
         <h3>Manual 2 (31-tone)</h3>
+
+        <ModeToggle k="man2_31tone">31-Tone</ModeToggle>
+        <ModeToggle k="man2_8">8'</ModeToggle>
+        <ModeToggle k="man2_16">16'</ModeToggle>
+
+
         <span style={{ display: "grid" }}>
           {this.renderOct(0)}
           {this.renderOct(1)}
@@ -204,45 +226,11 @@ export class OrganKasselPlayer extends React.PureComponent<{}, IState> {
 
         <h3>Manual 1 (12-tone)</h3>
 
-        <button
-          style={{
-            background: this.state.mode4 ? "#f15f55" : "#2196f3",
-            margin: "1em",
-          }}
-          onClick={() => this.setState({ mode4: !this.state.mode4 })}
-        >
-          4'
-        </button>
 
-        <button
-          style={{
-            background: this.state.mode8 ? "#f15f55" : "#2196f3",
-            margin: "1em",
-          }}
-          onClick={() => this.setState({ mode8: !this.state.mode8 })}
-        >
-          8'
-        </button>
-
-        <button
-          style={{
-            background: this.state.modeQuarte2 ? "#f15f55" : "#2196f3",
-            margin: "1em",
-          }}
-          onClick={() => this.setState({ modeQuarte2: !this.state.modeQuarte2 })}
-        >
-          Quarte 2
-        </button>
-
-        <button
-          style={{
-            background: this.state.modeMollterz1 ? "#f15f55" : "#2196f3",
-            margin: "1em",
-          }}
-          onClick={() => this.setState({ modeMollterz1: !this.state.modeMollterz1 })}
-        >
-          Mollterz 1
-        </button>
+        <ModeToggle k="man1_4">4'</ModeToggle>
+        <ModeToggle k="man1_8">8'</ModeToggle>
+        <ModeToggle k="man1_quarte2">Quarte 2</ModeToggle>
+        <ModeToggle k="man1_mollterz1">Mollterz 1</ModeToggle>
 
         <span style={{ display: "grid" }}>
           {this.renderOct(6)}

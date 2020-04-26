@@ -14,7 +14,8 @@ const presets = {
   'Mode4b_Partch2': require('./presets/ArcOrg_mode4b_Partch2.json'),
   'Mode5_EDO34': require('./presets/ArcOrg_mode5_EDO34.json'),
   'Mode6_1-3Comma_ad': require('./presets/ArcOrg_mode6_1-3Comma_ad.json'),
-  'Mode7_Salinas24+12': require('./presets/ArcOrg_mode7_Salinas24+12.json')
+  'Mode7_Salinas24+12': require('./presets/ArcOrg_mode7_Salinas24+12.json'),
+  'Mode8_Universal_quasi_limit7': require('./presets/ArcOrg_mode8_tuning_universal_quasi_limit7_g#=a442_RefPipe_Ab+.json')
 }
 
 let octaveLayoutS = [
@@ -355,7 +356,7 @@ export class ArciorganoPlayer extends React.PureComponent<{}, State> {
                           ratio: (pitch: number, r: number) => pitch * r * Math.pow(2, oc),
                           cents: (pitch: number, r: number) => pitch * Math.pow(2, r / 1200 + oc)
                         }[this.state.mode](this.state.pitch11, data)
-                        let disabled = (oc+2 == 5) && normalLabels[index] === 'his'
+                        let disabled = (oc + 2 == 5) && normalLabels[index] === 'his'
                         return (
                           <td key={i} style={{ padding: '0' }}>
                             <CompactFrequencyPlayer freq={freq}
