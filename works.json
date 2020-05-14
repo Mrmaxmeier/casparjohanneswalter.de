@@ -490,7 +490,7 @@
     "instrumentation": "cl, vc, pf",
     "media": [
       [
-        "audio (full)",
+        "audio (historical instruments, excerpts)",
         "https://soundcloud.com/user-857531595/durchscheinende-etude-ivd-199293"
       ],
       [
@@ -517,7 +517,7 @@
     "instrumentation": "solo ob, ensemble",
     "media": [
       [
-        "score video (excerpt)",
+        "(score video (excerpt)",
         "https://www.youtube.com/watch?v=3popByFVA7o&feature=youtu.be"
       ]
     ],
@@ -622,19 +622,19 @@
     "instrumentation": "tpt solo and orchestra\n(2.2.2.2. - 2.0.2..1. - 3perc, hp - str)",
     "media": [
       [
-        "audio (full)",
+        "movement 1",
         "https://www.youtube.com/watch?v=T9XtA_hY2lk"
       ],
       [
-        "score video (excerpt)",
+        "movement 2",
         "https://www.youtube.com/watch?v=h7rVURk0p80"
       ],
       [
-        "score video (excerpt 2)",
+        "movement 3",
         "https://www.youtube.com/watch?v=ludcuVdTaZw"
       ],
       [
-        "score video (excerpt 3)",
+        "movement 4",
         "https://www.youtube.com/watch?v=We3JCVHIh5A"
       ]
     ],
@@ -654,12 +654,6 @@
     "duration": "Dauer ca. 12'",
     "index": 44,
     "instrumentation": "wind quintet",
-    "media": [
-      [
-        "score video (excerpt)",
-        "3. Satz https://www.youtube.com/watch?v=ludcuVdTaZw"
-      ]
-    ],
     "subtitle": "durchscheinende Etüde III/a 4'\ndurchscheinende Etüde IV/a 4'\ndurchscheinende Etüde V/a 4'",
     "tags": [
       "Wind Quintet",
@@ -674,12 +668,6 @@
     "duration": "Dauer ca. 25'",
     "index": 45,
     "instrumentation": "(fl, cl, va, vc, perc, pf)",
-    "media": [
-      [
-        "score video (excerpt)",
-        "4. Satz https://www.youtube.com/watch?v=We3JCVHIh5A"
-      ]
-    ],
     "subtitle": "12 pieces for soprano and ensemble: Glasscherbe • Kreuzung • Unruhe, Unsicherheit, Anspannung • Verwirrung • \n Schlammspritzer • Tumult, al giapponese • Aphorismus, Akkordzerlegung • \n Habtondrama • Möwennachlese, sich auflösendes Intermezzo •\n adagietto, Vokalise • Wolkenbild • 12 Töne, Stilleben",
     "tags": [
       "Soprano",
@@ -770,7 +758,7 @@
         "https://youtu.be/KDkJx9ZWNoI"
       ],
       [
-        "score video (excerpt)",
+        "score video (mutiphonic excerpt)",
         "https://www.youtube.com/watch?v=QBntLlCvHVo&feature=youtu.be"
       ]
     ],
@@ -825,11 +813,11 @@
         "https://youtu.be/OKdd0kEjeVw"
       ],
       [
-        "score video (excerpt)",
+        "score video (multiphonic excerpt 1)",
         "https://www.youtube.com/watch?v=s2MRPGYJcvI&feature=youtu.be"
       ],
       [
-        "score video (excerpt 2)",
+        "score video (multiphonic excerpt 2)",
         "https://www.youtube.com/watch?v=NlHmlOcQMio&feature=youtu.be"
       ]
     ],
@@ -978,7 +966,7 @@
     "instrumentation": "tpt, 2vc",
     "media": [
       [
-        "audio (full)",
+        "video of the documentary",
         "https://www.youtube.com/watch?v=9cZxl-KSIx0"
       ]
     ],
@@ -1218,6 +1206,12 @@
     "duration": "Dauer ca. 13'",
     "index": 76,
     "instrumentation": "2S, A, T, Bar",
+    "media": [
+      [
+        "score video (full) animated with texts",
+        "https://youtu.be/Yy7yo6JZlLY"
+      ]
+    ],
     "subtitle": "Texts by B.Suckfüll, H.Maisch, O.Herzberg, H.Freiherr von Wieser (Sammlung Prinzhorn)",
     "tags": [
       "Vocal Music"
@@ -1249,6 +1243,10 @@
     "index": 78,
     "instrumentation": "tpt, 2S, Mez, T, Bar",
     "media": [
+      [
+        "audio with images of original texts (full)",
+        "https://www.youtube.com/watch?time_continue=33&v=VExkJyYsbEY&feature=emb_logo&fbclid=IwAR34n6lEklFXJaL7HymD4HQxY8vJp0uSB5sS5z0wv-xmzETudOSSuQdEyzg"
+      ],
       [
         "score video (full)",
         "https://youtu.be/neRD-pIu-yY"
@@ -1634,7 +1632,7 @@
     "instrumentation": "für 3 Celli",
     "media": [
       [
-        "score video (excerpt)",
+        "score video (multiphonic excerpt)",
         "https://www.youtube.com/watch?v=rDH58_5Jwvo&feature=youtu.be"
       ]
     ],
@@ -1728,7 +1726,7 @@
     "instrumentation": "für Klavier",
     "media": [
       [
-        "score video (excerpt)",
+        "score video (multiphonic excerpt)",
         "https://www.youtube.com/watch?v=MAuUiA8JI0s&feature=youtu.be"
       ]
     ],
@@ -1776,7 +1774,7 @@
     "instrumentation": "Besetzung:, Solo-perc - 1.1.1.1 – 1.1.1.1 - 2perc. – 2.2.2.1'",
     "media": [
       [
-        "additional material",
+        "analytic video",
         "https://www.youtube.com/watch?v=gshCr43MiSc&feature=youtu.be"
       ]
     ],
@@ -1942,7 +1940,7 @@
     "instrumentation": "for clarinet und piano",
     "media": [
       [
-        "score video (excerpt)",
+        "video (full)",
         "https://www.youtube.com/watch?v=YoqB6QAMNVA&feature=youtu.be"
       ]
     ],
@@ -1988,19 +1986,19 @@
     "instrumentation": "vc, piano",
     "media": [
       [
-        "video (full)",
+        "video with score (full)",
         "https://www.youtube.com/watch?v=jGG7FQ_D_Rk&feature=youtu.be"
       ],
       [
-        "score video (excerpt)",
+        "score video (multiphonic excerpt 1)",
         "https://www.youtube.com/watch?v=eB73PiaoyOA&feature=youtu.be"
       ],
       [
-        "score video (excerpt 2)",
+        "score video (multiphonic excerpt 2)",
         "https://www.youtube.com/watch?v=reufINg67Rk&feature=youtu.be"
       ],
       [
-        "additional material",
+        "analytic video (multiphonic explanation)",
         "https://www.youtube.com/watch?v=IS6j9OJlrqE&feature=youtu.be"
       ]
     ],
@@ -2030,7 +2028,7 @@
     "instrumentation": "tbn, vc",
     "media": [
       [
-        "score video (excerpt)",
+        "score video (multiphonic excerpt)",
         "https://www.youtube.com/watch?v=8DDlK_oX350&feature=youtu.be"
       ]
     ],
@@ -2063,7 +2061,7 @@
     "instrumentation": "für Obertonklavier, Pedal Steel Guitar und Ensemble (fl, cl, s-Sax, vn, va, vc)",
     "media": [
       [
-        "score video (excerpt)",
+        "score video (multiphonic excerpt",
         "https://www.youtube.com/watch?v=Wq90xP7ftiw&feature=youtu.be"
       ]
     ],
@@ -2093,7 +2091,7 @@
     "instrumentation": "piano (four hands)",
     "media": [
       [
-        "video (full)",
+        "audio (full)",
         "https://www.youtube.com/watch?v=aJDD7WsgmW8&list=PL7iOiA07pmv9fYK7DHZ_G08HjeorKclNs&index=4&t=0s"
       ]
     ],
@@ -2109,6 +2107,12 @@
     "duration": "Dauer ca. 6'",
     "index": 131,
     "instrumentation": "2 tbn",
+    "media": [
+      [
+        "score video",
+        "https://youtu.be/aUaLyVZii5E"
+      ]
+    ],
     "tags": [
       "Trombone",
       "Chamber Music (Brass)"
@@ -2149,12 +2153,30 @@
     "duration": "Dauer ca. 14'",
     "index": 134,
     "instrumentation": "Arciorgano",
+    "media": [
+      [
+        "video with score (piece 13)",
+        "https://youtu.be/ZTg7OtsGVlA"
+      ],
+      [
+        "video with score (piece 1,2)",
+        "https://youtu.be/ybT5HFtX_RY"
+      ],
+      [
+        "video with score (piece 18)",
+        "https://youtu.be/WQRWZ82O0a0"
+      ],
+      [
+        "video with score (piece 19)",
+        "https://youtu.be/-4ZOrxxaiPs"
+      ]
+    ],
     "tags": [
       "Arciorgano",
       "Organ"
     ],
     "title": "Elementare Akkordmechanik",
-    "year": "2016"
+    "year": "2016-20"
   },
   {
     "duration": "Dauer ca. 12'",
@@ -2178,7 +2200,7 @@
         "https://www.youtube.com/watch?v=I0q6ahA-3VE&feature=youtu.be"
       ],
       [
-        "score video (excerpt)",
+        "score video (multiphonic excerpt)",
         "https://www.youtube.com/watch?v=3QgE8443Jec&feature=youtu.be"
       ]
     ],
@@ -2245,7 +2267,7 @@
         "https://www.youtube.com/watch?v=zW3KXwvVLMU&feature=youtu.be"
       ],
       [
-        "score video (excerpt)",
+        "score video (multiphonic excerpt)",
         "https://www.youtube.com/watch?v=y4DgV2PEySA&feature=youtu.be"
       ]
     ],
@@ -2263,7 +2285,7 @@
     "instrumentation": "cl, tape",
     "media": [
       [
-        "video (full)",
+        "video with score (full)",
         "https://www.youtube.com/watch?v=WoXNhRypIuY&feature=youtu.be"
       ]
     ],
@@ -2294,7 +2316,7 @@
     "instrumentation": "für Ensemble und 4 Klangwürfel",
     "media": [
       [
-        "score video (excerpt)",
+        "score video (multiphonic excerpt)",
         "https://www.youtube.com/watch?v=2-H-T-zxbPs&feature=youtu.be"
       ]
     ],
@@ -2312,7 +2334,7 @@
     "instrumentation": "S, MS, A, T, Bar, ensemble, tape",
     "media": [
       [
-        "video (full)",
+        "video with animated 3D harmony (full)",
         "https://www.youtube.com/watch?v=IuUKNRA5UUw&feature=youtu.be"
       ]
     ],
@@ -2332,11 +2354,11 @@
     "instrumentation": "harp, tape (2 Klangwürfel)",
     "media": [
       [
-        "video (full)",
+        "video with score (full)",
         "https://youtu.be/aS_2NY3q8ac"
       ],
       [
-        "score video (excerpt)",
+        "score video (multiphonic excerpt)",
         "https://www.youtube.com/watch?v=Y40_biujPKY&feature=youtu.be"
       ]
     ],
@@ -2355,7 +2377,7 @@
     "instrumentation": "ensemble, tape",
     "media": [
       [
-        "video (full)",
+        "video with score of the dark passages (full)",
         "https://www.youtube.com/watch?v=EDKaQJyjFZE"
       ]
     ],

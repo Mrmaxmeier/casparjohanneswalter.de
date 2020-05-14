@@ -9,7 +9,9 @@ medialinks = [
     "audio (full)",
     "score video (full)",
     "audio example",
+    "audioExample",
     "score example",
+    "scoreExample",
     "score video (excerpt)",
     "score video (excerpt 2)",
     "score video (excerpt 3)",
@@ -36,7 +38,9 @@ with open("works.csv") as csvfile:
         media = []
         for k in medialinks:
             if k in d:
-                media.append([k, d[k]])
+                link = d[k].split(" ")[0]
+                desc = " ".join(d[k].split(" ")[1:]) or k
+                media.append([desc, link])
                 del d[k]
         if media:
             d["media"] = media
