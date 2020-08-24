@@ -33,9 +33,9 @@ export class ChordPlayer extends React.PureComponent<{}, State> {
   private pitch11?: MathInput
   private playAllButtons: PlayAllButton[]
 
-  constructor (props: {}) {
+  constructor(props: {}) {
     super(props)
-    let rows = 8
+    const rows = 8
     this.state = {
       rows,
       concertPitch: 440,
@@ -44,26 +44,26 @@ export class ChordPlayer extends React.PureComponent<{}, State> {
         () => range(6).map((i) => i === 0 ? 1 : null)
       ),
       mode: 'ratio',
-      rowLabels: new Array(rows).fill(null).map((_, x) => ''+(x+1))
+      rowLabels: new Array(rows).fill(null).map((_, x) => '' + (x + 1))
     }
     this.players = []
     this.inputs = []
     this.playAllButtons = []
   }
 
-  setRows (rows: number, cb?: () => void) {
+  setRows(rows: number, cb?: () => void) {
     if (rows < this.state.rows) {
       this.players.filter((_, i) => i >= rows)
         .forEach((row) => {
           row.forEach((player) => player.setPlaying(false))
         })
     }
-    let data = resizeArray(this.state.data, rows, () => range(6).map((i) => i === 0 ? 1 : null))
-    let rowLabels = resizeArray(this.state.rowLabels, rows, i => ''+(i+1))
+    const data = resizeArray(this.state.data, rows, () => range(6).map((i) => i === 0 ? 1 : null))
+    const rowLabels = resizeArray(this.state.rowLabels, rows, i => '' + (i + 1))
     this.setState({ rows, data, rowLabels }, cb)
   }
 
-  onPreset (name: string, preset: Preset) {
+  onPreset(name: string, preset: Preset) {
     this.setRows(preset.rows, () => {
       if (this.concertPitch)
         this.concertPitch.setValue(preset.concertPitch, true)
@@ -74,12 +74,12 @@ export class ChordPlayer extends React.PureComponent<{}, State> {
           this.inputs[ri][i].setValue(input, true)
         })
       })
-      let rowLabels = preset.rowLabels || (new Array(preset.rows).fill(null).map((_, x) => ''+(x+1)));
+      const rowLabels = preset.rowLabels || (new Array(preset.rows).fill(null).map((_, x) => '' + (x + 1)));
       this.setState({ mode: preset.mode, rowLabels })
     })
   }
 
-  dumpPreset (): Preset {
+  dumpPreset(): Preset {
     return {
       rows: this.state.rows,
       mode: this.state.mode,
@@ -92,7 +92,7 @@ export class ChordPlayer extends React.PureComponent<{}, State> {
     }
   }
 
-  render () {
+  render() {
     let c0 = concertPitchToC0(this.state.concertPitch)
     let cents = ratioToCents(this.state.pitch11 / c0)
 
@@ -112,7 +112,7 @@ export class ChordPlayer extends React.PureComponent<{}, State> {
                   default={440}
                   onChange={(concertPitch) => {
                     this.setState({ concertPitch })
-                  }} ref={(e) => { if (e) this.concertPitch = e }}/>
+                  }} ref={(e) => { if (e) this.concertPitch = e }} />
               </th>
             </tr>
             <tr>
@@ -135,7 +135,7 @@ export class ChordPlayer extends React.PureComponent<{}, State> {
               <th>Mode</th>
               <th>
                 <select onChange={(e) => {
-                  let mode = e.target.value
+                  const mode = e.target.value
                   if (mode === 'ratio' || mode === 'cents')
                     this.setState({ mode })
                 }} value={this.state.mode}>
@@ -149,11 +149,11 @@ export class ChordPlayer extends React.PureComponent<{}, State> {
               <th>
                 <input type="number" name="rows"
                   min="1" value={this.state.rows}
-                  style={{width: '3em'}} ref={(e) => { if (e) this.rows = e }}
+                  style={{ width: '3em' }} ref={(e) => { if (e) this.rows = e }}
                   onChange={(event) => {
-                    let rows = parseInt(event.target.value)
+                    const rows = parseInt(event.target.value)
                     this.setRows(rows)
-                  }}/>
+                  }} />
               </th>
             </tr>
             <Presets name='chordPlayerPresets' default={{
@@ -162,16 +162,25 @@ export class ChordPlayer extends React.PureComponent<{}, State> {
               rows: 8,
               mode: 'ratio',
               data: range(8).map(() => ['1 / 1', '', '', '', '', '']),
-              rowLabels: range(8).map(x => '' + (x+1))
+              rowLabels: range(8).map(x => '' + (x + 1))
             }} onChange={this.onPreset.bind(this)}
               current={this.dumpPreset.bind(this)} />
-            <tr><th><button onClick={() => {
-              let idx = this.playAllButtons.findIndex(playAll => playAll.state.active)
-              if (idx >= 0)
-                this.playAllButtons[idx].set(false)
-              if (this.playAllButtons[idx+1])
-                this.playAllButtons[idx+1].set(true)
-            }}>Play Next</button></th></tr>
+            <tr>
+              <th><button onClick={() => {
+                const idx = this.playAllButtons.findIndex(playAll => playAll.state.active)
+                if (idx >= 0)
+                  this.playAllButtons[idx].set(false)
+                if (this.playAllButtons[idx + 1])
+                  this.playAllButtons[idx + 1].set(true)
+              }}>Play Next</button></th>
+              <th><button onClick={() => {
+                const idx = this.playAllButtons.findIndex(playAll => playAll.state.active)
+                if (idx >= 0)
+                  this.playAllButtons[idx].set(false)
+                if (this.playAllButtons[idx - 1])
+                  this.playAllButtons[idx - 1].set(true)
+              }}>Play Previous</button></th>
+            </tr>
           </tbody>
         </table>
         <table>
@@ -181,29 +190,38 @@ export class ChordPlayer extends React.PureComponent<{}, State> {
                 <tr key={rowi}>
                   <th>
                     <button
-                      style={{height: '2em', width: '2em', padding: 0}}
+                      style={{ height: '2em', width: '2em', padding: 0 }}
                       title="delete row"
-                      onClick={_ => this.setState({
-                        rowLabels: [...this.state.rowLabels.slice(0, rowi), ...this.state.rowLabels.slice(rowi+1)],
-                        data: [...this.state.data.slice(0, rowi), ...this.state.data.slice(rowi+1)],
-                        rows: this.state.rows - 1,
-                      })}
+                      onClick={() => {
+                        const state = this.dumpPreset()
+                        this.onPreset('', {
+                          ...state,
+                          rowLabels: [...state.rowLabels.slice(0, rowi), ...state.rowLabels.slice(rowi + 1)],
+                          data: [...state.data.slice(0, rowi), ...state.data.slice(rowi + 1)],
+                          rows: state.rows - 1,
+                        })
+                      }}
                     >-</button>
                     <button
-                      style={{height: '2em', width: '2em', padding: 0}}
+                      style={{ height: '2em', width: '2em', padding: 0 }}
                       title="duplicate row"
-                      onClick={_ => this.setState({
-                        rowLabels: [...this.state.rowLabels.slice(0, rowi+1), ...this.state.rowLabels.slice(rowi)],
-                        data: [...this.state.data.slice(0, rowi+1), ...this.state.data.slice(rowi)],
-                        rows: this.state.rows + 1,
-                      })}
+
+                      onClick={() => {
+                        const state = this.dumpPreset()
+                        this.onPreset('', {
+                          ...state,
+                          rowLabels: [...state.rowLabels.slice(0, rowi + 1), ...state.rowLabels.slice(rowi)],
+                          data: [...state.data.slice(0, rowi + 1), ...state.data.slice(rowi)],
+                          rows: state.rows + 1,
+                        })
+                      }}
                     >+</button>
                   </th>
                   <th>
                     <input value={this.state.rowLabels[rowi]} onChange={v => {
-                      let rowLabels = this.state.rowLabels.map((x, i) => i == rowi ? v.target.value : x)
+                      const rowLabels = this.state.rowLabels.map((x, i) => i == rowi ? v.target.value : x)
                       this.setState({ rowLabels })
-                    }} style={{width: '7em'}}/>
+                    }} style={{ width: '7em' }} />
                   </th>
                   {row.map((e, i) => {
                     let freq = 0;
@@ -213,15 +231,15 @@ export class ChordPlayer extends React.PureComponent<{}, State> {
                         cents: (pitch: number, r: number) => pitch * Math.pow(2, r / 1200)
                       }[this.state.mode](this.state.pitch11, e)
                     return (
-                      <th key={i} style={{padding: '4px'}}>
+                      <th key={i} style={{ padding: '4px' }}>
                         <MathInput size={7} default={i === 0 ? '1 / 1' : ''}
                           onChange={(v) => {
-                            let data = clone(this.state.data)
+                            const data = clone(this.state.data)
                             data[rowi][i] = v
                             this.setState({ data })
                           }}
                           onError={(e) => {
-                            let data = clone(this.state.data)
+                            const data = clone(this.state.data)
                             data[rowi][i] = null
                             if (this.players[rowi][i])
                               this.players[rowi][i].stop()
