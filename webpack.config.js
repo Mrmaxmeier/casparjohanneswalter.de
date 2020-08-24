@@ -28,8 +28,16 @@ module.exports = {
       loader: 'source-map-loader'
     }, {
       test: /\.(jpe?g$|png)/i,
-      loaders: [
-        'file-loader?hash=sha512&digest=hex&name=[hash].[ext]'
+      use: [
+        {
+          loader: 'file-loader',
+          options: {
+            esModule: false,
+            hash: 'sha256',
+            digest: 'hex',
+            name: '[hash].[ext]'
+          }
+        }
       ]
     }, {
       test: /\.(ttf|eot|svg|woff(2)?)(\?[a-z0-9=&.]+)?$/,

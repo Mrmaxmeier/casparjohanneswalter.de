@@ -1,9 +1,9 @@
-let webpack = require('webpack')
-let React = require('react')
-let PrebuildRoutesPlugin = require('./prebuild-routes-plugin.js')
-let SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin')
+const webpack = require('webpack')
+const React = require('react')
+const PrebuildRoutesPlugin = require('./prebuild-routes-plugin.js')
+const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin')
 
-let config = require('./webpack.config.js')
+const config = require('./webpack.config.js')
 
 module.exports = Object.assign(config, {
   mode: 'production',
