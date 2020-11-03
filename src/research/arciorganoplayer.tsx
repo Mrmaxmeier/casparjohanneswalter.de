@@ -5,6 +5,8 @@ import { AudioController, AudioControllerRow } from './audioComponents'
 import { concertPitchToC0, ratioToCents, evalMathN } from './converters'
 import { Presets, QuickSaves } from './presets'
 import { range, clone, mapValues } from 'lodash'
+import { find_mapping } from './arciorgano_mapping'
+import * as download from 'downloadjs'
 
 const presets = {
   'Mode1_meantone31': require('./presets/ArcOrg_mode1_meantone31.json'),
@@ -206,6 +208,27 @@ export class ArciorganoPlayer extends React.PureComponent<{}, State> {
     )
   }
 
+  mechanicalArciCode() {
+    const saves = this.quicksaves!.state.saves
+    let lines = ""
+    for (const save of saves) {
+      if (save) {
+        const line = []
+        for (const [_octave, keys] of Object.entries(save.playing)) {
+          const octave = parseInt(_octave, 10)
+          for (const [_key, active] of Object.entries(keys)) {
+            const key = parseInt(_key, 10)
+            if (active) {
+              line.push(find_mapping(octave, key))
+            }
+          }
+        }
+        lines += `1000 0 ${line.join(' ')}\n`
+      }
+    }
+    return lines
+  }
+
   render() {
     const c0 = concertPitchToC0(this.state.concertPitch)
     const cents = ratioToCents(this.state.pitch11 / c0)
@@ -306,6 +329,16 @@ export class ArciorganoPlayer extends React.PureComponent<{}, State> {
               default={{ saves: [null, null, null, null] }} newAsDefault
               onChange={(_, state) => this.quicksaves && this.quicksaves.setState(state)}
               current={() => (this.quicksaves && this.quicksaves.state) || { saves: [] }} />
+            <tr>
+              <th>Mechanical Arciorgano Code</th>
+              <th>
+                <button onClick={() => {
+                  download(this.mechanicalArciCode(), "code.txt")
+                }}>
+                  Export/Download
+                </button>
+              </th>
+            </tr>
           </tbody>
         </table>
         <table>

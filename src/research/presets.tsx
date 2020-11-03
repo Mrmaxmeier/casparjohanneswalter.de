@@ -24,7 +24,7 @@ export class Presets<T> extends React.PureComponent<Props<T>, State<T>> {
 
   constructor(props: Props<T>) {
     super(props)
-    let defaultPresets: { [key: string]: T | null } = { '-- New --': this.props.default || null }
+    const defaultPresets: { [key: string]: T | null } = { '-- New --': this.props.default || null }
     this.state = {
       presets: { ...defaultPresets, ...this.props.presets } as { [preset: string]: T | null },
       preset: this.props.defaultKey || '-- New --',
@@ -38,8 +38,8 @@ export class Presets<T> extends React.PureComponent<Props<T>, State<T>> {
   }
 
   load(): { [key: string]: T | null } {
-    let data = window.localStorage.getItem(this.props.name) || '{}'
-    let presets = {
+    const data = window.localStorage.getItem(this.props.name) || '{}'
+    const presets = {
       '-- New --': null,
       ...this.props.presets,
       ...JSON.parse(data)
@@ -49,7 +49,7 @@ export class Presets<T> extends React.PureComponent<Props<T>, State<T>> {
   }
 
   save() {
-    let data = JSON.stringify(this.state.presets)
+    const data = JSON.stringify(this.state.presets)
     try {
       window.localStorage.setItem(this.props.name, data)
     } catch (e) {
@@ -71,8 +71,8 @@ export class Presets<T> extends React.PureComponent<Props<T>, State<T>> {
         ) : null}
         <th>
           <select onChange={(e) => {
-            let preset = e.target.value
-            let data = this.state.presets[preset]
+            const preset = e.target.value
+            const data = this.state.presets[preset]
             this.setState({ preset }, () => {
               if (data) {
                 this.props.onChange(preset, data)
@@ -90,8 +90,8 @@ export class Presets<T> extends React.PureComponent<Props<T>, State<T>> {
           <button onClick={() => {
             const name = window.prompt('Preset Name', this.state.preset)
             if (name === null) { return }
-            let data = this.props.current()
-            let presets = this.load()
+            const data = this.props.current()
+            const presets = this.load()
             presets[name] = data
             this.setState({ presets, preset: name }, () => {
               this.save()
@@ -105,8 +105,8 @@ export class Presets<T> extends React.PureComponent<Props<T>, State<T>> {
         </th>
         <th>
           <button onClick={() => {
-            let data = this.props.current()
-            let string = JSON.stringify(data, null, 2)
+            const data = this.props.current()
+            const string = JSON.stringify(data, null, 2)
             download(string, this.state.preset + '.json', 'application/json')
             console.log(string)
           }} disabled={this.state.preset === '-- New --' || this.state.localStorageError}>
