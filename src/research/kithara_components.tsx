@@ -301,13 +301,13 @@ export class KitharaCalc extends React.Component<{}, KitharaCalcState> {
   }
   handleApply (index: number) {
     let state = {
+      ...this.state,
       upperRow: this.state.upperRow,
       lowerRow: calcState(this.state.upperRow, {
         ratio: this.state.lowerRow[index].ratio,
         octave: this.state.lowerRow[index].octave,
         index: index
-      }),
-      ...this.state
+      })
     }
     this.setState(state)
     this.clearOvertone()
