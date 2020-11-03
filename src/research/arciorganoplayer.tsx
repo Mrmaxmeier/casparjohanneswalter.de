@@ -18,7 +18,7 @@ const presets = {
   'Mode8_Universal_quasi_limit7': require('./presets/ArcOrg_mode8_tuning_universal_quasi_limit7_g#=a442_RefPipe_Ab+.json')
 }
 
-let octaveLayoutS = [
+const octaveLayoutS = [
   ' 0 0   X X X   ',
   ' 0 0   X X X   ',
   '0 0 0 X X X X X',
@@ -27,18 +27,18 @@ let octaveLayoutS = [
   'X X X X X X X X'
 ]
 
-let octave0Disabled = octaveLayoutS.map((s) => {
-  let chars = s.split('')
+const octave0Disabled = octaveLayoutS.map((s) => {
+  const chars = s.split('')
   return chars.map((c) => c === '0')
 })
 
-let octaveLayout = octaveLayoutS.map((s) => {
-  let chars = s.split('')
+const octaveLayout = octaveLayoutS.map((s) => {
+  const chars = s.split('')
   return chars.map((c) => c !== ' ')
 })
 
 let _idx = -1
-let layoutIndex = octaveLayout.map((row) =>
+const layoutIndex = octaveLayout.map((row) =>
   row.map((a) => {
     if (a) {
       _idx += 1
@@ -48,7 +48,7 @@ let layoutIndex = octaveLayout.map((row) =>
 )
 
 
-let normalLabels = [
+const normalLabels = [
   'des+', 'dis+', 'ges+', 'as+', 'ais+',
   'cis+', 'es+', 'fis+', 'gis+', 'b+',
   'c+', 'd+', 'e+', 'f+', 'g+', 'a+', 'h+', 'c+',
@@ -57,7 +57,7 @@ let normalLabels = [
   'c', 'd', 'e', 'f', 'g', 'a', 'h', 'c'
 ];
 
-let partchLabels = [
+const partchLabels = [
   '8/5', '7/4', '16/15', '6/5', '9/7',
   '14/9', '9/5', '33/32', '8/7', '27/20',
   '3/2', '5/3', '11/6', '1/1', '11/10', '5/4', '7/5', '3/2',
@@ -66,11 +66,11 @@ let partchLabels = [
   '16/11', '18/11', '20/11', '160/81', '12/11', '11/9', '11/8', '16/11'
 ];
 
-let ces_fes_labels = clone(normalLabels)
-ces_fes_labels[20] = 'fes'
-ces_fes_labels[24] = 'ces'
+const cesFesLabels = clone(normalLabels)
+cesFesLabels[20] = 'fes'
+cesFesLabels[24] = 'ces'
 
-let partch2Labels = clone(partchLabels);
+const partch2Labels = clone(partchLabels);
 partch2Labels[2] = '15/14'
 partch2Labels[7] = '21/20'
 partch2Labels[9] = '4/3'
@@ -80,9 +80,9 @@ partch2Labels[27] = '33/32'
 partch2Labels[29] = '21/16'
 partch2Labels[33] = '64/33'
 
-let layoutLabels = {
+const layoutLabels = {
   normal: normalLabels,
-  ces_fes: ces_fes_labels,
+  ces_fes: cesFesLabels,
   partch: partchLabels,
   partch2: partch2Labels,
 }
@@ -122,9 +122,8 @@ export class ArciorganoPlayer extends React.PureComponent<{}, State> {
 
   constructor(props: {}) {
     super(props)
-    let octaves = 1
     this.state = {
-      octaves,
+      octaves: 1,
       rows: 8,
       concertPitch: 440,
       pitch11: 440 / 9 * 8,
@@ -145,11 +144,11 @@ export class ArciorganoPlayer extends React.PureComponent<{}, State> {
     if (preset.data.length === 37) {
       // index 17 is missing...
       // compat w/ old presets
-      let other = preset.data.splice(17, 37)
+      const other = preset.data.splice(17, 37)
       preset.data.push('')
       preset.data = preset.data.concat(other)
     }
-    let data = this.inputs.map((input, i) => {
+    const data = this.inputs.map((input, i) => {
       input.setValue(preset.data[i])
       return evalMathN(preset.data[i])
     })
@@ -181,7 +180,8 @@ export class ArciorganoPlayer extends React.PureComponent<{}, State> {
   }
 
   renderElement(index: number, small: boolean, disabled: boolean, octave: number) {
-    let data = this.state.data[index]
+    const data = this.state.data[index]
+    const muted = this.state.muted || disabled
     let freq: number | undefined
     if (data !== null) {
       freq = {
@@ -189,14 +189,13 @@ export class ArciorganoPlayer extends React.PureComponent<{}, State> {
         cents: (pitch: number, r: number) => pitch * Math.pow(2, r / 1200)
       }[this.state.mode](this.state.pitch11, data)
     }
-    let muted = this.state.muted || disabled
     return (
       <div>
         <MathInput size={small ? 3.35 : 4.25} default=''
           onChange={(v) => {
-            let data = clone(this.state.data)
-            data[index] = v
-            this.setState({ data })
+            const newData = clone(this.state.data)
+            newData[index] = v
+            this.setState({ data: newData })
           }} ref={(ref) => {
             if (ref) this.inputs[index] = ref
           }} />
@@ -208,8 +207,8 @@ export class ArciorganoPlayer extends React.PureComponent<{}, State> {
   }
 
   render() {
-    let c0 = concertPitchToC0(this.state.concertPitch)
-    let cents = ratioToCents(this.state.pitch11 / c0)
+    const c0 = concertPitchToC0(this.state.concertPitch)
+    const cents = ratioToCents(this.state.pitch11 / c0)
 
     this.players = new Array(this.state.rows).fill(null)
     this.inputs = new Array(this.state.rows).fill(null)
@@ -249,7 +248,7 @@ export class ArciorganoPlayer extends React.PureComponent<{}, State> {
               <th>Mode</th>
               <th>
                 <select onChange={(e) => {
-                  let mode = e.target.value
+                  const mode = e.target.value
                   if (mode === 'ratio' || mode === 'cents')
                     this.setState({ mode })
                 }} value={this.state.mode}>
@@ -260,7 +259,7 @@ export class ArciorganoPlayer extends React.PureComponent<{}, State> {
               <th>Note Label</th>
               <th>
                 <select onChange={(e) => {
-                  let label = e.target.value
+                  const label = e.target.value
                   if (label === 'normal' || label === 'ces_fes' || label === 'partch' || label === 'partch2')
                     this.setState({ label })
                 }} value={this.state.label}>
@@ -278,7 +277,7 @@ export class ArciorganoPlayer extends React.PureComponent<{}, State> {
                   min="1" max="4" value={this.state.octaves}
                   style={{ width: '3em' }}
                   onChange={(event) => {
-                    let octaves = parseInt(event.target.value)
+                    const octaves = parseInt(event.target.value, 10)
                     this.setState({ octaves })
                   }} />
               </th>
@@ -316,18 +315,17 @@ export class ArciorganoPlayer extends React.PureComponent<{}, State> {
               <th>
                 <QuickSaves
                   load={(save) => {
-                    for (let _octave of Object.keys(save.playing)) { // TODO: ES2017 entries
-                      let octave = parseInt(_octave)
-                      for (let _i of Object.keys(save.playing[octave])) {
-                        let i = parseInt(_i);
-                        let playing = save.playing[octave][i]
-                        let player = (this.players[octave] || {})[i]
+                    for (const _octave of Object.keys(save.playing)) { // TODO: ES2017 entries
+                      const octave = parseInt(_octave, 10)
+                      for (const _i of Object.keys(save.playing[octave])) {
+                        const i = parseInt(_i, 10);
+                        const playing = save.playing[octave][i]
+                        const player = (this.players[octave] || {})[i]
                         if (player) player.setPlaying(playing)
                       }
                     }
                   }}
                   saveData={() => {
-                    console.log(mapValues(this.players, octave => mapValues(octave, player => player.state.isPlaying)))
                     return {
                       playing: mapValues(this.players, octave => mapValues(octave, player => player.state.isPlaying))
                     }
@@ -348,15 +346,15 @@ export class ArciorganoPlayer extends React.PureComponent<{}, State> {
                   <tr key={rowi}>
                     {row.map((isThing, i) => {
                       if (isThing) {
-                        let small = (rowi !== 2) && (rowi !== 5)
-                        let index = layoutIndex[rowi][i]
-                        let data = this.state.data[index]
+                        const small = (rowi !== 2) && (rowi !== 5)
+                        const index = layoutIndex[rowi][i]
+                        const data = this.state.data[index]
                         if (data === null) { return }
-                        let freq = {
+                        const freq = {
                           ratio: (pitch: number, r: number) => pitch * r * Math.pow(2, oc),
                           cents: (pitch: number, r: number) => pitch * Math.pow(2, r / 1200 + oc)
                         }[this.state.mode](this.state.pitch11, data)
-                        let disabled = (oc + 2 == 5) && normalLabels[index] === 'his'
+                        const disabled = (oc + 2 === 5) && normalLabels[index] === 'his'
                         return (
                           <td key={i} style={{ padding: '0' }}>
                             <CompactFrequencyPlayer freq={freq}
