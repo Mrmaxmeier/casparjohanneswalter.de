@@ -12,6 +12,7 @@ interface MathInputProps extends React.Props<MathInput> {
   onError?: (e: MathError) => void;
   wide?: boolean;
   size?: number;
+  disabled?: boolean;
 }
 
 interface MathInputState extends React.ComponentState {
@@ -65,7 +66,7 @@ export class MathInput extends React.PureComponent<MathInputProps, MathInputStat
         color: ""
       };
     if (this.state.error) {
-      style["color"] = "red"
+      style.color = "red"
     }
     let default_: string | undefined;
     if (typeof this.props.default === "number") {
@@ -76,6 +77,7 @@ export class MathInput extends React.PureComponent<MathInputProps, MathInputStat
     return (
       <input type="text" ref={(e) => { if (e) { this.elem = e } }}
         defaultValue={default_}
+        disabled={this.props.disabled}
         onChange={(d) => {
           const parsed = evalMath(d.target.value);
           if (typeof parsed === "number") {

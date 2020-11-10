@@ -244,7 +244,7 @@ interface GPState {
 // TODO: track performance issues
 const UPDATE_INTERVAL = 5 // ms
 class GlissandoPlayer extends React.Component<State, GPState> {
-  private interval: NodeJS.Timeout | null
+  private interval: number | null
   private first?: Datapoint
   private last?: Datapoint
   private pauseAt?: number
@@ -337,7 +337,7 @@ class GlissandoPlayer extends React.Component<State, GPState> {
 
     let freq = centsToFreq(this.valueAt(time), this.props.concertPitch)
     this.setState({ time, paused: false, freq })
-    this.interval = setInterval(this.update.bind(this), UPDATE_INTERVAL)
+    this.interval = setInterval(this.update.bind(this), UPDATE_INTERVAL) as unknown as number
   }
 
   onMidi(id: number, mag: number) {

@@ -3,10 +3,11 @@ import * as React from 'react'
 import { MathInput, NoteDisplay, NoteImage, CompactFrequencyPlayer } from './components'
 import { AudioController, AudioControllerRow } from './audioComponents'
 import { concertPitchToC0, ratioToCents, evalMathN } from './converters'
-import { Presets, QuickSaves } from './presets'
+import { Presets } from './presets'
 import { range, clone, mapValues } from 'lodash'
 import { find_mapping } from './arciorgano_mapping'
 import * as download from 'downloadjs'
+import { boolean } from 'mathjs'
 
 const presets = {
   'Mode1_meantone31': require('./presets/ArcOrg_mode1_meantone31.json'),
@@ -111,16 +112,186 @@ interface Preset {
   octaves: number
 }
 
-interface SaveState {
+interface SequenceEntry {
   playing: { [octave: number]: { [idx: number]: boolean } }
+  length?: number,
+  overlap?: number,
 }
 
+
+
+interface SequenceEditorProps {
+  saveData: (i: number) => SequenceEntry,
+  load: (save: SequenceEntry) => void,
+}
+interface SequenceEditorState {
+  saves: (SequenceEntry | null)[],
+  isPlaying?: boolean,
+  progress?: number
+}
+
+class SequenceEditor extends React.PureComponent<SequenceEditorProps, SequenceEditorState> {
+  private lengthInputs: { [key: number]: MathInput } = {}
+  private overlapInputs: { [key: number]: MathInput } = {}
+  private startTimer?: number
+  private stopTimer?: number
+  private sequenceActive: { [key: number]: boolean } = {}
+  constructor(props: SequenceEditorProps) {
+    super(props)
+    this.state = {
+      saves: new Array(4).fill(null),
+      isPlaying: false,
+    }
+  }
+
+  load(saves: (SequenceEntry | null)[]) {
+    this.setState({ saves })
+    saves.forEach((save, i) => {
+      this.lengthInputs[i]?.setValue(save?.length || 1000)
+      this.overlapInputs[i]?.setValue(save?.overlap || 0)
+    })
+  }
+
+  onClickPlay() {
+    if (this.startTimer !== undefined)
+      clearTimeout(this.startTimer)
+    this.startTimer = undefined
+
+    if (this.stopTimer !== undefined)
+      clearTimeout(this.stopTimer)
+    this.stopTimer = undefined
+
+    this.sequenceActive = {}
+    if (this.state.isPlaying) {
+      this.setState({ isPlaying: false })
+      this.pushState()
+    } else {
+      this.advance(0)
+    }
+  }
+
+  advance(idx: number) {
+    this.sequenceActive[idx] = true
+    this.pushState()
+    const hasNext = idx < this.state.saves.length && this.state.saves[idx + 1] !== null
+    const length = this.state.saves[idx]?.length || 1000
+    const overlap = this.state.saves[idx]?.overlap || 0
+    this.stopTimer = setTimeout(() => {
+      this.sequenceActive[idx] = false
+      if (overlap !== 0 || !hasNext)
+        this.pushState()
+    }, length + overlap) as unknown as number
+    if (hasNext)
+      this.startTimer = setTimeout(() => this.advance(idx + 1), length) as unknown as number
+    this.setState({
+      isPlaying: hasNext
+    })
+  }
+
+  pushState() {
+    const playing: { [octave: number]: { [idx: number]: boolean } } = {}
+    // Object.entries stringifies key :/
+    for (const [_i, saveActive] of Object.entries(this.sequenceActive)) {
+      const _playing = this.state.saves[parseInt(_i, 10)]
+      if (_playing !== null) {
+        for (const [_j, octave] of Object.entries(_playing.playing)) {
+          const j = parseInt(_j, 10)
+          if (playing[j] === undefined)
+            playing[j] = {}
+          for (const [_k, active] of Object.entries(octave)) {
+            const k = parseInt(_k, 10)
+            playing[j][k] = (saveActive && active) || playing[j][k]
+          }
+        }
+      }
+    }
+    this.props.load({ playing })
+  }
+
+  render() {
+    const style = { background: this.state.isPlaying ? "#f15f55" : "#2196f3" };
+    return (
+      <table>
+        <tbody>
+          <tr>
+            <th>Sequence Editor</th>
+            {this.state.saves.map((_: (SequenceEntry | null), i: number) => (
+              <th key={i} style={{ padding: '8px' }}>
+                <button
+                  onClick={() => {
+                    const save = this.props.saveData(i)
+                    const saves = [...this.state.saves];
+                    saves[i] = save
+                    if (i === saves.length - 1) {
+                      saves.push(null);
+                    }
+                    this.setState({ saves })
+                  }}
+                  style={{ padding: '8px' }}
+                >Save {i + 1}</button>
+              </th>
+            ))}
+          </tr>
+          <tr>
+            <th>
+              <button style={style} onClick={() => this.onClickPlay()} disabled={this.state.saves[0] === null}>
+                Play Sequence
+              </button>
+            </th>
+            {this.state.saves.map((data: (SequenceEntry | null), i: number) => (
+              <th key={i} style={{ padding: '8px' }}>
+                <button
+                  disabled={!data}
+                  onClick={() => this.props.load(data!)}
+                  style={{ padding: '8px' }}
+                >Load {i + 1}</button>
+              </th>
+            ))}
+          </tr>
+          <tr>
+            <th>Length</th>
+            {this.state.saves.map((_, i) => <td key={i}>
+              <MathInput size={3.35}
+                disabled={!this.state.saves[i]}
+                default='1000'
+                onChange={(v) => {
+                  const saves = clone(this.state.saves)
+                  saves[i]!.length = v
+                  this.setState({ saves })
+                }} ref={(ref) => {
+                  if (ref) this.lengthInputs[i] = ref
+                }} />
+            </td>)}
+          </tr>
+          <tr>
+            <th>Overlap</th>
+            {this.state.saves.map((_, i) => <td key={i}>
+              <MathInput size={3.35}
+                disabled={!this.state.saves[i]}
+                default='0'
+                onChange={(v) => {
+                  const saves = clone(this.state.saves)
+                  saves[i]!.overlap = v
+                  this.setState({ saves })
+                }} ref={(ref) => {
+                  if (ref) this.overlapInputs[i] = ref
+                }} />
+            </td>)}
+          </tr>
+        </tbody>
+      </table>
+    )
+  }
+}
+
+
+// tslint:disable-next-line: max-classes-per-file
 export class ArciorganoPlayer extends React.PureComponent<{}, State> {
   private players: { [octave: number]: { [idx: number]: CompactFrequencyPlayer } }
   private inputs: MathInput[]
   private concertPitch?: MathInput
   private pitch11?: MathInput
-  private quicksaves?: QuickSaves<SaveState>
+  private sequenceEditor?: SequenceEditor
 
   constructor(props: {}) {
     super(props)
@@ -209,7 +380,7 @@ export class ArciorganoPlayer extends React.PureComponent<{}, State> {
   }
 
   mechanicalArciCode() {
-    const saves = this.quicksaves!.state.saves
+    const saves = this.sequenceEditor!.state.saves
     let lines = ""
     for (const save of saves) {
       if (save) {
@@ -223,7 +394,7 @@ export class ArciorganoPlayer extends React.PureComponent<{}, State> {
             }
           }
         }
-        lines += `1000 0 ${line.join(' ')}\n`
+        lines += `${save.length || 1000} ${save.overlap || 0} ${line.join(' ')}\n`
       }
     }
     return lines
@@ -326,9 +497,9 @@ export class ArciorganoPlayer extends React.PureComponent<{}, State> {
               </th>
             </tr>
             <Presets name='arciorganoSavePresets' label='Music Preset'
-              default={{ saves: [null, null, null, null] }} newAsDefault
-              onChange={(_, state) => this.quicksaves && this.quicksaves.setState(state)}
-              current={() => (this.quicksaves && this.quicksaves.state) || { saves: [] }} />
+              default={{ saves: [null, null, null, null], isPlaying: false }} newAsDefault
+              onChange={(_, state) => this.sequenceEditor && this.sequenceEditor.load(state.saves)}
+              current={() => (this.sequenceEditor && this.sequenceEditor.state) || { saves: [] }} />
             <tr>
               <th>Mechanical Arciorgano Code</th>
               <th>
@@ -341,34 +512,24 @@ export class ArciorganoPlayer extends React.PureComponent<{}, State> {
             </tr>
           </tbody>
         </table>
-        <table>
-          <tbody>
-            <tr>
-              <th>Playing</th>
-              <th>
-                <QuickSaves
-                  load={(save) => {
-                    for (const _octave of Object.keys(save.playing)) { // TODO: ES2017 entries
-                      const octave = parseInt(_octave, 10)
-                      for (const _i of Object.keys(save.playing[octave])) {
-                        const i = parseInt(_i, 10);
-                        const playing = save.playing[octave][i]
-                        const player = (this.players[octave] || {})[i]
-                        if (player) player.setPlaying(playing)
-                      }
-                    }
-                  }}
-                  saveData={() => {
-                    return {
-                      playing: mapValues(this.players, octave => mapValues(octave, player => player.state.isPlaying))
-                    }
-                  }}
-                  ref={(e: QuickSaves<SaveState>) => { if (e) this.quicksaves = e }}
-                />
-              </th>
-            </tr>
-          </tbody>
-        </table>
+        <SequenceEditor
+          load={(save) => {
+            for (const [_octave, players] of Object.entries(this.players)) {
+              const octave = parseInt(_octave, 10)
+              if (players)
+                for (const [_i, player] of Object.entries(players)) {
+                  const i = parseInt(_i, 10)
+                  if (player) player.setPlaying(save.playing && save.playing[octave] && save.playing[octave][i])
+                }
+            }
+          }}
+          saveData={() => {
+            return {
+              playing: mapValues(this.players, octave => mapValues(octave, player => player.state.isPlaying))
+            }
+          }}
+          ref={(e: SequenceEditor) => { if (e) this.sequenceEditor = e }}
+        />
 
         {range(this.state.octaves - 1, 0, -1).map((oc) =>
           <div key={oc}>
